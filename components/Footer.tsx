@@ -25,21 +25,6 @@ export default function Footer() {
           <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Boost Health Initiative Logo" fill className="object-contain" />
         </div>
       </div>
-      {/* Navigation Links */}
-      <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-6 md:flex-row md:justify-around">
-        <Link className="text-[#1c140d] text-base font-normal min-w-32 py-2" href="/">Home</Link>
-        <Link className="text-[#1c140d] text-base font-normal min-w-32 py-2" href="/about">About</Link>
-        <Link className="text-[#1c140d] text-base font-normal min-w-32 py-2" href="/programs">Programs</Link>
-        <Link className="text-[#1c140d] text-base font-normal min-w-32 py-2" href="/news">News</Link>
-        <Link className="text-[#1c140d] text-base font-normal min-w-32 py-2" href="/contact">Contact</Link>
-        <button
-          className="text-[#1c140d] text-base font-bold min-w-32 py-2 rounded-lg hover:bg-orange-500 transition-all focus:outline-none focus:ring-2 focus:ring-orange-400"
-          onClick={() => setDonateOpen(true)}
-        >
-          Donate
-        </button>
-        <Link className="text-[#1c140d] text-base font-normal min-w-32 py-2" href="/contact">Get Involved</Link>
-      </div>
       {/* Social Links */}
       <div className="flex flex-wrap justify-center gap-4 mt-2">
         <a href="#" aria-label="Twitter" className="text-[#1c140d]">
@@ -82,7 +67,7 @@ export default function Footer() {
           </form>
         )}
       </div>
-      <p className="text-[#1c140d] text-base font-normal mt-4">© 2024 Boost Health Initiative. All rights reserved.</p>
+      <p className="text-[#1c140d] text-base font-normal mt-4">© 2025 Boost Health Initiative. All rights reserved.</p>
     </footer>
   );
 } 
