@@ -20,7 +20,10 @@ export default function NavBar() {
               <div className="relative w-10 h-10">
                 <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
               </div>
-              <button
+              <span className="text-[#1c140d] text-lg font-bold">Boost Health Initiative</span>
+
+            </div>
+            <button
                 onClick={() => setNavOpen((v) => !v)}
                 aria-label="Toggle navigation"
                 className="flex flex-col gap-1 p-2"
@@ -29,13 +32,11 @@ export default function NavBar() {
                 <span className="w-6 h-0.5 bg-[#1c140d] rounded transition-all"></span>
                 <span className="w-6 h-0.5 bg-[#1c140d] rounded transition-all"></span>
               </button>
-            </div>
-            <span className="text-[#1c140d] text-lg font-bold">Boost Health Initiative</span>
           </div>
 
           {/* Desktop Nav - Logo + Title */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="relative w-16 h-16">
+            <div className="relative w-10 h-10">
               <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
             </div>
             <h1 className="text-[#1c140d] text-xl font-bold">Boost Health Initiative</h1>
