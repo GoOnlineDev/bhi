@@ -10,9 +10,23 @@ export default function DonateModal({ open, onClose }: { open: boolean; onClose:
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    if (submitted) return;
+    try {
+      const res = await fetch('/api/send-email/donate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        alert('There was an error sending your donation. Please try again.');
+      }
+    } catch (err) {
+      alert('There was an error sending your donation. Please try again.');
+    }
   }
 
   if (!open) return null;
