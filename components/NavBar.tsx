@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import DonateModal from './DonateModal';
 
+
 export default function NavBar() {
   const [navOpen, setNavOpen] = useState(false);
   const [donateOpen, setDonateOpen] = useState(false);
