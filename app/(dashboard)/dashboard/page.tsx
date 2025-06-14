@@ -1,7 +1,7 @@
 "use client";
 
 import { Authenticated, Unauthenticated, useMutation } from "convex/react";
-import { SignInButton, UserButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { UploadButton } from "@/utils/uploadthing";
 
 export default function Dashboard() {
@@ -12,7 +12,13 @@ export default function Dashboard() {
         <AuthenticatedContent />
       </Authenticated>
       <Unauthenticated>
-        <SignInButton />
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 40 }}>
+          <h2>Please sign in or sign up to access the dashboard.</h2>
+          <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+            <SignInButton />
+            <SignUpButton />
+          </div>
+        </div>
       </Unauthenticated>
     </>
   );

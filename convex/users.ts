@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const createOrGetUser = mutation({
@@ -29,9 +29,22 @@ export const createOrGetUser = mutation({
       firstName: identity.givenName ?? undefined,
       lastName: identity.familyName ?? undefined,
       imageUrl: typeof identity.pictureUrl === "string" ? identity.pictureUrl : undefined,
-      role: "user"
+      role: "patient"
     });
 
     return userId;
+  },
+});
+
+export const getCurrentUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", q => q.eq("clerkId", identity.subject))
+      .unique();
+    return user;
   },
 }); 

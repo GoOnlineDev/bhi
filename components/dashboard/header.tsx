@@ -17,8 +17,8 @@ export default function DashboardHeader() {
       </nav>
       <nav className="hidden md:flex gap-6">
         <Link href="/dashboard" className="text-[#1c140d] font-semibold hover:text-[#f37c1b] transition">Home</Link>
-        <Link href="/dashboard/profile" className="text-[#1c140d] font-semibold hover:text-[#f37c1b] transition">Profile</Link>
-        <Link href="/dashboard/settings" className="text-[#1c140d] font-semibold hover:text-[#f37c1b] transition">Settings</Link>
+        <Link href="/dashboard/news" className="text-[#1c140d] font-semibold hover:text-[#f37c1b] transition">News</Link>
+        <Link href="/dashboard/programs" className="text-[#1c140d] font-semibold hover:text-[#f37c1b] transition">Programs</Link>
       </nav>
     </header>
   );

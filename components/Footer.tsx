@@ -3,17 +3,26 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
 import DonateModal from './DonateModal';
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [donateOpen, setDonateOpen] = useState(false);
+  const [error, setError] = useState("");
+  const addSubscriber = useMutation(api.subscribers.addSubscriber);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Here you would handle sending the email to your backend or newsletter service
-    setSubscribed(true);
-    setEmail('');
+    setError("");
+    try {
+      await addSubscriber({ email });
+      setSubscribed(true);
+      setEmail('');
+    } catch (err) {
+      setError("Failed to subscribe. Please try again.");
+    }
   }
 
   return (
@@ -112,6 +121,7 @@ export default function Footer() {
             </button>
           </form>
         )}
+        {error && <div className="text-red-600 font-medium mt-1">{error}</div>}
       </div>
       <p className="text-[#1c140d] text-base font-normal mt-4">© 2025 Boost Health Initiative. All rights reserved.</p>
     </footer>
