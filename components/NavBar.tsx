@@ -36,12 +36,14 @@ export default function NavBar() {
           </div>
 
           {/* Desktop Nav - Logo + Title */}
+          <Link href="/" >
           <div className="hidden md:flex items-center gap-4">
             <div className="relative w-10 h-10">
               <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
             </div>
             <h1 className="text-[#1c140d] text-xl font-bold">Boost Health Initiative</h1>
           </div>
+          </Link>
 
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-8 text-[#1c140d] font-medium text-sm">
