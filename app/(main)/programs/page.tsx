@@ -36,20 +36,6 @@ export default function Programs() {
               Comprehensive initiatives designed to address critical health challenges and empower communities across Uganda.
             </p>
           </div>
-          {/* Suubi Medical Centre Button */}
-          <div className="flex w-full max-w-[960px] px-4 py-3 justify-start mx-auto">
-            <a
-              href="https://suubi.com"
-              target="_blank"
-              rel="noopener"
-              className="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-[#f4ede7] text-[#1c140d] text-sm font-bold tracking-[0.015em]"
-            >
-              <span className="relative w-7 h-7 mr-2">
-                <Image src="/SUUBI LOGO ICON PNG Bckd TRANS.png" alt="Suubi Medical Centre Logo" fill className="object-contain" />
-              </span>
-              <span className="truncate">Visit Suubi Medical Centre</span>
-            </a>
-          </div>
           {/* Search Bar */}
           <div className="flex justify-center my-8">
             <input

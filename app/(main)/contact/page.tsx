@@ -46,20 +46,6 @@ export default function Contact() {
               Contact us to learn more about our programs or explore partnership opportunities.
             </p>
           </div>
-          {/* Suubi Medical Centre Button */}
-          <div className="flex w-full max-w-[960px] px-4 py-3 justify-start mx-auto">
-            <a
-              href="https://suubi.com"
-              target="_blank"
-              rel="noopener"
-              className="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-[#f4ede7] text-[#1c140d] text-sm font-bold tracking-[0.015em]"
-            >
-              <span className="relative w-7 h-7 mr-2">
-                <img src="/SUUBI LOGO ICON PNG Bckd TRANS.png" alt="Suubi Medical Centre Logo" className="object-contain w-7 h-7" />
-              </span>
-              <span className="truncate">Visit Suubi Medical Centre</span>
-            </a>
-          </div>
           <div className="grid md:grid-cols-2 gap-12 items-start">
             {/* Contact Form */}
             <div className="bg-white/90 rounded-2xl shadow-xl p-8 flex flex-col gap-6 border border-[#f4ede7]">

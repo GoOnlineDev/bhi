@@ -94,20 +94,6 @@ export default function About() {
           </div>
         </div>
       </section>
-      {/* Suubi Medical Centre Button */}
-      <div className="flex w-full max-w-[960px] px-4 py-3 justify-start mx-auto">
-        <a
-          href="https://suubi.com"
-          target="_blank"
-          rel="noopener"
-          className="flex min-w-[84px] max-w-[480px] items-center justify-center rounded-lg h-10 px-4 bg-[#f4ede7] text-[#1c140d] text-sm font-bold tracking-[0.015em]"
-        >
-          <span className="relative w-7 h-7 mr-2">
-            <Image src="/SUUBI LOGO ICON PNG Bckd TRANS.png" alt="Suubi Medical Centre Logo" fill className="object-contain" />
-          </span>
-          <span className="truncate">Visit Suubi Medical Centre</span>
-        </a>
-      </div>
       <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-emerald-500/10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -3,6 +3,7 @@ import DashboardHeader from '../../components/dashboard/header';
 import DashboardSidebar from '../../components/dashboard/sidebar';
 import DashboardFooter from '../../components/dashboard/footer';
 
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#fcfaf8]">

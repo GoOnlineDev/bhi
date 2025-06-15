@@ -7,7 +7,7 @@ const crons = cronJobs();
 
 crons.interval(
   "check for new news and programs and send emails",
-  { minutes: 5 },
+  { minutes: 120 },
   internal.crons.processNewContent,
   {}
 );

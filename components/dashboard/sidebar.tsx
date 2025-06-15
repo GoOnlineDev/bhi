@@ -8,7 +8,6 @@ export default function DashboardSidebar() {
         <Link href="/dashboard" className="w-full px-4 py-2 rounded-lg text-[#1c140d] font-semibold hover:bg-[#f4ede7] transition">Dashboard Home</Link>
         <Link href="/dashboard/news" className="w-full px-4 py-2 rounded-lg text-[#1c140d] font-semibold hover:bg-[#f4ede7] transition">News</Link>
         <Link href="/dashboard/programs" className="w-full px-4 py-2 rounded-lg text-[#1c140d] font-semibold hover:bg-[#f4ede7] transition">Programs</Link>
-        <Link href="/dashboard/settings" className="w-full px-4 py-2 rounded-lg text-[#1c140d] font-semibold hover:bg-[#f4ede7] transition">Settings</Link>
       </nav>
     </aside>
   );
