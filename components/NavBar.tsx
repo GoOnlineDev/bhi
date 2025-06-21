@@ -13,7 +13,7 @@ export default function NavBar() {
   return (
     <>
       <DonateModal open={donateOpen} onClose={() => setDonateOpen(false)} />
-      <header className="fixed top-0 left-0 w-full z-50 bg-[#fcfaf8]/80 backdrop-blur-md border-b border-[#e6e2dc]">
+      <header className="fixed top-0 left-0 w-full z-[100] bg-[#fcfaf8]/80 backdrop-blur-md border-b border-[#e6e2dc]">
         <div className="flex items-center justify-between px-4 md:px-10 py-3">
           {/* Mobile Nav - Logo + Hamburger */}
           <div className="flex items-center md:hidden w-full justify-between">
@@ -68,7 +68,7 @@ export default function NavBar() {
           <>
             {/* Full Screen Backdrop - Solid Black */}
             <div 
-              className="fixed inset-0 bg-gray-900 z-[999] md:hidden"
+              className="fixed inset-0 bg-gray-900 z-[200] md:hidden"
               onClick={() => setNavOpen(false)}
               style={{ 
                 top: 0, 
@@ -82,7 +82,7 @@ export default function NavBar() {
             />
             
             {/* Mobile Menu */}
-            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[1000] md:hidden">
+            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[300] md:hidden">
               <div className="flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b">

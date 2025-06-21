@@ -19,7 +19,7 @@ export default function Home() {
           className="w-full aspect-video bg-center bg-no-repeat bg-cover rounded-lg md:min-w-[400px] md:w-1/2"
           style={{
             backgroundImage:
-              'url(/img/dr1.jpg)',
+              'url(/img/dr7.jpg)',
           }}
         ></div>
         {/* Hero Text */}
@@ -54,7 +54,7 @@ export default function Home() {
           className="bg-cover bg-center flex flex-col items-stretch justify-end rounded-lg pt-[132px] min-h-[220px]"
           style={{
             backgroundImage:
-              'linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%), url(/img/dr1.jpg)',
+              'linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%), url(/img/dr6.jpg)',
           }}
         >
           <div className="flex w-full items-end justify-between gap-4 p-4">
