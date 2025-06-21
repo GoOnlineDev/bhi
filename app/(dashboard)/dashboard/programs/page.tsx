@@ -39,6 +39,25 @@ const canApprove = (role: string) => ["admin", "superadmin"].includes(role);
 
 const STATUS_OPTIONS = ["upcoming", "ongoing", "completed"] as const;
 
+type EditFormType = {
+  name: string;
+  description: string;
+  goal: string;
+  startDate: number;
+  endDate?: number;
+  location: string;
+  images: string[];
+  videos: string[];
+  status: typeof STATUS_OPTIONS[number];
+  contactPerson: string;
+  contactPhone: string;
+  contactEmail: string;
+  tags: string[];
+  relatedNewsIds: Id<"news">[];
+  isFeatured: boolean;
+  approved: boolean;
+};
+
 export default function ProgramsDashboard() {
   const { toast } = useToast();
   const createProgram = useMutation(api.programs.createProgram);
@@ -69,7 +88,7 @@ export default function ProgramsDashboard() {
     createdAt: Date.now(),
   });
   const [editId, setEditId] = useState<Id<"programs"> | null>(null);
-  const [editForm, setEditForm] = useState<any>({});
+  const [editForm, setEditForm] = useState<EditFormType>({} as EditFormType);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState<"idle" | "uploading" | "complete" | "error">("idle");
@@ -86,7 +105,7 @@ export default function ProgramsDashboard() {
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setEditForm((prev: any) => ({
+    setEditForm((prev: EditFormType) => ({
       ...prev,
       [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
@@ -193,7 +212,7 @@ export default function ProgramsDashboard() {
         approved: canApprove(userRole) ? editForm.approved : false,
       });
       setEditId(null);
-      setEditForm({});
+      setEditForm({} as EditFormType);
       toast({
         title: "Success",
         description: "Program updated successfully",
@@ -212,11 +231,10 @@ export default function ProgramsDashboard() {
 
   const handleCancelEdit = () => {
     setEditId(null);
-    setEditForm({});
+    setEditForm({} as EditFormType);
   };
 
   const handleImageUpload = (res: any) => {
-    setUploadProgress("uploading");
     if (res && Array.isArray(res)) {
       const images: string[] = [];
       const videos: string[] = [];
@@ -256,7 +274,7 @@ export default function ProgramsDashboard() {
         }
       });
       
-      setEditForm((prev: any) => ({ 
+      setEditForm((prev: EditFormType) => ({ 
         ...prev, 
         images: [...(prev.images || []), ...images],
         videos: [...(prev.videos || []), ...videos]
@@ -266,9 +284,9 @@ export default function ProgramsDashboard() {
 
   const removeImage = (index: number, isEdit = false) => {
     if (isEdit) {
-      setEditForm((prev: any) => ({
+      setEditForm((prev: EditFormType) => ({
         ...prev,
-        images: prev.images.filter((_: any, i: number) => i !== index)
+        images: prev.images.filter((_, i: number) => i !== index)
       }));
     } else {
       setForm((prev) => ({
@@ -280,9 +298,9 @@ export default function ProgramsDashboard() {
 
   const removeVideo = (index: number, isEdit = false) => {
     if (isEdit) {
-      setEditForm((prev: any) => ({
+      setEditForm((prev: EditFormType) => ({
         ...prev,
-        videos: prev.videos.filter((_: any, i: number) => i !== index)
+        videos: prev.videos.filter((_, i: number) => i !== index)
       }));
     } else {
       setForm((prev) => ({
@@ -297,6 +315,9 @@ export default function ProgramsDashboard() {
       <UploadButton
         endpoint="programMediaUploader"
         onClientUploadComplete={handleImageUpload}
+        onUploadBegin={() => {
+          setUploadProgress("uploading");
+        }}
         onUploadError={(error: Error) => {
           setUploadProgress("error");
           toast({
@@ -347,8 +368,8 @@ export default function ProgramsDashboard() {
               ) : (
                 <>
                   <Upload className="w-6 h-6" />
-                  <span>Drop files here or click to upload</span>
-                  <span className="text-xs">Images and videos up to 512MB</span>
+                  <span>Upload Media</span>
+                  <span className="text-xs">Drop files or click</span>
                 </>
               )}
             </div>
@@ -703,7 +724,7 @@ export default function ProgramsDashboard() {
                             />
                             <Select 
                               value={editForm.status} 
-                              onValueChange={(value) => setEditForm(prev => ({ ...prev, status: value }))}
+                              onValueChange={(value) => setEditForm((prev: EditFormType) => ({ ...prev, status: value as typeof STATUS_OPTIONS[number] }))}
                             >
                               <SelectTrigger className="focus:ring-[#1b7cf3] focus:border-[#1b7cf3]">
                                 <SelectValue />
@@ -730,7 +751,11 @@ export default function ProgramsDashboard() {
                             <UploadButton
                               endpoint="programMediaUploader"
                               onClientUploadComplete={handleEditUpload}
+                              onUploadBegin={() => {
+                                setUploadProgress("uploading");
+                              }}
                               onUploadError={(error: Error) => {
+                                setUploadProgress("error");
                                 toast({
                                   title: "Upload Error",
                                   description: error.message,
@@ -827,7 +852,7 @@ export default function ProgramsDashboard() {
                             </Badge>
                           </div>
 
-                          {(program.images?.length > 0 || program.videos?.length > 0) && (
+                          {((program.images?.length || 0) > 0 || (program.videos?.length || 0) > 0) && (
                             <div className="mb-4">
                               {renderMediaPreviews(program.images || [], program.videos || [])}
                             </div>
@@ -890,10 +915,10 @@ export default function ProgramsDashboard() {
                             required
                             className="focus:ring-[#1b7cf3] focus:border-[#1b7cf3]"
                           />
-                          <Select 
-                            value={editForm.status} 
-                            onValueChange={(value) => setEditForm(prev => ({ ...prev, status: value }))}
-                          >
+                                                      <Select 
+                              value={editForm.status} 
+                              onValueChange={(value) => setEditForm((prev: EditFormType) => ({ ...prev, status: value as typeof STATUS_OPTIONS[number] }))}
+                            >
                             <SelectTrigger className="focus:ring-[#1b7cf3] focus:border-[#1b7cf3]">
                               <SelectValue />
                             </SelectTrigger>
@@ -919,7 +944,11 @@ export default function ProgramsDashboard() {
                           <UploadButton
                             endpoint="programMediaUploader"
                             onClientUploadComplete={handleEditUpload}
+                            onUploadBegin={() => {
+                              setUploadProgress("uploading");
+                            }}
                             onUploadError={(error: Error) => {
+                              setUploadProgress("error");
                               toast({
                                 title: "Upload Error",
                                 description: error.message,
@@ -1039,7 +1068,7 @@ export default function ProgramsDashboard() {
                           </Badge>
                         </div>
 
-                        {(program.images?.length > 0 || program.videos?.length > 0) && (
+                        {((program.images?.length || 0) > 0 || (program.videos?.length || 0) > 0) && (
                           <div className="mb-4">
                             {renderMediaPreviews(program.images || [], program.videos || [])}
                           </div>

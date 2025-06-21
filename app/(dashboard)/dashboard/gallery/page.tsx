@@ -24,7 +24,9 @@ import {
   Calendar, 
   Tag,
   Filter,
-  X
+  X,
+  AlertCircle,
+  Upload
 } from "lucide-react";
 
 type GalleryItem = {
@@ -176,7 +178,18 @@ export default function DashboardGalleryPage() {
       tags: item.tags.join(', '),
       isPublished: item.isPublished,
     });
+    // Reset upload states when editing
+    setUploadedFiles([]);
+    setUploadProgress("idle");
     setIsEditModalOpen(true);
+  };
+
+  const clearCurrentMedia = () => {
+    setFormData(prev => ({ ...prev, url: "", type: "image" }));
+    toast({
+      title: "Media Cleared",
+      description: "Current media removed. Upload new media to replace it.",
+    });
   };
 
   const handleUpdate = async () => {
@@ -233,7 +246,6 @@ export default function DashboardGalleryPage() {
   };
 
   const handleMediaUpload = (res: any) => {
-    setUploadProgress("uploading");
     if (res?.[0]?.url) {
       const fileType = res[0].type;
       const newFile = { 
@@ -276,67 +288,70 @@ export default function DashboardGalleryPage() {
 
   const renderUploadArea = () => (
     <div className="space-y-4">
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#f37c1b] transition-colors">
-        <UploadButton
-          endpoint="galleryMediaUploader"
-          onClientUploadComplete={handleMediaUpload}
-          onUploadError={(error: Error) => {
-            setUploadProgress("error");
-            toast({
-              title: "Upload Error",
-              description: error.message,
-              variant: "destructive",
-            });
-          }}
-          appearance={{
-            button: {
-              background: "transparent",
-              border: "none",
-              color: "#6b7280",
-              fontWeight: "500",
-              fontSize: "14px",
-              padding: "12px 24px",
-              cursor: "pointer",
-              width: "100%",
-            },
-            container: { width: "100%" },
-            allowedContent: {
-              color: "#9ca3af",
-              fontSize: "12px",
-              marginTop: "8px"
-            }
-          }}
-          content={{
-            button: (
-              <div className="flex flex-col items-center gap-3">
-                {uploadProgress === "uploading" ? (
-                  <>
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#f37c1b]"></div>
-                    <span>Uploading...</span>
-                  </>
-                ) : uploadProgress === "error" ? (
-                  <>
-                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                      <X className="w-4 h-4 text-red-500" />
-                    </div>
-                    <span>Upload failed - try again</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-12 h-12 bg-[#f37c1b]/10 rounded-full flex items-center justify-center">
-                      <Plus className="w-6 h-6 text-[#f37c1b]" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-[#1c140d]">Drop files here or click to upload</p>
-                      <p className="text-sm text-gray-500">Images and videos up to 512MB</p>
-                    </div>
-                  </>
-                )}
-              </div>
-            )
-          }}
-        />
-      </div>
+      <UploadButton
+        endpoint="galleryMediaUploader"
+        onClientUploadComplete={handleMediaUpload}
+        onUploadBegin={() => {
+          setUploadProgress("uploading");
+        }}
+        onUploadError={(error: Error) => {
+          setUploadProgress("error");
+          toast({
+            title: "Upload Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        }}
+        appearance={{
+          button: {
+            background: "transparent",
+            border: "2px dashed #d1d5db",
+            borderRadius: "12px",
+            color: "#6b7280",
+            fontWeight: "500",
+            fontSize: "14px",
+            padding: "24px",
+            width: "100%",
+            minHeight: "100px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+          },
+          container: { width: "100%" },
+          allowedContent: {
+            color: "#9ca3af",
+            fontSize: "12px",
+            marginTop: "8px"
+          }
+        }}
+        content={{
+          button: (
+            <div className="flex flex-col items-center gap-2">
+              {uploadProgress === "uploading" ? (
+                <>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#f37c1b]"></div>
+                  <span>Uploading...</span>
+                </>
+              ) : uploadProgress === "error" ? (
+                <>
+                  <AlertCircle className="w-6 h-6 text-red-500" />
+                  <span>Upload failed - try again</span>
+                </>
+              ) : (
+                <>
+                  <Upload className="w-6 h-6" />
+                  <span>Upload Media</span>
+                  <span className="text-xs">Drop files or click</span>
+                </>
+              )}
+            </div>
+          )
+        }}
+      />
 
       {/* Media Previews */}
       {uploadedFiles.length > 0 && (
@@ -379,6 +394,61 @@ export default function DashboardGalleryPage() {
       )}
     </div>
   );
+
+  const renderCurrentMedia = () => {
+    if (!formData.url) return null;
+
+    return (
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium text-gray-700">Current Media</h4>
+        <div className="relative group w-fit">
+          <div className="aspect-video w-48 rounded-lg overflow-hidden bg-gray-100">
+            {formData.type === 'image' ? (
+              <Image
+                src={formData.url}
+                alt="Current media"
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="relative w-full h-full">
+                {formData.thumbnail ? (
+                  <Image
+                    src={formData.thumbnail}
+                    alt="Video thumbnail"
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <Video className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                  <div className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center">
+                    <Video className="w-4 h-4 text-[#f37c1b]" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearCurrentMedia}
+            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white hover:bg-red-600 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <X className="w-3 h-3" />
+          </Button>
+          <div className="absolute bottom-1 left-1">
+            <Badge variant="secondary" className="text-xs">
+              {formData.type}
+            </Badge>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#fcfaf8] p-6">
@@ -755,8 +825,12 @@ export default function DashboardGalleryPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Replace Media (optional)</label>
-                {renderUploadArea()}
+                <label className="block text-sm font-medium mb-2">Media</label>
+                {renderCurrentMedia()}
+                <div className="mt-4">
+                  <label className="block text-sm font-medium mb-2">Replace Media (optional)</label>
+                  {renderUploadArea()}
+                </div>
               </div>
 
               {formData.type === "video" && (

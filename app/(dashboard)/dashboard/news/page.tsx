@@ -247,7 +247,6 @@ export default function NewsDashboard() {
   };
 
   const handleMediaUpload = (res: any) => {
-    setUploadProgress("uploading");
     if (res && Array.isArray(res)) {
       const newImages: string[] = [];
       const newVideos: string[] = [];
@@ -405,64 +404,70 @@ export default function NewsDashboard() {
 
   const renderUploadArea = (onUpload: (res: any) => void) => (
     <div className="space-y-4">
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-        <UploadButton
-          endpoint="newsMediaUploader"
-          onClientUploadComplete={onUpload}
-          onUploadError={(error: Error) => {
-            setUploadProgress("error");
-            toast({
-              title: "Upload Error",
-              description: error.message,
-              variant: "destructive",
-            });
-          }}
-          appearance={{
-            button: {
-              background: "transparent",
-              border: "none",
-              color: "#6b7280",
-              fontWeight: "500",
-              fontSize: "14px",
-              cursor: "pointer",
-              width: "100%",
-            },
-            container: { width: "100%" },
-            allowedContent: {
-              color: "#9ca3af",
-              fontSize: "12px",
-              marginTop: "8px"
-            }
-          }}
-          content={{
-            button: (
-              <div className="flex flex-col items-center gap-3">
-                {uploadProgress === "uploading" ? (
-                  <>
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                    <span>Uploading media...</span>
-                  </>
-                ) : uploadProgress === "error" ? (
-                  <>
-                    <AlertCircle className="w-8 h-8 text-red-500" />
-                    <span>Upload failed - try again</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
-                      <Upload className="w-6 h-6 text-blue-500" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">Upload images and videos</p>
-                      <p className="text-sm text-gray-500">Drop files here or click to browse</p>
-                    </div>
-                  </>
-                )}
-              </div>
-            )
-          }}
-        />
-      </div>
+      <UploadButton
+        endpoint="newsMediaUploader"
+        onClientUploadComplete={onUpload}
+        onUploadBegin={() => {
+          setUploadProgress("uploading");
+        }}
+        onUploadError={(error: Error) => {
+          setUploadProgress("error");
+          toast({
+            title: "Upload Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        }}
+        appearance={{
+          button: {
+            background: "transparent",
+            border: "2px dashed #d1d5db",
+            borderRadius: "12px",
+            color: "#6b7280",
+            fontWeight: "500",
+            fontSize: "14px",
+            padding: "24px",
+            width: "100%",
+            minHeight: "100px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+          },
+          container: { width: "100%" },
+          allowedContent: {
+            color: "#9ca3af",
+            fontSize: "12px",
+            marginTop: "8px"
+          }
+        }}
+        content={{
+          button: (
+            <div className="flex flex-col items-center gap-2">
+              {uploadProgress === "uploading" ? (
+                <>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                  <span>Uploading...</span>
+                </>
+              ) : uploadProgress === "error" ? (
+                <>
+                  <AlertCircle className="w-6 h-6 text-red-500" />
+                  <span>Upload failed - try again</span>
+                </>
+              ) : (
+                <>
+                  <Upload className="w-6 h-6" />
+                  <span>Upload Media</span>
+                  <span className="text-xs">Drop files or click</span>
+                </>
+              )}
+            </div>
+          )
+        }}
+      />
     </div>
   );
 
