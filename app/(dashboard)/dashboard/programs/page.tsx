@@ -162,7 +162,7 @@ export default function ProgramsDashboard() {
   const handleDelete = async (id: Id<"programs">) => {
     if (confirm("Are you sure you want to delete this program?")) {
       try {
-        await deleteProgram({ id });
+      await deleteProgram({ id });
         toast({
           title: "Success",
           description: "Program deleted successfully",
@@ -312,8 +312,8 @@ export default function ProgramsDashboard() {
 
   const renderUploadArea = () => (
     <div className="space-y-4">
-      <UploadButton
-        endpoint="programMediaUploader"
+            <UploadButton
+              endpoint="programMediaUploader"
         onClientUploadComplete={handleImageUpload}
         onUploadBegin={() => {
           setUploadProgress("uploading");
@@ -326,8 +326,8 @@ export default function ProgramsDashboard() {
             variant: "destructive",
           });
         }}
-        appearance={{
-          button: {
+              appearance={{
+                button: {
             background: "transparent",
             border: "2px dashed #d1d5db",
             borderRadius: "12px",
@@ -374,9 +374,9 @@ export default function ProgramsDashboard() {
               )}
             </div>
           )
-        }}
-      />
-    </div>
+              }}
+            />
+          </div>
   );
 
   const renderMediaPreviews = (images: string[], videos: string[], isEdit = false) => (
@@ -409,8 +409,8 @@ export default function ProgramsDashboard() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+            </div>
+          )}
       
       {videos.length > 0 && (
         <div>
@@ -438,8 +438,8 @@ export default function ProgramsDashboard() {
                 </Button>
               </div>
             ))}
-          </div>
-        </div>
+              </div>
+            </div>
       )}
     </div>
   );
@@ -508,7 +508,7 @@ export default function ProgramsDashboard() {
           </Card>
         </div>
 
-        {canEdit(userRole) && (
+      {canEdit(userRole) && (
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-[#1c140d]">
@@ -655,7 +655,7 @@ export default function ProgramsDashboard() {
                     </label>
                   </div>
                   
-                  {canApprove(userRole) && (
+                    {canApprove(userRole) && (
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -748,8 +748,8 @@ export default function ProgramsDashboard() {
                           
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Add More Media</label>
-                            <UploadButton
-                              endpoint="programMediaUploader"
+                      <UploadButton
+                        endpoint="programMediaUploader"
                               onClientUploadComplete={handleEditUpload}
                               onUploadBegin={() => {
                                 setUploadProgress("uploading");
@@ -762,8 +762,8 @@ export default function ProgramsDashboard() {
                                   variant: "destructive",
                                 });
                               }}
-                              appearance={{
-                                button: {
+                        appearance={{
+                          button: {
                                   background: "#1b7cf3",
                                   color: "#fff",
                                   borderRadius: "8px",
@@ -776,8 +776,8 @@ export default function ProgramsDashboard() {
                             {(editForm.images?.length > 0 || editForm.videos?.length > 0) && (
                               <div className="mt-4">
                                 {renderMediaPreviews(editForm.images || [], editForm.videos || [], true)}
-                              </div>
-                            )}
+                      </div>
+                    )}
                           </div>
 
                           <div className="flex items-center gap-6">
@@ -792,7 +792,7 @@ export default function ProgramsDashboard() {
                               <label className="text-sm font-medium text-gray-700">
                                 Featured
                               </label>
-                            </div>
+                        </div>
                             
                             {canApprove(userRole) && (
                               <div className="flex items-center gap-2">
@@ -806,8 +806,8 @@ export default function ProgramsDashboard() {
                                 <label className="text-sm font-medium text-gray-700">
                                   Approved
                                 </label>
-                              </div>
-                            )}
+                      </div>
+                    )}
                           </div>
 
                           <div className="flex gap-2">
@@ -817,10 +817,10 @@ export default function ProgramsDashboard() {
                             <Button type="button" variant="outline" onClick={handleCancelEdit}>
                               Cancel
                             </Button>
-                          </div>
+                    </div>
                           {error && <div className="text-red-600 text-sm">{error}</div>}
-                        </form>
-                      ) : (
+                  </form>
+                ) : (
                         <div>
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
@@ -829,7 +829,7 @@ export default function ProgramsDashboard() {
                                 {program.isFeatured && (
                                   <Star className="w-4 h-4 text-yellow-500 fill-current" />
                                 )}
-                              </div>
+                    </div>
                               <p className="text-gray-600 text-sm mb-2">{program.description}</p>
                               <div className="flex items-center gap-4 text-xs text-gray-500">
                                 <Badge variant="outline" className="border-yellow-500 text-yellow-700 capitalize">
@@ -845,8 +845,8 @@ export default function ProgramsDashboard() {
                                   <Calendar className="w-3 h-3" />
                                   {program.startDate ? new Date(program.startDate).toLocaleDateString() : ""}
                                 </span>
-                              </div>
-                            </div>
+                        </div>
+                      </div>
                             <Badge className="bg-yellow-500 text-white">
                               {program.approved ? "Approved" : "Pending"}
                             </Badge>
@@ -859,7 +859,7 @@ export default function ProgramsDashboard() {
                           )}
 
                           <div className="flex gap-2">
-                            {canEdit(userRole) && (
+                      {canEdit(userRole) && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -869,8 +869,8 @@ export default function ProgramsDashboard() {
                                 <Edit3 className="w-4 h-4 mr-1" />
                                 Edit
                               </Button>
-                            )}
-                            {canEdit(userRole) && (
+                      )}
+                      {canEdit(userRole) && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -887,7 +887,7 @@ export default function ProgramsDashboard() {
                     </CardContent>
                   </Card>
                 ))}
-              </div>
+                    </div>
             </CardContent>
           </Card>
         )}
@@ -902,10 +902,10 @@ export default function ProgramsDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {approvedPrograms.map((program) => (
+        {approvedPrograms.map((program) => (
                 <Card key={program._id} className="border-l-4 border-l-green-500">
                   <CardContent className="p-4">
-                    {editId === program._id ? (
+            {editId === program._id ? (
                       <form onSubmit={handleUpdate} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <Input
@@ -941,8 +941,8 @@ export default function ProgramsDashboard() {
                         
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Add More Media</label>
-                          <UploadButton
-                            endpoint="programMediaUploader"
+                  <UploadButton
+                    endpoint="programMediaUploader"
                             onClientUploadComplete={handleEditUpload}
                             onUploadBegin={() => {
                               setUploadProgress("uploading");
@@ -955,8 +955,8 @@ export default function ProgramsDashboard() {
                                 variant: "destructive",
                               });
                             }}
-                            appearance={{
-                              button: {
+                    appearance={{
+                      button: {
                                 background: "#1b7cf3",
                                 color: "#fff",
                                 borderRadius: "8px",
@@ -969,8 +969,8 @@ export default function ProgramsDashboard() {
                           {(editForm.images?.length > 0 || editForm.videos?.length > 0) && (
                             <div className="mt-4">
                               {renderMediaPreviews(editForm.images || [], editForm.videos || [], true)}
-                            </div>
-                          )}
+                  </div>
+                )}
                         </div>
 
                         <div className="flex items-center gap-6">
@@ -985,7 +985,7 @@ export default function ProgramsDashboard() {
                             <label className="text-sm font-medium text-gray-700">
                               Featured
                             </label>
-                          </div>
+                    </div>
                           
                           {canApprove(userRole) && (
                             <div className="flex items-center gap-2">
@@ -999,8 +999,8 @@ export default function ProgramsDashboard() {
                               <label className="text-sm font-medium text-gray-700">
                                 Approved
                               </label>
-                            </div>
-                          )}
+                  </div>
+                )}
                         </div>
 
                         <div className="flex gap-2">
@@ -1010,10 +1010,10 @@ export default function ProgramsDashboard() {
                           <Button type="button" variant="outline" onClick={handleCancelEdit}>
                             Cancel
                           </Button>
-                        </div>
+                </div>
                         {error && <div className="text-red-600 text-sm">{error}</div>}
-                      </form>
-                    ) : (
+              </form>
+            ) : (
                       <div>
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
@@ -1038,7 +1038,7 @@ export default function ProgramsDashboard() {
                                 <Calendar className="w-3 h-3" />
                                 {program.startDate ? new Date(program.startDate).toLocaleDateString() : ""}
                               </span>
-                            </div>
+                </div>
                             
                             {(program.contactPerson || program.contactPhone || program.contactEmail) && (
                               <div className="flex items-center gap-4 text-xs text-gray-500">
@@ -1060,22 +1060,22 @@ export default function ProgramsDashboard() {
                                     {program.contactEmail}
                                   </span>
                                 )}
-                              </div>
-                            )}
+                  </div>
+                )}
                           </div>
                           <Badge className="bg-green-500 text-white">
                             Approved
                           </Badge>
-                        </div>
+                    </div>
 
                         {((program.images?.length || 0) > 0 || (program.videos?.length || 0) > 0) && (
                           <div className="mb-4">
                             {renderMediaPreviews(program.images || [], program.videos || [])}
-                          </div>
-                        )}
+                  </div>
+                )}
 
                         <div className="flex gap-2">
-                          {canEdit(userRole) && (
+                  {canEdit(userRole) && (
                             <Button
                               variant="outline"
                               size="sm"
@@ -1085,8 +1085,8 @@ export default function ProgramsDashboard() {
                               <Edit3 className="w-4 h-4 mr-1" />
                               Edit
                             </Button>
-                          )}
-                          {canEdit(userRole) && (
+                  )}
+                  {canEdit(userRole) && (
                             <Button
                               variant="outline"
                               size="sm"
@@ -1096,13 +1096,13 @@ export default function ProgramsDashboard() {
                               <Trash2 className="w-4 h-4 mr-1" />
                               Delete
                             </Button>
-                          )}
-                        </div>
+                  )}
+                </div>
                       </div>
-                    )}
+            )}
                   </CardContent>
                 </Card>
-              ))}
+        ))}
             </div>
           </CardContent>
         </Card>

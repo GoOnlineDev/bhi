@@ -438,7 +438,7 @@ export default function GalleryPage() {
 
       {/* Media Modal */}
       {selectedMedia && (
-        <div className="fixed inset-0 z-[90] bg-black/90 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
           <div className="relative w-full h-full flex items-center justify-center p-4">
             {/* Close Button */}
             <button

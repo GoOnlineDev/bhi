@@ -828,7 +828,7 @@ export default function DashboardGalleryPage() {
                 <label className="block text-sm font-medium mb-2">Media</label>
                 {renderCurrentMedia()}
                 <div className="mt-4">
-                  <label className="block text-sm font-medium mb-2">Replace Media (optional)</label>
+                <label className="block text-sm font-medium mb-2">Replace Media (optional)</label>
                   {renderUploadArea()}
                 </div>
               </div>

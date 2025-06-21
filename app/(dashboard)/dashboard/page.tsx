@@ -209,7 +209,7 @@ function AuthenticatedContent() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="text-xl font-semibold text-[#1c140d] mb-6 flex items-center gap-2">
           <TrendingUp className="w-5 h-5" />
           Quick Actions
@@ -307,7 +307,7 @@ function AuthenticatedContent() {
                   <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors cursor-pointer">
                     <div className="flex items-center gap-3">
                       <Calendar className="w-4 h-4 text-yellow-600" />
-                      <div>
+        <div>
                         <span className="text-sm font-medium">Unapproved Programs</span>
                         <p className="text-xs text-gray-600">Programs awaiting approval</p>
                       </div>
@@ -345,8 +345,8 @@ function AuthenticatedContent() {
             <div className="space-y-4">
               <p className="text-gray-600 text-sm">Upload media files for use in news articles and programs</p>
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-200">
-                <UploadButton
-                  endpoint="imageUploader"
+          <UploadButton
+            endpoint="imageUploader"
                   appearance={{
                     button: {
                       background: "linear-gradient(135deg, #f37c1b, #ff9d4d)",
@@ -371,14 +371,14 @@ function AuthenticatedContent() {
                       textAlign: "center"
                     }
                   }}
-                  onClientUploadComplete={(res) => {
-                    console.log("Files: ", res);
+            onClientUploadComplete={(res) => {
+              console.log("Files: ", res);
                     toast({
                       title: "Upload Successful!",
                       description: `${res.length} file(s) uploaded successfully`,
                     });
-                  }}
-                  onUploadError={(error: Error) => {
+            }}
+            onUploadError={(error: Error) => {
                     toast({
                       title: "Upload Failed",
                       description: error.message,
@@ -403,7 +403,7 @@ function AuthenticatedContent() {
                   </div>
                 </div>
               </div>
-            </div>
+        </div>
           </CardContent>
         </Card>
       </div>
