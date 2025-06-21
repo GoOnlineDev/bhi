@@ -23,7 +23,8 @@ import {
   MapPin, 
   Calendar, 
   Tag,
-  Filter
+  Filter,
+  X
 } from "lucide-react";
 
 type GalleryItem = {
@@ -64,6 +65,8 @@ export default function DashboardGalleryPage() {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [viewFilter, setViewFilter] = useState<"all" | "published" | "unpublished">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [uploadProgress, setUploadProgress] = useState<"idle" | "uploading" | "complete" | "error">("idle");
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{url: string; type: string}>>([]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -115,6 +118,8 @@ export default function DashboardGalleryPage() {
       tags: "",
       isPublished: false,
     });
+    setUploadedFiles([]);
+    setUploadProgress("idle");
   };
 
   const handleCreate = async () => {
@@ -228,15 +233,152 @@ export default function DashboardGalleryPage() {
   };
 
   const handleMediaUpload = (res: any) => {
+    setUploadProgress("uploading");
     if (res?.[0]?.url) {
       const fileType = res[0].type;
+      const newFile = { 
+        url: res[0].url, 
+        type: fileType.startsWith('image/') ? 'image' : 'video' 
+      };
+      
+      setUploadedFiles(prev => [...prev, newFile]);
+      
       if (fileType.startsWith('image/')) {
         setFormData(prev => ({ ...prev, type: "image", url: res[0].url }));
       } else if (fileType.startsWith('video/')) {
         setFormData(prev => ({ ...prev, type: "video", url: res[0].url }));
       }
+      
+      setUploadProgress("complete");
+      toast({
+        title: "Upload Successful",
+        description: "Media file uploaded successfully",
+      });
+    } else {
+      setUploadProgress("error");
     }
   };
+
+  const removeUploadedFile = (index: number) => {
+    const removedFile = uploadedFiles[index];
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    
+    // If this was the selected media, clear the form data
+    if (formData.url === removedFile.url) {
+      setFormData(prev => ({ ...prev, url: "", type: "image" }));
+    }
+    
+    toast({
+      title: "File Removed",
+      description: "File removed from upload queue",
+    });
+  };
+
+  const renderUploadArea = () => (
+    <div className="space-y-4">
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#f37c1b] transition-colors">
+        <UploadButton
+          endpoint="galleryMediaUploader"
+          onClientUploadComplete={handleMediaUpload}
+          onUploadError={(error: Error) => {
+            setUploadProgress("error");
+            toast({
+              title: "Upload Error",
+              description: error.message,
+              variant: "destructive",
+            });
+          }}
+          appearance={{
+            button: {
+              background: "transparent",
+              border: "none",
+              color: "#6b7280",
+              fontWeight: "500",
+              fontSize: "14px",
+              padding: "12px 24px",
+              cursor: "pointer",
+              width: "100%",
+            },
+            container: { width: "100%" },
+            allowedContent: {
+              color: "#9ca3af",
+              fontSize: "12px",
+              marginTop: "8px"
+            }
+          }}
+          content={{
+            button: (
+              <div className="flex flex-col items-center gap-3">
+                {uploadProgress === "uploading" ? (
+                  <>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#f37c1b]"></div>
+                    <span>Uploading...</span>
+                  </>
+                ) : uploadProgress === "error" ? (
+                  <>
+                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                      <X className="w-4 h-4 text-red-500" />
+                    </div>
+                    <span>Upload failed - try again</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-12 h-12 bg-[#f37c1b]/10 rounded-full flex items-center justify-center">
+                      <Plus className="w-6 h-6 text-[#f37c1b]" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-[#1c140d]">Drop files here or click to upload</p>
+                      <p className="text-sm text-gray-500">Images and videos up to 512MB</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            )
+          }}
+        />
+      </div>
+
+      {/* Media Previews */}
+      {uploadedFiles.length > 0 && (
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-gray-700">Uploaded Files</h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {uploadedFiles.map((file, index) => (
+              <div key={index} className="relative group">
+                <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
+                  {file.type === 'image' ? (
+                    <Image
+                      src={file.url}
+                      alt={`Upload ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Video className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeUploadedFile(index)}
+                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white hover:bg-red-600 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+                <div className="absolute bottom-1 left-1">
+                  <Badge variant="secondary" className="text-xs">
+                    {file.type}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#fcfaf8] p-6">
@@ -323,24 +465,7 @@ export default function DashboardGalleryPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Upload Media *</label>
-                  <UploadButton
-                    endpoint="galleryMediaUploader"
-                    onClientUploadComplete={handleMediaUpload}
-                    onUploadError={(error: Error) => {
-                      toast({
-                        title: "Upload Error",
-                        description: error.message,
-                        variant: "destructive",
-                      });
-                    }}
-                  />
-                  {formData.url && (
-                    <div className="mt-2 p-2 bg-gray-50 rounded">
-                      <p className="text-sm text-gray-600">
-                        {formData.type === "image" ? "Image" : "Video"} uploaded successfully
-                      </p>
-                    </div>
-                  )}
+                  {renderUploadArea()}
                 </div>
 
                 {formData.type === "video" && (
@@ -631,17 +756,7 @@ export default function DashboardGalleryPage() {
 
               <div>
                 <label className="block text-sm font-medium mb-2">Replace Media (optional)</label>
-                <UploadButton
-                  endpoint="galleryMediaUploader"
-                  onClientUploadComplete={handleMediaUpload}
-                  onUploadError={(error: Error) => {
-                    toast({
-                      title: "Upload Error",
-                      description: error.message,
-                      variant: "destructive",
-                    });
-                  }}
-                />
+                {renderUploadArea()}
               </div>
 
               {formData.type === "video" && (
