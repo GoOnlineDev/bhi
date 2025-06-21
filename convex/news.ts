@@ -85,6 +85,7 @@ export const createNews = mutation({
     content: v.string(),
     summary: v.string(),
     images: v.array(v.string()),
+    videos: v.optional(v.array(v.string())),
     category: v.union(
       v.literal("Announcements"),
       v.literal("Health Tips"),
@@ -140,6 +141,7 @@ export const createNews = mutation({
       summary: args.summary,
       author: user._id,
       images: args.images,
+      videos: args.videos,
       category: args.category,
       startDate: args.startDate,
       endDate: args.endDate,
@@ -197,6 +199,7 @@ export const updateNews = mutation({
     content: v.optional(v.string()),
     summary: v.optional(v.string()),
     images: v.optional(v.array(v.string())),
+    videos: v.optional(v.array(v.string())),
     category: v.optional(v.union(
       v.literal("Announcements"),
       v.literal("Health Tips"),
@@ -258,6 +261,7 @@ export const updateNews = mutation({
       ...(args.content !== undefined && { content: args.content }),
       ...(args.summary !== undefined && { summary: args.summary }),
       ...(args.images !== undefined && { images: args.images }),
+      ...(args.videos !== undefined && { videos: args.videos }),
       ...(args.category !== undefined && { category: args.category }),
       ...(args.startDate !== undefined && { startDate: args.startDate }),
       ...(args.endDate !== undefined && { endDate: args.endDate }),

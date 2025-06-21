@@ -41,6 +41,7 @@ export default function NewsDashboard() {
     content: "",
     summary: "",
     images: [] as string[],
+    videos: [] as string[],
     category: CATEGORY_OPTIONS[0],
     startDate: Date.now(),
     endDate: undefined as number | undefined,
@@ -61,7 +62,16 @@ export default function NewsDashboard() {
   };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'images' || name === 'videos') {
+      try {
+        setEditForm({ ...editForm, [name]: JSON.parse(value) });
+      } catch {
+        setEditForm({ ...editForm, [name]: value });
+      }
+    } else {
+      setEditForm({ ...editForm, [name]: value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,6 +90,7 @@ export default function NewsDashboard() {
         content: "",
         summary: "",
         images: [],
+        videos: [],
         category: CATEGORY_OPTIONS[0],
         startDate: Date.now(),
         endDate: undefined,
@@ -106,6 +117,7 @@ export default function NewsDashboard() {
       content: news.content,
       summary: news.summary,
       images: news.images,
+      videos: news.videos || [],
       category: news.category,
       startDate: news.startDate,
       endDate: news.endDate,
@@ -140,9 +152,24 @@ export default function NewsDashboard() {
     setEditForm({});
   };
 
-  const handleImageUpload = (res: any) => {
+  const handleMediaUpload = (res: any) => {
     if (res && Array.isArray(res)) {
-      setForm((prev) => ({ ...prev, images: [...prev.images, ...res.map((f: any) => f.url)] }));
+      const newImages: string[] = [];
+      const newVideos: string[] = [];
+      
+      res.forEach((file: any) => {
+        if (file.type?.startsWith('image/')) {
+          newImages.push(file.url);
+        } else if (file.type?.startsWith('video/')) {
+          newVideos.push(file.url);
+        }
+      });
+      
+      setForm((prev) => ({ 
+        ...prev, 
+        images: [...prev.images, ...newImages],
+        videos: [...prev.videos, ...newVideos]
+      }));
     }
   };
 
@@ -180,7 +207,7 @@ export default function NewsDashboard() {
           </label>
           <div style={{ margin: '8px 0' }}>
             <UploadButton
-              endpoint="newsImageUploader"
+              endpoint="newsMediaUploader"
               appearance={{
                 button: {
                   background: borderColor,
@@ -200,7 +227,7 @@ export default function NewsDashboard() {
                   alignItems: 'flex-start',
                 },
               }}
-              onClientUploadComplete={handleImageUpload}
+              onClientUploadComplete={handleMediaUpload}
               onUploadError={(error: Error) => {
                 alert(`Upload error: ${error.message}`);
               }}
@@ -210,6 +237,13 @@ export default function NewsDashboard() {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '8px 0' }}>
               {form.images.map((img, idx) => (
                 <img key={idx} src={img} alt="News" style={{ maxWidth: 100, borderRadius: 8, border: `1px solid ${borderColor}` }} />
+              ))}
+            </div>
+          )}
+          {form.videos.length > 0 && (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '8px 0' }}>
+              {form.videos.map((video, idx) => (
+                <video key={idx} src={video} style={{ maxWidth: 100, borderRadius: 8, border: `1px solid ${borderColor}` }} controls />
               ))}
             </div>
           )}
@@ -230,6 +264,7 @@ export default function NewsDashboard() {
                     <textarea name="summary" value={editForm.summary} onChange={handleEditChange} required style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                     <textarea name="content" value={editForm.content} onChange={handleEditChange} required style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                     <input name="images" value={JSON.stringify(editForm.images)} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
+                    <input name="videos" value={JSON.stringify(editForm.videos)} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                     <input name="category" value={editForm.category} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                     <input name="institution" value={editForm.institution} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                     <label>Start Date & Time
@@ -267,6 +302,13 @@ export default function NewsDashboard() {
                         ))}
                       </div>
                     )}
+                    {news.videos && news.videos.length > 0 && (
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '8px 0' }}>
+                        {news.videos.map((video: string, idx: number) => (
+                          <video key={idx} src={video} style={{ maxWidth: 60, borderRadius: 6, border: `1px solid ${borderColor}` }} controls />
+                        ))}
+                      </div>
+                    )}
                     <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
                       {canEdit(userRole) && (
                         <button onClick={() => handleEdit(news)} style={{ background: "#fff7f0", color: borderColor, border: `1.5px solid ${borderColor}`, borderRadius: 8, padding: "6px 14px", fontWeight: 700 }}>Edit</button>
@@ -292,6 +334,7 @@ export default function NewsDashboard() {
                 <textarea name="summary" value={editForm.summary} onChange={handleEditChange} required style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                 <textarea name="content" value={editForm.content} onChange={handleEditChange} required style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                 <input name="images" value={JSON.stringify(editForm.images)} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
+                <input name="videos" value={JSON.stringify(editForm.videos)} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                 <input name="category" value={editForm.category} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                 <input name="institution" value={editForm.institution} onChange={handleEditChange} style={{ borderRadius: 8, border: `1px solid ${borderColor}`, padding: 8 }} />
                 <label>Start Date & Time
@@ -326,6 +369,13 @@ export default function NewsDashboard() {
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '8px 0' }}>
                     {news.images.map((img: string, idx: number) => (
                       <img key={idx} src={img} alt="News" style={{ maxWidth: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} />
+                    ))}
+                  </div>
+                )}
+                {news.videos && news.videos.length > 0 && (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '8px 0' }}>
+                    {news.videos.map((video: string, idx: number) => (
+                      <video key={idx} src={video} style={{ maxWidth: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} controls />
                     ))}
                   </div>
                 )}

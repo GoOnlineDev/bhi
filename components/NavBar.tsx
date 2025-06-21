@@ -49,7 +49,9 @@ export default function NavBar() {
           <nav className="hidden md:flex items-center gap-8 text-[#1c140d] font-medium text-sm">
             <Link href="/" className="hover:text-[#f37c1b] transition-colors">Home</Link>
             <Link href="/about" className="hover:text-[#f37c1b] transition-colors">About</Link>
+            <Link href="/services" className="hover:text-[#f37c1b] transition-colors">Services</Link>
             <Link href="/programs" className="hover:text-[#f37c1b] transition-colors">Programs</Link>
+            <Link href="/gallery" className="hover:text-[#f37c1b] transition-colors">Gallery</Link>
             <Link href="/news" className="hover:text-[#f37c1b] transition-colors">News</Link>
             <Link href="/contact" className="hover:text-[#f37c1b] transition-colors">Contact</Link>
             <button
@@ -110,11 +112,25 @@ export default function NavBar() {
                     About
                   </Link>
                   <Link
+                    href="/services"
+                    onClick={() => setNavOpen(false)}
+                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+                  >
+                    Services
+                  </Link>
+                  <Link
                     href="/programs"
                     onClick={() => setNavOpen(false)}
                     className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
                   >
                     Programs
+                  </Link>
+                  <Link
+                    href="/gallery"
+                    onClick={() => setNavOpen(false)}
+                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
+                  >
+                    Gallery
                   </Link>
                   <Link
                     href="/news"

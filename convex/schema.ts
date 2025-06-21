@@ -23,6 +23,7 @@ export default defineSchema({
     summary: v.string(),           // Short summary or excerpt
     author: v.string(),            // Who posted it (can be name or ID)
     images: v.array(v.string()),   // List of image URLs
+    videos: v.optional(v.array(v.string())), // Video URLs (optional array)
     category: v.union(
       v.literal("Announcements"),
       v.literal("Health Tips"),
@@ -65,6 +66,7 @@ export default defineSchema({
     endDate: v.optional(v.number()),      // Optional: when it ends
     location: v.optional(v.string()),     // Where the program is held (optional)
     images: v.array(v.string()),          // Banner or feature images (array)
+    videos: v.optional(v.array(v.string())), // Video URLs (optional array)
     createdAt: v.number(),                // Timestamp for record creation
     updatedAt: v.optional(v.number()),    // Optional update tracker
     status: v.string(),                   // "upcoming", "ongoing", "completed"
@@ -90,6 +92,42 @@ export default defineSchema({
   })
   .index("by_email", ["email"])
   .index("by_createdAt", ["createdAt"]),
+
+  // Gallery table for media items (photos and videos)
+  gallery: defineTable({
+    title: v.string(),                    // Title of the media item
+    description: v.string(),              // Description of the media item
+    type: v.union(v.literal("image"), v.literal("video")), // Media type
+    url: v.string(),                      // URL of the media file
+    thumbnail: v.optional(v.string()),    // Optional thumbnail URL for videos
+    category: v.union(
+      v.literal("Maternal Health"),
+      v.literal("Education"),
+      v.literal("Mental Health"),
+      v.literal("Clinical Services"),
+      v.literal("Laboratory"),
+      v.literal("Facilities"),
+      v.literal("Community Outreach"),
+      v.literal("Youth Services"),
+      v.literal("Nursing"),
+      v.literal("Environmental Health"),
+      v.literal("Training")
+    ),
+    date: v.number(),                     // Date when the media was created/taken (timestamp)
+    location: v.optional(v.string()),     // Location where the media was taken
+    tags: v.array(v.string()),           // Tags for categorization and search
+    createdAt: v.number(),               // When the record was created
+    updatedAt: v.optional(v.number()),   // When the record was last updated
+    isPublished: v.boolean(),            // Whether the media is published/visible
+    uploadedBy: v.optional(v.string()),  // User ID who uploaded the media
+  })
+  .index("by_type", ["type"])
+  .index("by_category", ["category"])
+  .index("by_date", ["date"])
+  .index("by_isPublished", ["isPublished"])
+  .index("by_createdAt", ["createdAt"])
+  .index("by_category_isPublished", ["category", "isPublished"])
+  .index("by_type_isPublished", ["type", "isPublished"]),
 
   // Cron state table for persistent cron job state
   cron_state: defineTable({

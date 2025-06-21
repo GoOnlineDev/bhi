@@ -5,15 +5,11 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatDistanceToNow } from "date-fns";
-import { useState } from "react";
-import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   const news = useQuery(api.news.getPublishedNews);
   const featuredPrograms = useQuery(api.programs.getFeaturedApprovedPrograms);
-  const [selectedNews, setSelectedNews] = useState<any | null>(null);
-  const [selectedProgram, setSelectedProgram] = useState<any | null>(null);
 
   return (
     <main className="mt-20 flex-1 w-full flex flex-col items-center px-2 md:px-5 py-5">
@@ -97,9 +93,9 @@ export default function Home() {
               <h3 className="text-lg font-semibold text-[#1c140d] mb-4">Latest News</h3>
               <div className="flex flex-col gap-4">
                 {news?.slice(0, 3).map((item) => (
-                  <div 
+                  <Link 
                     key={item._id} 
-                    onClick={() => setSelectedNews(item)}
+                    href={`/news/${item._id}`}
                     className="group flex gap-4 bg-white rounded-lg p-3 hover:shadow-md transition-all duration-300 cursor-pointer"
                   >
                     <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden">
@@ -128,7 +124,7 @@ export default function Home() {
                         {formatDistanceToNow(new Date(item.publishedAt), { addSuffix: true })}
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
                 {(!news || news.length === 0) && (
                   <p className="text-gray-500 text-center py-4">No news available at the moment.</p>
@@ -141,9 +137,9 @@ export default function Home() {
               <h3 className="text-lg font-semibold text-[#1c140d] mb-4">Featured Programs</h3>
               <div className="flex flex-col gap-4">
                 {featuredPrograms?.slice(0, 2).map((program) => (
-                  <div 
+                  <Link 
                     key={program._id} 
-                    onClick={() => setSelectedProgram(program)}
+                    href={`/programs/${program._id}`}
                     className="group flex flex-col bg-white rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
                   >
                     <div className="relative w-full aspect-[16/9]">
@@ -197,7 +193,7 @@ export default function Home() {
                         </p>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 ))}
                 {(!featuredPrograms || featuredPrograms.length === 0) && (
                   <p className="text-gray-500 text-center py-4">No featured programs available at the moment.</p>
@@ -208,159 +204,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* News Modal */}
-      {selectedNews && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-          onClick={() => setSelectedNews(null)}
-        >
-          <div
-            className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
-            <button
-              className="absolute top-3 right-3 text-slate-500 hover:text-[#f37c1b] focus:outline-none z-10"
-              onClick={() => setSelectedNews(null)}
-              aria-label="Close"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            {selectedNews.images && selectedNews.images.length > 0 && (
-              <div className="w-full aspect-video relative">
-                <Image
-                  src={selectedNews.images[0]}
-                  alt={selectedNews.title}
-                  fill
-                  className="object-cover rounded-t-xl"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-            )}
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-3 text-[#1c140d]">{selectedNews.title}</h2>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge className="bg-[#f37c1b]/10 text-[#f37c1b]">{selectedNews.category}</Badge>
-                {selectedNews.institution && (
-                  <Badge className="bg-gray-100 text-gray-700">{selectedNews.institution}</Badge>
-                )}
-                <span className="text-sm text-gray-500">
-                  {formatDistanceToNow(new Date(selectedNews.publishedAt), { addSuffix: true })}
-                </span>
-              </div>
-              <div className="mb-4 text-gray-700 font-medium">{selectedNews.summary}</div>
-              <div className="text-gray-600 whitespace-pre-line" style={{ overflowWrap: 'anywhere' }}>
-                {selectedNews.content}
-              </div>
-              {selectedNews.images && selectedNews.images.length > 1 && (
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                  {selectedNews.images.slice(1).map((img: string, idx: number) => (
-                    <div key={idx} className="relative aspect-video">
-                      <Image
-                        src={img}
-                        alt={`News image ${idx + 2}`}
-                        fill
-                        className="object-cover rounded-lg"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Program Modal */}
-      {selectedProgram && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-          onClick={() => setSelectedProgram(null)}
-        >
-          <div
-            className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
-            <button
-              className="absolute top-3 right-3 text-slate-500 hover:text-[#f37c1b] focus:outline-none z-10"
-              onClick={() => setSelectedProgram(null)}
-              aria-label="Close"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            {selectedProgram.images && selectedProgram.images.length > 0 && (
-              <div className="w-full aspect-video relative">
-                <Image
-                  src={selectedProgram.images[0]}
-                  alt={selectedProgram.name}
-                  fill
-                  className="object-cover rounded-t-xl"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-            )}
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-3 text-[#1c140d]">{selectedProgram.name}</h2>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge className={`${
-                  selectedProgram.status === "Active" 
-                    ? "bg-green-100 text-green-700"
-                    : selectedProgram.status === "Upcoming"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}>
-                  {selectedProgram.status}
-                </Badge>
-                {selectedProgram.location && (
-                  <Badge className="bg-gray-100 text-gray-700">{selectedProgram.location}</Badge>
-                )}
-                <span className="text-sm text-gray-500">
-                  {selectedProgram.startDate ? new Date(selectedProgram.startDate).toLocaleDateString() : ""}
-                </span>
-              </div>
-              {selectedProgram.goal && (
-                <div className="mb-4 p-3 bg-[#f37c1b]/5 rounded-lg">
-                  <h3 className="font-semibold text-[#f37c1b] mb-1">Goal</h3>
-                  <p className="text-gray-700">{selectedProgram.goal}</p>
-                </div>
-              )}
-              <div className="text-gray-600 whitespace-pre-line mb-4" style={{ overflowWrap: 'anywhere' }}>
-                {selectedProgram.description}
-              </div>
-              {selectedProgram.contactPerson && (
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold text-gray-700 mb-1">Contact Information</h3>
-                  <p className="text-gray-600">{selectedProgram.contactPerson}</p>
-                  {selectedProgram.contactEmail && (
-                    <a 
-                      href={`mailto:${selectedProgram.contactEmail}`}
-                      className="text-[#f37c1b] hover:underline block mt-1"
-                    >
-                      {selectedProgram.contactEmail}
-                    </a>
-                  )}
-                  {selectedProgram.contactPhone && (
-                    <p className="text-gray-600 mt-1">{selectedProgram.contactPhone}</p>
-                  )}
-                </div>
-              )}
-              {selectedProgram.images && selectedProgram.images.length > 1 && (
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                  {selectedProgram.images.slice(1).map((img: string, idx: number) => (
-                    <div key={idx} className="relative aspect-video">
-                      <Image
-                        src={img}
-                        alt={`Program image ${idx + 2}`}
-                        fill
-                        className="object-cover rounded-lg"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+
+
     </main>
   );
 }

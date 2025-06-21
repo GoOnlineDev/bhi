@@ -29,6 +29,7 @@ export default function ProgramsDashboard() {
     endDate: undefined as number | undefined,
     location: "",
     images: [] as string[],
+    videos: [] as string[],
     status: STATUS_OPTIONS[0],
     contactPerson: "",
     contactPhone: "",
@@ -82,6 +83,7 @@ export default function ProgramsDashboard() {
         endDate: undefined,
         location: "",
         images: [],
+        videos: [],
         status: STATUS_OPTIONS[0],
         contactPerson: "",
         contactPhone: "",
@@ -115,6 +117,7 @@ export default function ProgramsDashboard() {
       endDate: program.endDate,
       location: program.location,
       images: program.images,
+      videos: program.videos,
       status: program.status,
       contactPerson: program.contactPerson,
       contactPhone: program.contactPhone,
@@ -154,7 +157,43 @@ export default function ProgramsDashboard() {
 
   const handleImageUpload = (res: any) => {
     if (res && Array.isArray(res)) {
-      setForm((prev) => ({ ...prev, images: [...prev.images, ...res.map((f: any) => f.url)] }));
+      const images: string[] = [];
+      const videos: string[] = [];
+      
+      res.forEach((file: any) => {
+        if (file.type && file.type.startsWith('video/')) {
+          videos.push(file.url);
+        } else {
+          images.push(file.url);
+        }
+      });
+      
+      setForm((prev) => ({ 
+        ...prev, 
+        images: [...prev.images, ...images],
+        videos: [...prev.videos, ...videos]
+      }));
+    }
+  };
+
+  const handleEditUpload = (res: any) => {
+    if (res && Array.isArray(res)) {
+      const images: string[] = [];
+      const videos: string[] = [];
+      
+      res.forEach((file: any) => {
+        if (file.type && file.type.startsWith('video/')) {
+          videos.push(file.url);
+        } else {
+          images.push(file.url);
+        }
+      });
+      
+      setEditForm((prev: any) => ({ 
+        ...prev, 
+        images: [...(prev.images || []), ...images],
+        videos: [...(prev.videos || []), ...videos]
+      }));
     }
   };
 
@@ -199,7 +238,7 @@ export default function ProgramsDashboard() {
           )}
           <div style={{ margin: '8px 0' }}>
             <UploadButton
-              endpoint="programImageUploader"
+              endpoint="programMediaUploader"
               appearance={{
                 button: {
                   background: borderColor,
@@ -230,6 +269,16 @@ export default function ProgramsDashboard() {
               {form.images.map((img, idx) => (
                 <img key={idx} src={img} alt="Program" style={{ maxWidth: 100, borderRadius: 8, border: `1px solid ${borderColor}` }} />
               ))}
+            </div>
+          )}
+          {form.videos.length > 0 && (
+            <div style={{ margin: '8px 0' }}>
+              <strong style={{ color: borderColor, fontSize: 14 }}>Videos:</strong>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+                {form.videos.map((video, idx) => (
+                  <video key={idx} src={video} style={{ maxWidth: 150, maxHeight: 100, borderRadius: 8, border: `1px solid ${borderColor}` }} controls />
+                ))}
+              </div>
             </div>
           )}
           <button type="submit" disabled={loading} style={{ background: borderColor, color: "#fff", border: "none", borderRadius: 8, padding: 10, fontWeight: 700 }}>{loading ? "Adding..." : "Add Program"}</button>
@@ -269,6 +318,51 @@ export default function ProgramsDashboard() {
                         Approved
                       </label>
                     )}
+                    <div style={{ margin: '8px 0' }}>
+                      <UploadButton
+                        endpoint="programMediaUploader"
+                        appearance={{
+                          button: {
+                            background: borderColor,
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: 8,
+                            padding: '8px 16px',
+                            fontWeight: 700,
+                            fontSize: 14,
+                            cursor: 'pointer',
+                            boxShadow: `0 1px 8px #1b7cf333`,
+                            marginBottom: 4,
+                          },
+                          container: {
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                          },
+                        }}
+                        onClientUploadComplete={handleEditUpload}
+                        onUploadError={(error: Error) => {
+                          alert(`Upload error: ${error.message}`);
+                        }}
+                      />
+                    </div>
+                    {editForm.images && editForm.images.length > 0 && (
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '8px 0' }}>
+                        {editForm.images.map((img: string, idx: number) => (
+                          <img key={idx} src={img} alt="Program" style={{ maxWidth: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} />
+                        ))}
+                      </div>
+                    )}
+                    {editForm.videos && editForm.videos.length > 0 && (
+                      <div style={{ margin: '8px 0' }}>
+                        <strong style={{ color: borderColor, fontSize: 14 }}>Videos:</strong>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+                          {editForm.videos.map((video: string, idx: number) => (
+                            <video key={idx} src={video} style={{ maxWidth: 120, maxHeight: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} controls />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <div style={{ display: "flex", gap: 12 }}>
                       <button type="submit" style={{ background: borderColor, color: "#fff", border: "none", borderRadius: 8, padding: 8, fontWeight: 700 }}>Update</button>
                       <button type="button" onClick={handleCancelEdit} style={{ background: "#eee", color: accentColor, border: "none", borderRadius: 8, padding: 8, fontWeight: 700 }}>Cancel</button>
@@ -290,6 +384,16 @@ export default function ProgramsDashboard() {
                         {program.images.map((img: string, idx: number) => (
                           <img key={idx} src={img} alt="Program" style={{ maxWidth: 60, borderRadius: 6, border: `1px solid ${borderColor}` }} />
                         ))}
+                      </div>
+                    )}
+                    {program.videos && program.videos.length > 0 && (
+                      <div style={{ margin: '8px 0' }}>
+                        <strong style={{ color: borderColor, fontSize: 12 }}>Videos:</strong>
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+                          {program.videos.map((video: string, idx: number) => (
+                            <video key={idx} src={video} style={{ maxWidth: 80, maxHeight: 60, borderRadius: 6, border: `1px solid ${borderColor}` }} controls />
+                          ))}
+                        </div>
                       </div>
                     )}
                     <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
@@ -337,6 +441,51 @@ export default function ProgramsDashboard() {
                     Approved
                   </label>
                 )}
+                <div style={{ margin: '8px 0' }}>
+                  <UploadButton
+                    endpoint="programMediaUploader"
+                    appearance={{
+                      button: {
+                        background: borderColor,
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '8px 16px',
+                        fontWeight: 700,
+                        fontSize: 14,
+                        cursor: 'pointer',
+                        boxShadow: `0 1px 8px #1b7cf333`,
+                        marginBottom: 4,
+                      },
+                      container: {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                      },
+                    }}
+                    onClientUploadComplete={handleEditUpload}
+                    onUploadError={(error: Error) => {
+                      alert(`Upload error: ${error.message}`);
+                    }}
+                  />
+                </div>
+                {editForm.images && editForm.images.length > 0 && (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '8px 0' }}>
+                    {editForm.images.map((img: string, idx: number) => (
+                      <img key={idx} src={img} alt="Program" style={{ maxWidth: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} />
+                    ))}
+                  </div>
+                )}
+                {editForm.videos && editForm.videos.length > 0 && (
+                  <div style={{ margin: '8px 0' }}>
+                    <strong style={{ color: borderColor, fontSize: 14 }}>Videos:</strong>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+                      {editForm.videos.map((video: string, idx: number) => (
+                        <video key={idx} src={video} style={{ maxWidth: 120, maxHeight: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} controls />
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div style={{ display: "flex", gap: 12 }}>
                   <button type="submit" style={{ background: borderColor, color: "#fff", border: "none", borderRadius: 8, padding: 8, fontWeight: 700 }}>Update</button>
                   <button type="button" onClick={handleCancelEdit} style={{ background: "#eee", color: accentColor, border: "none", borderRadius: 8, padding: 8, fontWeight: 700 }}>Cancel</button>
@@ -358,6 +507,16 @@ export default function ProgramsDashboard() {
                     {program.images.map((img: string, idx: number) => (
                       <img key={idx} src={img} alt="Program" style={{ maxWidth: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} />
                     ))}
+                  </div>
+                )}
+                {program.videos && program.videos.length > 0 && (
+                  <div style={{ margin: '8px 0' }}>
+                    <strong style={{ color: borderColor, fontSize: 14 }}>Videos:</strong>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+                      {program.videos.map((video: string, idx: number) => (
+                        <video key={idx} src={video} style={{ maxWidth: 120, maxHeight: 80, borderRadius: 8, border: `1px solid ${borderColor}` }} controls />
+                      ))}
+                    </div>
                   </div>
                 )}
                 <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
