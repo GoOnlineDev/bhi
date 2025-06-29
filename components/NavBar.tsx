@@ -12,7 +12,7 @@ export default function NavBar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-[100] bg-[#fcfaf8]/80 backdrop-blur-md border-b border-[#e6e2dc]">
+      <header className="fixed top-0 left-0 w-full z-[1000] bg-[#fcfaf8]/80 backdrop-blur-md border-b border-[#e6e2dc]">
         <div className="flex items-center justify-between px-4 md:px-10 py-3">
           {/* Mobile Nav - Logo + Hamburger */}
           <div className="flex items-center md:hidden w-full justify-between">
@@ -74,12 +74,12 @@ export default function NavBar() {
           <>
             {/* Backdrop - Covers full screen */}
             <div 
-              className="fixed inset-0 bg-black/50 z-[200] md:hidden"
+              className="fixed inset-0 bg-black/50 z-[9998] md:hidden"
               onClick={() => setNavOpen(false)}
             />
             
             {/* Mobile Menu */}
-            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[300] md:hidden overflow-hidden">
+            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[9999] md:hidden overflow-hidden">
               <div className="flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b bg-white">
