@@ -37,7 +37,7 @@ export default function AuthTester() {
       }
     } catch (error) {
       console.error("❌ Token test failed:", error);
-      setTokenInfo({ error: error.message });
+      setTokenInfo({ error: error instanceof Error ? error.message : String(error) });
     }
   };
 
@@ -49,7 +49,7 @@ export default function AuthTester() {
       console.log("✅ Convex auth result:", result);
     } catch (error) {
       console.error("❌ Convex auth failed:", error);
-      setConvexResult({ error: error.message });
+      setConvexResult({ error: error instanceof Error ? error.message : String(error) });
     }
   };
 
@@ -61,7 +61,7 @@ export default function AuthTester() {
       console.log("✅ User creation result:", result);
     } catch (error) {
       console.error("❌ User creation failed:", error);
-      setConvexResult({ ...convexResult, userCreationError: error.message });
+      setConvexResult({ ...convexResult, userCreationError: error instanceof Error ? error.message : String(error) });
     }
   };
 
