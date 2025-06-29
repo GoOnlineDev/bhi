@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body className={inter.className + " bg-[#fcfaf8] relative flex min-h-screen flex-col font-['Lexend','Noto Sans',sans-serif] overflow-x-hidden"}>
+      <body className={inter.className + " bg-[#fcfaf8] flex min-h-screen flex-col font-['Lexend','Noto Sans',sans-serif]"}>
         <ClerkProvider publishableKey={clerkPublishableKey}>
           <ConvexClientProvider>
             {children}
