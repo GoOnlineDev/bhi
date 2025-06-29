@@ -12,35 +12,33 @@ export default function NavBar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-[1000] bg-[#fcfaf8]/80 backdrop-blur-md border-b border-[#e6e2dc]">
+      <header className="fixed top-0 left-0 w-full z-50 bg-[#fcfaf8]/95 backdrop-blur-sm border-b border-[#e6e2dc]">
         <div className="flex items-center justify-between px-4 md:px-10 py-3">
           {/* Mobile Nav - Logo + Hamburger */}
           <div className="flex items-center md:hidden w-full justify-between">
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="relative w-10 h-10">
                 <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
               </div>
               <span className="text-[#1c140d] text-lg font-bold">Boost Health Initiative</span>
-            </div>
+            </Link>
             <button
-                onClick={() => setNavOpen((v) => !v)}
-                aria-label="Toggle navigation"
-                className="flex flex-col gap-1 p-2"
-              >
-                <span className="w-6 h-0.5 bg-[#1c140d] rounded transition-all"></span>
-                <span className="w-6 h-0.5 bg-[#1c140d] rounded transition-all"></span>
-                <span className="w-6 h-0.5 bg-[#1c140d] rounded transition-all"></span>
-              </button>
+              onClick={() => setNavOpen(!navOpen)}
+              aria-label="Toggle navigation"
+              className="flex flex-col gap-1 p-2 z-50 relative"
+            >
+              <span className={`w-6 h-0.5 bg-[#1c140d] rounded transition-all duration-300 ${navOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-[#1c140d] rounded transition-all duration-300 ${navOpen ? 'opacity-0' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-[#1c140d] rounded transition-all duration-300 ${navOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+            </button>
           </div>
 
           {/* Desktop Nav - Logo + Title */}
-          <Link href="/" >
-          <div className="hidden md:flex items-center gap-4">
+          <Link href="/" className="hidden md:flex items-center gap-4">
             <div className="relative w-10 h-10">
               <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
             </div>
             <h1 className="text-[#1c140d] text-xl font-bold">Boost Health Initiative</h1>
-          </div>
           </Link>
 
           {/* Desktop Nav Links */}
@@ -68,112 +66,114 @@ export default function NavBar() {
             </div>
           </nav>
         </div>
+      </header>
 
-        {/* Mobile Nav Drawer */}
-        {navOpen && (
-          <>
-            {/* Backdrop - Covers full screen */}
-            <div 
-              className="fixed inset-0 bg-black/50 z-[9998] md:hidden"
-              onClick={() => setNavOpen(false)}
-            />
-            
-            {/* Mobile Menu */}
-            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[9999] md:hidden overflow-hidden">
-              <div className="flex flex-col h-full">
-                {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b bg-white">
-                  <div className="flex items-center gap-2">
-                    <div className="relative w-8 h-8">
-                      <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
-                    </div>
-                    <span className="text-lg font-bold text-[#1c140d]">BHI</span>
-                  </div>
-                  <button
+      {/* Mobile Menu Overlay */}
+      {navOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setNavOpen(false)}
+          />
+          
+          {/* Mobile Menu Panel */}
+          <div className="absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transform transition-transform duration-300 ease-out">
+            {/* Menu Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="relative w-8 h-8">
+                  <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
+                </div>
+                <span className="text-[#1c140d] font-bold text-lg">BHI</span>
+              </div>
+              <button
+                onClick={() => setNavOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Menu Content */}
+            <div className="flex flex-col h-full">
+              {/* User Section */}
+              <div className="p-6 bg-gray-50 border-b border-gray-100">
+                <SignedOut>
+                  <SignInButton mode="modal" fallbackRedirectUrl="/">
+                    <button
+                      onClick={() => setNavOpen(false)}
+                      className="w-full py-3 px-4 bg-[#f37c1b] text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
+                    >
+                      Become a Member
+                    </button>
+                  </SignInButton>
+                </SignedOut>
+                <SignedIn>
+                  <BHIUserButton isMobile={true} onMobileMenuClose={() => setNavOpen(false)} />
+                </SignedIn>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="flex-1 overflow-y-auto py-4">
+                <nav className="space-y-1 px-4">
+                  <Link
+                    href="/"
                     onClick={() => setNavOpen(false)}
-                    className="text-2xl text-gray-600 hover:text-gray-800 p-1"
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
                   >
-                    ×
-                  </button>
-                </div>
-                
-                {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto">
-                  {/* Authentication Section - Move to top for better UX */}
-                  <div className="p-4 border-b bg-gray-50">
-                    <SignedOut>
-                      <SignInButton mode="modal" fallbackRedirectUrl="/">
-                        <button
-                          onClick={() => setNavOpen(false)}
-                          className="w-full py-3 px-4 bg-[#f37c1b] text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
-                        >
-                          Become a Member
-                        </button>
-                      </SignInButton>
-                    </SignedOut>
-                    <SignedIn>
-                      <BHIUserButton isMobile={true} onMobileMenuClose={() => setNavOpen(false)} />
-                    </SignedIn>
-                  </div>
-
-                  {/* Navigation Links */}
-                  <div className="py-2">
-                    <Link
-                      href="/"
-                      onClick={() => setNavOpen(false)}
-                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
-                    >
-                      Home
-                    </Link>
-                    <Link
-                      href="/about"
-                      onClick={() => setNavOpen(false)}
-                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
-                    >
-                      About
-                    </Link>
-                    <Link
-                      href="/services"
-                      onClick={() => setNavOpen(false)}
-                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
-                    >
-                      Services
-                    </Link>
-                    <Link
-                      href="/programs"
-                      onClick={() => setNavOpen(false)}
-                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
-                    >
-                      Programs
-                    </Link>
-                    <Link
-                      href="/gallery"
-                      onClick={() => setNavOpen(false)}
-                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
-                    >
-                      Gallery
-                    </Link>
-                    <Link
-                      href="/news"
-                      onClick={() => setNavOpen(false)}
-                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
-                    >
-                      News
-                    </Link>
-                    <Link
-                      href="/contact"
-                      onClick={() => setNavOpen(false)}
-                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
-                    >
-                      Contact
-                    </Link>
-                  </div>
-                </div>
+                    <span className="font-medium">Home</span>
+                  </Link>
+                  <Link
+                    href="/about"
+                    onClick={() => setNavOpen(false)}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
+                  >
+                    <span className="font-medium">About</span>
+                  </Link>
+                  <Link
+                    href="/services"
+                    onClick={() => setNavOpen(false)}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
+                  >
+                    <span className="font-medium">Services</span>
+                  </Link>
+                  <Link
+                    href="/programs"
+                    onClick={() => setNavOpen(false)}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
+                  >
+                    <span className="font-medium">Programs</span>
+                  </Link>
+                  <Link
+                    href="/gallery"
+                    onClick={() => setNavOpen(false)}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
+                  >
+                    <span className="font-medium">Gallery</span>
+                  </Link>
+                  <Link
+                    href="/news"
+                    onClick={() => setNavOpen(false)}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
+                  >
+                    <span className="font-medium">News</span>
+                  </Link>
+                  <Link
+                    href="/contact"
+                    onClick={() => setNavOpen(false)}
+                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
+                  >
+                    <span className="font-medium">Contact</span>
+                  </Link>
+                </nav>
               </div>
             </div>
-          </>
-        )}
-      </header>
+          </div>
+        </div>
+      )}
     </>
   );
 }
