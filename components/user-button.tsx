@@ -16,8 +16,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  User,
-  Settings,
   LogOut,
   Home,
   Camera,
@@ -134,9 +132,92 @@ export default function BHIUserButton({ className }: UserButtonProps) {
   // Only show dashboard access for admin and editor roles
   const hasDashboardAccess = isAdmin || isEditor;
   
-  // Don't render the user button at all for patients - they only get basic profile access
+  // For patients, show a simple sign out button
   if (isPatient) {
-    return null;
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className={`h-10 px-3 rounded-full hover:bg-[#f37c1b]/10 transition-colors ${className}`}
+          >
+            <div className="flex items-center space-x-2">
+              {/* User Avatar */}
+              <div className="w-8 h-8 rounded-full bg-[#f37c1b] text-white flex items-center justify-center text-sm font-medium">
+                {user.imageUrl ? (
+                  <img
+                    src={user.imageUrl}
+                    alt={`${user.firstName} ${user.lastName}`}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  getInitials()
+                )}
+              </div>
+              
+              {/* User Info - Hidden on mobile */}
+              <div className="hidden sm:block text-left">
+                <p className="text-sm font-medium text-[#1c140d] leading-tight">
+                  {user.firstName} {user.lastName}
+                </p>
+                <div className="flex items-center space-x-1">
+                  <p className="text-xs text-[#1c140d]/70 capitalize">
+                    Member
+                  </p>
+                </div>
+              </div>
+              
+              <ChevronDown className="w-4 h-4 text-[#1c140d]/70" />
+            </div>
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align="end" className="w-64 shadow-lg border border-[#f37c1b]/20">
+          {/* User Info Header */}
+          <DropdownMenuLabel className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-[#f37c1b] text-white flex items-center justify-center font-medium">
+                {user.imageUrl ? (
+                  <img
+                    src={user.imageUrl}
+                    alt={`${user.firstName} ${user.lastName}`}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  getInitials()
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-[#1c140d] truncate">
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="text-xs text-[#1c140d]/70 truncate">
+                  {user.emailAddresses[0]?.emailAddress}
+                </p>
+                <div className="flex items-center mt-1">
+                  <Badge variant="outline" className="text-xs border-[#f37c1b]/30 text-[#f37c1b]">
+                    Member
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </DropdownMenuLabel>
+
+          <DropdownMenuSeparator className="bg-[#f37c1b]/20" />
+
+          {/* Sign Out */}
+          <div className="p-2">
+            <DropdownMenuItem 
+              onClick={handleSignOut}
+              className="cursor-pointer flex items-center px-2 py-2 rounded-md hover:bg-red-50 text-red-600 hover:text-red-700"
+            >
+              <LogOut className="w-4 h-4 mr-3" />
+              <span className="text-sm font-medium">Sign Out</span>
+            </DropdownMenuItem>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   }
 
   return (
@@ -247,25 +328,6 @@ export default function BHIUserButton({ className }: UserButtonProps) {
             <DropdownMenuSeparator className="bg-[#f37c1b]/20" />
           </>
         )}
-
-        {/* Profile Settings */}
-        <div className="p-2">
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <Link href="/profile" className="flex items-center px-2 py-2 rounded-md hover:bg-[#f37c1b]/5">
-              <User className="w-4 h-4 mr-3 text-[#1c140d]/70" />
-              <span className="text-sm text-[#1c140d]">Profile</span>
-            </Link>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <Link href="/settings" className="flex items-center px-2 py-2 rounded-md hover:bg-[#f37c1b]/5">
-              <Settings className="w-4 h-4 mr-3 text-[#1c140d]/70" />
-              <span className="text-sm text-[#1c140d]">Settings</span>
-            </Link>
-          </DropdownMenuItem>
-        </div>
-
-        <DropdownMenuSeparator className="bg-[#f37c1b]/20" />
 
         {/* Sign Out */}
         <div className="p-2">
