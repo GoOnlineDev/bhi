@@ -69,26 +69,29 @@ export default function NavBar() {
           </nav>
         </div>
 
-        {/* Mobile Nav Drawer - Fixed Backdrop */}
+        {/* Mobile Nav Drawer */}
         {navOpen && (
           <>
-            {/* Full Screen Backdrop - Solid Black */}
+            {/* Backdrop - Only covers the remaining area */}
             <div 
-              className="fixed inset-0 bg-gray-900 z-[200] md:hidden"
+              className="fixed inset-0 bg-black/20 z-[200] md:hidden"
               onClick={() => setNavOpen(false)}
               style={{ 
-                top: 0, 
+                top: '73px', // Height of the navbar
                 left: 0, 
                 right: 0, 
-                bottom: 0,
-                width: '100vw',
-                height: '100vh',
-                backgroundColor: '#fcfaf8'
+                bottom: 0
               }}
             />
             
             {/* Mobile Menu */}
-            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[300] md:hidden">
+            <div 
+              className="fixed left-0 w-4/5 max-w-sm bg-white shadow-xl z-[300] md:hidden"
+              style={{
+                top: '73px', // Start below the navbar
+                height: 'calc(100vh - 73px)' // Full height minus navbar
+              }}
+            >
               <div className="flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b">
@@ -167,9 +170,7 @@ export default function NavBar() {
                     </SignInButton>
                   </SignedOut>
                   <SignedIn>
-                    <div className="flex items-center justify-center">
-                      <BHIUserButton />
-                    </div>
+                    <BHIUserButton isMobile={true} onMobileMenuClose={() => setNavOpen(false)} />
                   </SignedIn>
                 </div>
               </div>
