@@ -1,7 +1,7 @@
 export default {
     providers: [
       {
-        domain: 'https://helped-sunbeam-46.clerk.accounts.dev',
+        domain: 'https://clerk.boosthealthinitiative.com',
         applicationID: "convex",
       },
     ]
