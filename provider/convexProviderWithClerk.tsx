@@ -14,13 +14,33 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL)
 
 function UserInitializer() {
   const createOrGetUser = useMutation(api.users.createOrGetUser);
-  const { isSignedIn } = useUser();
+  const { isSignedIn, getToken } = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
-    if (isSignedIn) {
-      createOrGetUser().catch(error => console.error("Failed to create or get user:", error));
+    if (isSignedIn && user) {
+      // In production, we might need to wait for the token to be available
+      const initializeUser = async () => {
+        try {
+          // Get the JWT token to ensure it's available
+          const token = await getToken();
+          if (token) {
+            await createOrGetUser();
+          }
+        } catch (error) {
+          console.error("Failed to create or get user:", error);
+          
+          // Log additional debug info in development
+          if (process.env.NODE_ENV === 'development') {
+            console.log('User object:', user);
+            console.log('Auth state:', { isSignedIn });
+          }
+        }
+      };
+
+      initializeUser();
     }
-  }, [isSignedIn, createOrGetUser]);
+  }, [isSignedIn, user, createOrGetUser, getToken]);
 
   return null;
 }

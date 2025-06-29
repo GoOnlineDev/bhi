@@ -4,7 +4,7 @@ import { useAuth, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 
 export default function ClerkDebugger() {
-  const { isLoaded: authLoaded, userId, isSignedIn } = useAuth();
+  const { isLoaded: authLoaded, userId, isSignedIn, getToken } = useAuth();
   const { isLoaded: userLoaded, user } = useUser();
   const [debugInfo, setDebugInfo] = useState<any>({});
 
@@ -13,42 +13,62 @@ export default function ClerkDebugger() {
     const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
     const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
     
-    setDebugInfo({
-      // Clerk Status
-      authLoaded,
-      userLoaded,
-      userId,
-      isSignedIn,
-      user: user ? {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        emailAddresses: user.emailAddresses?.map(email => email.emailAddress),
-      } : null,
-      
-      // Environment Variables
-      clerkPublishableKey: clerkKey ? clerkKey.substring(0, 20) + '...' : 'MISSING',
-      clerkKeyType: clerkKey?.startsWith('pk_live_') ? 'PRODUCTION' : clerkKey?.startsWith('pk_test_') ? 'DEVELOPMENT' : 'INVALID',
-      convexUrl: convexUrl || 'MISSING',
-      nodeEnv: process.env.NODE_ENV,
-      
-      // URLs and Paths
-      currentUrl: typeof window !== 'undefined' ? window.location.href : 'server',
-      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent.substring(0, 50) + '...' : 'server',
-      
-      // Timing
-      timestamp: new Date().toISOString(),
-      
-      // Potential Issues
-      issues: [
-        !clerkKey && '❌ CLERK_PUBLISHABLE_KEY missing',
-        clerkKey && !clerkKey.startsWith('pk_') && '❌ Invalid Clerk key format',
-        !convexUrl && '❌ CONVEX_URL missing',
-        !authLoaded && '⚠️ Clerk not loading',
-        authLoaded && !isSignedIn && '⚠️ User not signed in',
-      ].filter(Boolean),
+    // Try to get JWT token info
+    const getTokenInfo = async () => {
+      let tokenInfo = null;
+      if (isSignedIn && getToken) {
+        try {
+          const token = await getToken();
+          tokenInfo = token ? 'Token available' : 'Token not available';
+        } catch (error) {
+          tokenInfo = `Token error: ${error}`;
+        }
+      }
+      return tokenInfo;
+    };
+    
+    getTokenInfo().then(tokenInfo => {
+      setDebugInfo({
+        // Clerk Status
+        authLoaded,
+        userLoaded,
+        userId,
+        isSignedIn,
+        user: user ? {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          emailAddresses: user.emailAddresses?.map(email => email.emailAddress),
+        } : null,
+        
+        // JWT Token Info
+        tokenInfo,
+        
+        // Environment Variables
+        clerkPublishableKey: clerkKey ? clerkKey.substring(0, 20) + '...' : 'MISSING',
+        clerkKeyType: clerkKey?.startsWith('pk_live_') ? 'PRODUCTION' : clerkKey?.startsWith('pk_test_') ? 'DEVELOPMENT' : 'INVALID',
+        convexUrl: convexUrl || 'MISSING',
+        nodeEnv: process.env.NODE_ENV,
+        
+        // URLs and Paths
+        currentUrl: typeof window !== 'undefined' ? window.location.href : 'server',
+        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent.substring(0, 50) + '...' : 'server',
+        
+        // Timing
+        timestamp: new Date().toISOString(),
+        
+        // Potential Issues
+        issues: [
+          !clerkKey && '❌ CLERK_PUBLISHABLE_KEY missing',
+          clerkKey && !clerkKey.startsWith('pk_') && '❌ Invalid Clerk key format',
+          !convexUrl && '❌ CONVEX_URL missing',
+          !authLoaded && '⚠️ Clerk not loading',
+          authLoaded && !isSignedIn && '⚠️ User not signed in',
+          tokenInfo && tokenInfo.includes('error') && '⚠️ JWT token error',
+        ].filter(Boolean),
+      });
     });
-  }, [authLoaded, userLoaded, userId, isSignedIn, user]);
+  }, [authLoaded, userLoaded, userId, isSignedIn, user, getToken]);
 
   // Show in development or when there are issues
   const shouldShow = process.env.NODE_ENV === 'development' || !authLoaded || debugInfo.issues?.length > 0;
