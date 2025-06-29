@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import ConvexClientProvider from '@/provider/convexProviderWithClerk'
-
+import { ClerkProvider } from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -36,10 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className + " bg-[#fcfaf8] relative flex min-h-screen flex-col font-['Lexend','Noto Sans',sans-serif] overflow-x-hidden"}>
-
+        <ClerkProvider publishableKey={clerkPublishableKey}>
           <ConvexClientProvider>
             {children}
-          </ConvexClientProvider>
+          </ConvexClientProvider>  
+        </ClerkProvider>
       </body>
     </html>
   );
