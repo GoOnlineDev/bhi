@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs'
 import ConvexClientProvider from '@/provider/convexProviderWithClerk'
 import ClerkDebugger from '@/components/ClerkDebugger'
+import AuthTester from '@/components/AuthTester'
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConvexClientProvider>
             {children}
             <ClerkDebugger />
+            <AuthTester />
           </ConvexClientProvider>
         </ClerkProvider>
       </body>

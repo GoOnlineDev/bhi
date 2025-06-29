@@ -19,26 +19,36 @@ function UserInitializer() {
 
   useEffect(() => {
     if (isSignedIn && user) {
-      // In production, we might need to wait for the token to be available
+      // In production, we need to ensure the JWT token is properly formatted
       const initializeUser = async () => {
         try {
-          // Get the JWT token to ensure it's available
-          const token = await getToken();
+          // CRITICAL: Use the correct template name for Convex
+          const token = await getToken({ template: "convex" });
+          console.log("🔍 Token available:", !!token);
+          
           if (token) {
-            await createOrGetUser();
+            console.log("🔍 Attempting to create/get user...");
+            const userId = await createOrGetUser();
+            console.log("✅ User initialized:", userId);
+          } else {
+            console.log("❌ No JWT token available - check Clerk JWT template configuration");
           }
         } catch (error) {
-          console.error("Failed to create or get user:", error);
+          console.error("❌ Failed to create or get user:", error);
           
-          // Log additional debug info in development
-          if (process.env.NODE_ENV === 'development') {
-            console.log('User object:', user);
-            console.log('Auth state:', { isSignedIn });
-          }
+          // Enhanced debugging
+          console.log("🔍 Debug info:", {
+            isSignedIn,
+            userLoaded: !!user,
+            userId: user?.id,
+            email: user?.primaryEmailAddress?.emailAddress,
+          });
         }
       };
 
-      initializeUser();
+      // Add a small delay to ensure user is fully loaded
+      const timer = setTimeout(initializeUser, 100);
+      return () => clearTimeout(timer);
     }
   }, [isSignedIn, user, createOrGetUser, getToken]);
 

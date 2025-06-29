@@ -1,10 +1,8 @@
-
-
-  export default {
-    providers: [
-      {
-        domain:'https://clerk.boosthealthinitiative.com',
-        applicationID: "convex",
-      },
-    ]
-  };
+export default {
+  providers: [
+    {
+      domain: "https://clerk.boosthealthinitiative.com",
+      applicationID: "convex",
+    },
+  ]
+};
