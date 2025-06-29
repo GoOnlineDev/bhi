@@ -55,7 +55,7 @@ export default function NavBar() {
             {/* Authentication Section */}
             <div className="ml-4 flex items-center gap-3">
               <SignedOut>
-                <SignInButton mode="redirect" fallbackRedirectUrl="/dashboard">
+                <SignInButton mode="modal" fallbackRedirectUrl="/">
                   <button className="px-4 py-2 rounded-lg bg-[#f37c1b] text-white font-semibold hover:bg-orange-500 transition-all">
                     Become a Member
                   </button>
@@ -168,7 +168,7 @@ export default function NavBar() {
                 {/* Authentication Section */}
                 <div className="p-4 border-t">
                   <SignedOut>
-                    <SignInButton mode="redirect" fallbackRedirectUrl="/dashboard">
+                    <SignInButton mode="modal" fallbackRedirectUrl="/">
                       <button
                         onClick={() => setNavOpen(false)}
                         className="w-full py-3 px-4 bg-[#f37c1b] text-white font-semibold rounded-lg hover:bg-orange-600"
