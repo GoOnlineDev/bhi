@@ -1,10 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ClerkProvider } from '@clerk/nextjs'
 import ConvexClientProvider from '@/provider/convexProviderWithClerk'
-import ClerkDebugger from '@/components/ClerkDebugger'
-import AuthTester from '@/components/AuthTester'
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -38,25 +36,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className + " bg-[#fcfaf8] relative flex min-h-screen flex-col font-['Lexend','Noto Sans',sans-serif] overflow-x-hidden"}>
-        <ClerkProvider
-          publishableKey={clerkPublishableKey}
-          signInUrl="/sign-in"
-          signUpUrl="/sign-up"
-          afterSignInUrl="/dashboard"
-          afterSignUpUrl="/dashboard"
-          appearance={{
-            elements: {
-              formButtonPrimary: 'bg-[#f37c1b] hover:bg-orange-500',
-              footerActionLink: 'text-[#f37c1b] hover:text-orange-500'
-            }
-          }}
-        >
+
           <ConvexClientProvider>
             {children}
-            <ClerkDebugger />
-            <AuthTester />
           </ConvexClientProvider>
-        </ClerkProvider>
       </body>
     </html>
   );

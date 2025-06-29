@@ -21,7 +21,7 @@ export default function SignInPage() {
                 card: 'shadow-2xl',
               }
             }}
-            redirectUrl="/dashboard"
+            redirectUrl="/"
           />
         </div>
       </div>
