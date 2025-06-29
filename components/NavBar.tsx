@@ -3,17 +3,15 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
-import DonateModal from './DonateModal';
-
+import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 
 export default function NavBar() {
   const [navOpen, setNavOpen] = useState(false);
-  const [donateOpen, setDonateOpen] = useState(false);
+  const { user } = useUser();
 
   return (
     <>
-      <DonateModal open={donateOpen} onClose={() => setDonateOpen(false)} />
-      <header className="fixed top-0 left-0 w-full z-50 bg-[#fcfaf8]/80 backdrop-blur-md border-b border-[#e6e2dc]">
+      <header className="fixed top-0 left-0 w-full z-[100] bg-[#fcfaf8]/80 backdrop-blur-md border-b border-[#e6e2dc]">
         <div className="flex items-center justify-between px-4 md:px-10 py-3">
           {/* Mobile Nav - Logo + Hamburger */}
           <div className="flex items-center md:hidden w-full justify-between">
@@ -22,7 +20,6 @@ export default function NavBar() {
                 <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
               </div>
               <span className="text-[#1c140d] text-lg font-bold">Boost Health Initiative</span>
-
             </div>
             <button
                 onClick={() => setNavOpen((v) => !v)}
@@ -54,12 +51,32 @@ export default function NavBar() {
             <Link href="/gallery" className="hover:text-[#f37c1b] transition-colors">Gallery</Link>
             <Link href="/news" className="hover:text-[#f37c1b] transition-colors">News</Link>
             <Link href="/contact" className="hover:text-[#f37c1b] transition-colors">Contact</Link>
-            <button
-              onClick={() => setDonateOpen(true)}
-              className="ml-4 px-4 py-2 rounded-lg bg-[#f37c1b] text-white font-semibold hover:bg-orange-500 transition-all"
-            >
-              Donate
-            </button>
+            
+            {/* Authentication Section */}
+            <div className="ml-4 flex items-center gap-3">
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="px-4 py-2 rounded-lg bg-[#f37c1b] text-white font-semibold hover:bg-orange-500 transition-all">
+                    Become a Member
+                  </button>
+                </SignInButton>
+              </SignedOut>
+              <SignedIn>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-[#1c140d]">
+                    Welcome, {user?.firstName || 'Member'}!
+                  </span>
+                  <UserButton 
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        avatarBox: "w-8 h-8"
+                      }
+                    }}
+                  />
+                </div>
+              </SignedIn>
+            </div>
           </nav>
         </div>
 
@@ -68,7 +85,7 @@ export default function NavBar() {
           <>
             {/* Full Screen Backdrop - Solid Black */}
             <div 
-              className="fixed inset-0 bg-gray-900 z-[999] md:hidden"
+              className="fixed inset-0 bg-gray-900 z-[200] md:hidden"
               onClick={() => setNavOpen(false)}
               style={{ 
                 top: 0, 
@@ -82,7 +99,7 @@ export default function NavBar() {
             />
             
             {/* Mobile Menu */}
-            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[1000] md:hidden">
+            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[300] md:hidden">
               <div className="flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b">
@@ -148,17 +165,33 @@ export default function NavBar() {
                   </Link>
                 </div>
                 
-                {/* Donate Button */}
+                {/* Authentication Section */}
                 <div className="p-4 border-t">
-                  <button
-                    onClick={() => {
-                      setDonateOpen(true);
-                      setNavOpen(false);
-                    }}
-                    className="w-full py-3 px-4 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600"
-                  >
-                    Donate
-                  </button>
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <button
+                        onClick={() => setNavOpen(false)}
+                        className="w-full py-3 px-4 bg-[#f37c1b] text-white font-semibold rounded-lg hover:bg-orange-600"
+                      >
+                        Become a Member
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">
+                        Welcome, {user?.firstName || 'Member'}!
+                      </span>
+                      <UserButton 
+                        afterSignOutUrl="/"
+                        appearance={{
+                          elements: {
+                            avatarBox: "w-8 h-8"
+                          }
+                        }}
+                      />
+                    </div>
+                  </SignedIn>
                 </div>
               </div>
             </div>
