@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
-import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
+import { SignInButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
+import BHIUserButton from './user-button';
 
 export default function NavBar() {
   const [navOpen, setNavOpen] = useState(false);
@@ -62,19 +63,7 @@ export default function NavBar() {
                 </SignInButton>
               </SignedOut>
               <SignedIn>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-[#1c140d]">
-                    Welcome, {user?.firstName || 'Member'}!
-                  </span>
-                  <UserButton 
-                    afterSignOutUrl="/"
-                    appearance={{
-                      elements: {
-                        avatarBox: "w-8 h-8"
-                      }
-                    }}
-                  />
-                </div>
+                <BHIUserButton />
               </SignedIn>
             </div>
           </nav>
@@ -178,18 +167,8 @@ export default function NavBar() {
                     </SignInButton>
                   </SignedOut>
                   <SignedIn>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
-                        Welcome, {user?.firstName || 'Member'}!
-                      </span>
-                      <UserButton 
-                        afterSignOutUrl="/"
-                        appearance={{
-                          elements: {
-                            avatarBox: "w-8 h-8"
-                          }
-                        }}
-                      />
+                    <div className="flex items-center justify-center">
+                      <BHIUserButton />
                     </div>
                   </SignedIn>
                 </div>
