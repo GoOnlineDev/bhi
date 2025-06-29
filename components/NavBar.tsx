@@ -72,106 +72,102 @@ export default function NavBar() {
         {/* Mobile Nav Drawer */}
         {navOpen && (
           <>
-            {/* Backdrop - Only covers the remaining area */}
+            {/* Backdrop - Covers full screen */}
             <div 
-              className="fixed inset-0 bg-black/20 z-[200] md:hidden"
+              className="fixed inset-0 bg-black/50 z-[200] md:hidden"
               onClick={() => setNavOpen(false)}
-              style={{ 
-                top: '73px', // Height of the navbar
-                left: 0, 
-                right: 0, 
-                bottom: 0
-              }}
             />
             
             {/* Mobile Menu */}
-            <div 
-              className="fixed left-0 w-4/5 max-w-sm bg-white shadow-xl z-[300] md:hidden"
-              style={{
-                top: '73px', // Start below the navbar
-                height: 'calc(100vh - 73px)' // Full height minus navbar
-              }}
-            >
+            <div className="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-xl z-[300] md:hidden overflow-hidden">
               <div className="flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b">
-                  <span className="text-xl font-bold text-gray-800">Menu</span>
+                <div className="flex items-center justify-between p-4 border-b bg-white">
+                  <div className="flex items-center gap-2">
+                    <div className="relative w-8 h-8">
+                      <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
+                    </div>
+                    <span className="text-lg font-bold text-[#1c140d]">BHI</span>
+                  </div>
                   <button
                     onClick={() => setNavOpen(false)}
-                    className="text-2xl text-gray-600 hover:text-gray-800"
+                    className="text-2xl text-gray-600 hover:text-gray-800 p-1"
                   >
                     ×
                   </button>
                 </div>
                 
-                {/* Navigation Links */}
-                <div className="flex-1 py-4">
-                  <Link
-                    href="/"
-                    onClick={() => setNavOpen(false)}
-                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-                  >
-                    Home
-                  </Link>
-                  <Link
-                    href="/about"
-                    onClick={() => setNavOpen(false)}
-                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-                  >
-                    About
-                  </Link>
-                  <Link
-                    href="/services"
-                    onClick={() => setNavOpen(false)}
-                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-                  >
-                    Services
-                  </Link>
-                  <Link
-                    href="/programs"
-                    onClick={() => setNavOpen(false)}
-                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-                  >
-                    Programs
-                  </Link>
-                  <Link
-                    href="/gallery"
-                    onClick={() => setNavOpen(false)}
-                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-                  >
-                    Gallery
-                  </Link>
-                  <Link
-                    href="/news"
-                    onClick={() => setNavOpen(false)}
-                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-                  >
-                    News
-                  </Link>
-                  <Link
-                    href="/contact"
-                    onClick={() => setNavOpen(false)}
-                    className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-orange-600"
-                  >
-                    Contact
-                  </Link>
-                </div>
-                
-                {/* Authentication Section */}
-                <div className="p-4 border-t">
-                  <SignedOut>
-                    <SignInButton mode="modal" fallbackRedirectUrl="/">
-                      <button
-                        onClick={() => setNavOpen(false)}
-                        className="w-full py-3 px-4 bg-[#f37c1b] text-white font-semibold rounded-lg hover:bg-orange-600"
-                      >
-                        Become a Member
-                      </button>
-                    </SignInButton>
-                  </SignedOut>
-                  <SignedIn>
-                    <BHIUserButton isMobile={true} onMobileMenuClose={() => setNavOpen(false)} />
-                  </SignedIn>
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto">
+                  {/* Authentication Section - Move to top for better UX */}
+                  <div className="p-4 border-b bg-gray-50">
+                    <SignedOut>
+                      <SignInButton mode="modal" fallbackRedirectUrl="/">
+                        <button
+                          onClick={() => setNavOpen(false)}
+                          className="w-full py-3 px-4 bg-[#f37c1b] text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
+                        >
+                          Become a Member
+                        </button>
+                      </SignInButton>
+                    </SignedOut>
+                    <SignedIn>
+                      <BHIUserButton isMobile={true} onMobileMenuClose={() => setNavOpen(false)} />
+                    </SignedIn>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <div className="py-2">
+                    <Link
+                      href="/"
+                      onClick={() => setNavOpen(false)}
+                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
+                    >
+                      Home
+                    </Link>
+                    <Link
+                      href="/about"
+                      onClick={() => setNavOpen(false)}
+                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
+                    >
+                      About
+                    </Link>
+                    <Link
+                      href="/services"
+                      onClick={() => setNavOpen(false)}
+                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
+                    >
+                      Services
+                    </Link>
+                    <Link
+                      href="/programs"
+                      onClick={() => setNavOpen(false)}
+                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
+                    >
+                      Programs
+                    </Link>
+                    <Link
+                      href="/gallery"
+                      onClick={() => setNavOpen(false)}
+                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
+                    >
+                      Gallery
+                    </Link>
+                    <Link
+                      href="/news"
+                      onClick={() => setNavOpen(false)}
+                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
+                    >
+                      News
+                    </Link>
+                    <Link
+                      href="/contact"
+                      onClick={() => setNavOpen(false)}
+                      className="block px-6 py-3 text-lg text-gray-700 hover:bg-gray-100 hover:text-[#f37c1b] transition-colors"
+                    >
+                      Contact
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

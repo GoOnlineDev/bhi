@@ -139,21 +139,61 @@ export default function BHIUserButton({ className, isMobile, onMobileMenuClose }
   
   // For patients, show a simple sign out button
   if (isPatient) {
+    // Mobile version - integrated into menu
+    if (isMobile) {
+      return (
+        <div className="space-y-3">
+          {/* User Info Display */}
+          <div className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-[#f37c1b]/20">
+            <div className="w-10 h-10 rounded-full bg-[#f37c1b] text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
+              {user.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt={`${user.firstName} ${user.lastName}`}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                getInitials()
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-base font-medium text-[#1c140d] truncate">
+                {user.firstName} {user.lastName}
+              </p>
+              <p className="text-sm text-[#1c140d]/70 truncate">
+                Member
+              </p>
+            </div>
+          </div>
+          
+          {/* Sign Out Button */}
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center justify-center px-4 py-3 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            <span className="font-medium">Sign Out</span>
+          </button>
+        </div>
+      );
+    }
+
+    // Desktop version - dropdown
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className={`${isMobile ? 'w-full justify-start h-12 px-4' : 'h-10 px-3'} rounded-${isMobile ? 'lg' : 'full'} hover:bg-[#f37c1b]/10 transition-colors ${className}`}
+            className={`h-10 px-3 rounded-full hover:bg-[#f37c1b]/10 transition-colors ${className}`}
           >
-            <div className={`flex items-center ${isMobile ? 'space-x-3' : 'space-x-2'}`}>
+            <div className="flex items-center space-x-2">
               {/* User Avatar */}
-              <div className={`${isMobile ? 'w-10 h-10' : 'w-8 h-8'} rounded-full bg-[#f37c1b] text-white flex items-center justify-center text-sm font-medium flex-shrink-0`}>
+              <div className="w-8 h-8 rounded-full bg-[#f37c1b] text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
                 {user.imageUrl ? (
                   <img
                     src={user.imageUrl}
                     alt={`${user.firstName} ${user.lastName}`}
-                    className={`${isMobile ? 'w-10 h-10' : 'w-8 h-8'} rounded-full object-cover`}
+                    className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (
                   getInitials()
@@ -161,23 +201,23 @@ export default function BHIUserButton({ className, isMobile, onMobileMenuClose }
               </div>
               
               {/* User Info */}
-              <div className={`${isMobile ? 'block' : 'hidden sm:block'} text-left flex-1`}>
-                <p className={`${isMobile ? 'text-base' : 'text-sm'} font-medium text-[#1c140d] leading-tight`}>
+              <div className="hidden sm:block text-left flex-1">
+                <p className="text-sm font-medium text-[#1c140d] leading-tight">
                   {user.firstName} {user.lastName}
                 </p>
                 <div className="flex items-center space-x-1">
-                  <p className={`${isMobile ? 'text-sm' : 'text-xs'} text-[#1c140d]/70 capitalize`}>
+                  <p className="text-xs text-[#1c140d]/70 capitalize">
                     Member
                   </p>
                 </div>
               </div>
               
-              {!isMobile && <ChevronDown className="w-4 h-4 text-[#1c140d]/70" />}
+              <ChevronDown className="w-4 h-4 text-[#1c140d]/70" />
             </div>
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className={`${isMobile ? 'w-72' : 'w-64'} shadow-lg border border-[#f37c1b]/20`}>
+        <DropdownMenuContent align="end" className="w-64 shadow-lg border border-[#f37c1b]/20" side="bottom" sideOffset={4}>
           {/* User Info Header */}
           <DropdownMenuLabel className="p-4">
             <div className="flex items-center space-x-3">
@@ -225,21 +265,98 @@ export default function BHIUserButton({ className, isMobile, onMobileMenuClose }
     );
   }
 
+  // Admin/Editor users
+  // Mobile version - integrated into menu
+  if (isMobile) {
+    return (
+      <div className="space-y-3">
+        {/* User Info Display */}
+        <div className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-[#f37c1b]/20">
+          <div className="w-10 h-10 rounded-full bg-[#f37c1b] text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
+            {user.imageUrl ? (
+              <img
+                src={user.imageUrl}
+                alt={`${user.firstName} ${user.lastName}`}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            ) : (
+              getInitials()
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-base font-medium text-[#1c140d] truncate">
+              {user.firstName} {user.lastName}
+            </p>
+            <div className="flex items-center space-x-1">
+              <p className="text-sm text-[#1c140d]/70 capitalize">
+                {currentUser.role}
+              </p>
+              {isAdmin && (
+                <Shield className="w-3 h-3 text-[#f37c1b]" />
+              )}
+              {isEditor && (
+                <Edit className="w-3 h-3 text-[#f37c1b]" />
+              )}
+            </div>
+          </div>
+        </div>
+        
+        {/* Quick Links */}
+        {hasDashboardAccess && quickLinks.length > 0 && (
+          <div className="space-y-1">
+            <p className="text-xs font-semibold text-[#1c140d]/60 uppercase tracking-wider px-2 mb-2">
+              Quick Access
+            </p>
+            {quickLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => {
+                  if (onMobileMenuClose) {
+                    onMobileMenuClose();
+                  }
+                }}
+                className="flex items-center px-3 py-2 rounded-md hover:bg-[#f37c1b]/5 transition-colors"
+              >
+                <link.icon className="w-4 h-4 mr-3 text-[#1c140d]/70" />
+                <span className="flex-1 text-sm text-[#1c140d]">{link.label}</span>
+                {link.badge && (
+                  <Badge variant="secondary" className="ml-2 h-5 text-xs bg-[#f37c1b] text-white">
+                    {link.badge}
+                  </Badge>
+                )}
+              </Link>
+            ))}
+          </div>
+        )}
+        
+        {/* Sign Out Button */}
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center justify-center px-4 py-3 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          <span className="font-medium">Sign Out</span>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className={`${isMobile ? 'w-full justify-start h-12 px-4' : 'h-10 px-3'} rounded-${isMobile ? 'lg' : 'full'} hover:bg-[#f37c1b]/10 transition-colors ${className}`}
+          className={`h-10 px-3 rounded-full hover:bg-[#f37c1b]/10 transition-colors ${className}`}
         >
-          <div className={`flex items-center ${isMobile ? 'space-x-3' : 'space-x-2'}`}>
+          <div className="flex items-center space-x-2">
             {/* User Avatar */}
-            <div className={`${isMobile ? 'w-10 h-10' : 'w-8 h-8'} rounded-full bg-[#f37c1b] text-white flex items-center justify-center text-sm font-medium flex-shrink-0`}>
+            <div className="w-8 h-8 rounded-full bg-[#f37c1b] text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
               {user.imageUrl ? (
                 <img
                   src={user.imageUrl}
                   alt={`${user.firstName} ${user.lastName}`}
-                  className={`${isMobile ? 'w-10 h-10' : 'w-8 h-8'} rounded-full object-cover`}
+                  className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
                 getInitials()
@@ -247,12 +364,12 @@ export default function BHIUserButton({ className, isMobile, onMobileMenuClose }
             </div>
             
             {/* User Info */}
-            <div className={`${isMobile ? 'block' : 'hidden sm:block'} text-left flex-1`}>
-              <p className={`${isMobile ? 'text-base' : 'text-sm'} font-medium text-[#1c140d] leading-tight`}>
+            <div className="hidden sm:block text-left flex-1">
+              <p className="text-sm font-medium text-[#1c140d] leading-tight">
                 {user.firstName} {user.lastName}
               </p>
               <div className="flex items-center space-x-1">
-                <p className={`${isMobile ? 'text-sm' : 'text-xs'} text-[#1c140d]/70 capitalize`}>
+                <p className="text-xs text-[#1c140d]/70 capitalize">
                   {currentUser.role}
                 </p>
                 {isAdmin && (
@@ -264,12 +381,12 @@ export default function BHIUserButton({ className, isMobile, onMobileMenuClose }
               </div>
             </div>
             
-            {!isMobile && <ChevronDown className="w-4 h-4 text-[#1c140d]/70" />}
+            <ChevronDown className="w-4 h-4 text-[#1c140d]/70" />
           </div>
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className={`${isMobile ? 'w-72' : 'w-64'} shadow-lg border border-[#f37c1b]/20`}>
+      <DropdownMenuContent align="end" className="w-64 shadow-lg border border-[#f37c1b]/20" side="bottom" sideOffset={4}>
         {/* User Info Header */}
         <DropdownMenuLabel className="p-4">
           <div className="flex items-center space-x-3">
