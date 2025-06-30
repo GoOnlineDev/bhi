@@ -66,18 +66,20 @@ export default function GalleryPage() {
   const galleryStats = useQuery(api.gallery.getGalleryStats);
 
   // Convert database data to MediaItem format
-  const convertedGalleryData: MediaItem[] = (galleryData || []).map(item => ({
-    _id: item._id,
-    type: item.type,
-    url: item.url,
-    thumbnail: item.thumbnail,
-    title: item.title,
-    description: item.description,
-    category: item.category,
-    date: item.date,
-    location: item.location,
-    tags: item.tags,
-  }));
+  const convertedGalleryData: MediaItem[] = (galleryData || [])
+    .filter(item => item.type && item.url && item.title && item.description && item.category && item.date)
+    .map(item => ({
+      _id: item._id,
+      type: item.type as 'image' | 'video',
+      url: item.url!,
+      thumbnail: item.thumbnail,
+      title: item.title!,
+      description: item.description!,
+      category: item.category!,
+      date: item.date!,
+      location: item.location,
+      tags: item.tags || [],
+    }));
 
   const [filteredMedia, setFilteredMedia] = useState<MediaItem[]>([]);
 
