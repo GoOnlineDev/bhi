@@ -31,15 +31,15 @@ import {
 
 type GalleryItem = {
   _id: Id<"gallery">;
-  title: string;
-  description: string;
-  type: "image" | "video";
-  url: string;
+  title?: string;
+  description?: string;
+  type?: "image" | "video";
+  url?: string;
   thumbnail?: string;
-  category: string;
-  date: number;
+  category?: string;
+  date?: number;
   location?: string;
-  tags: string[];
+  tags?: string[];
   createdAt: number;
   updatedAt?: number;
   isPublished: boolean;
@@ -126,24 +126,24 @@ export default function DashboardGalleryPage() {
 
   const handleCreate = async () => {
     try {
-      if (!formData.title || !formData.description || !formData.url) {
+      if (!formData.title.trim() || !formData.description.trim() || !formData.url.trim()) {
         toast({
           title: "Error",
-          description: "Please fill in all required fields",
+          description: "Please fill in all required fields (title, description, and media)",
           variant: "destructive",
         });
         return;
       }
 
       await createGalleryItem({
-        title: formData.title,
-        description: formData.description,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
         type: formData.type,
-        url: formData.url,
-        thumbnail: formData.thumbnail || undefined,
+        url: formData.url.trim(),
+        thumbnail: formData.thumbnail?.trim() || undefined,
         category: formData.category as any,
         date: new Date(formData.date).getTime(),
-        location: formData.location || undefined,
+        location: formData.location?.trim() || undefined,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
         isPublished: formData.isPublished,
       });
@@ -167,15 +167,15 @@ export default function DashboardGalleryPage() {
   const handleEdit = (item: GalleryItem) => {
     setSelectedItem(item);
     setFormData({
-      title: item.title,
-      description: item.description,
-      type: item.type,
-      url: item.url,
+      title: item.title || "",
+      description: item.description || "",
+      type: item.type || "image",
+      url: item.url || "",
       thumbnail: item.thumbnail || "",
-      category: item.category,
-      date: new Date(item.date).toISOString().split('T')[0],
+      category: item.category || categories[0],
+      date: item.date ? new Date(item.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       location: item.location || "",
-      tags: item.tags.join(', '),
+      tags: item.tags ? item.tags.join(', ') : "",
       isPublished: item.isPublished,
     });
     // Reset upload states when editing
@@ -196,16 +196,25 @@ export default function DashboardGalleryPage() {
     if (!selectedItem) return;
 
     try {
+      if (!formData.title.trim() || !formData.description.trim() || !formData.url.trim()) {
+        toast({
+          title: "Error",
+          description: "Please fill in all required fields (title, description, and media)",
+          variant: "destructive",
+        });
+        return;
+      }
+
       await updateGalleryItem({
         id: selectedItem._id,
-        title: formData.title,
-        description: formData.description,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
         type: formData.type,
-        url: formData.url,
-        thumbnail: formData.thumbnail || undefined,
+        url: formData.url.trim(),
+        thumbnail: formData.thumbnail?.trim() || undefined,
         category: formData.category as any,
         date: new Date(formData.date).getTime(),
-        location: formData.location || undefined,
+        location: formData.location?.trim() || undefined,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
         isPublished: formData.isPublished,
       });
@@ -655,19 +664,19 @@ export default function DashboardGalleryPage() {
           {filteredItems.map((item) => (
             <Card key={item._id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative aspect-video">
-                {item.type === "image" ? (
+                {item.type === "image" && item.url ? (
                   <Image
                     src={item.url}
-                    alt={item.title}
+                    alt={item.title || "Gallery image"}
                     fill
                     className="object-cover"
                   />
-                ) : (
+                ) : item.type === "video" ? (
                   <div className="relative w-full h-full">
                     {item.thumbnail ? (
                       <Image
                         src={item.thumbnail}
-                        alt={item.title}
+                        alt={item.title || "Video thumbnail"}
                         fill
                         className="object-cover"
                       />
@@ -681,6 +690,10 @@ export default function DashboardGalleryPage() {
                         <Video className="w-6 h-6 text-[#f37c1b]" />
                       </div>
                     </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <Camera className="w-12 h-12 text-gray-400" />
                   </div>
                 )}
                 <div className="absolute top-2 left-2">
@@ -697,14 +710,16 @@ export default function DashboardGalleryPage() {
                 </div>
               </div>
               <CardContent className="p-4">
-                <h3 className="font-semibold text-[#1c140d] mb-2 line-clamp-1">{item.title}</h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                <h3 className="font-semibold text-[#1c140d] mb-2 line-clamp-1">{item.title || "Untitled"}</h3>
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description || "No description"}</p>
                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                  <Badge variant="outline">{item.category}</Badge>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>{new Date(item.date).toLocaleDateString()}</span>
-                  </div>
+                  <Badge variant="outline">{item.category || "Uncategorized"}</Badge>
+                  {item.date && (
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{new Date(item.date).toLocaleDateString()}</span>
+                    </div>
+                  )}
                 </div>
                 {item.location && (
                   <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
@@ -712,10 +727,12 @@ export default function DashboardGalleryPage() {
                     <span>{item.location}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1 text-xs text-gray-500 mb-4">
-                  <Tag className="w-3 h-3" />
-                  <span>{item.tags.join(', ')}</span>
-                </div>
+                {item.tags && item.tags.length > 0 && (
+                  <div className="flex items-center gap-1 text-xs text-gray-500 mb-4">
+                    <Tag className="w-3 h-3" />
+                    <span>{item.tags.join(', ')}</span>
+                  </div>
+                )}
                 <div className="flex gap-2">
                   <Button
                     size="sm"
