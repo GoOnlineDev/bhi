@@ -84,8 +84,8 @@ export const searchGalleryByTags = query({
     
     // Filter items that contain any of the search tags
     return allItems.filter(item => 
-      tags.some(tag => 
-        item.tags.some(itemTag => 
+      item.tags && item.tags.length > 0 && tags.some(tag => 
+        item.tags!.some(itemTag => 
           itemTag.toLowerCase().includes(tag.toLowerCase())
         )
       )
@@ -96,12 +96,12 @@ export const searchGalleryByTags = query({
 // Create gallery item mutation
 export const createGalleryItem = mutation({
   args: {
-    title: v.string(),
-    description: v.string(),
-    type: v.union(v.literal("image"), v.literal("video")),
-    url: v.string(),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    type: v.optional(v.union(v.literal("image"), v.literal("video"))),
+    url: v.optional(v.string()),
     thumbnail: v.optional(v.string()),
-    category: v.union(
+    category: v.optional(v.union(
       v.literal("Maternal Health"),
       v.literal("Education"),
       v.literal("Mental Health"),
@@ -113,10 +113,10 @@ export const createGalleryItem = mutation({
       v.literal("Nursing"),
       v.literal("Environmental Health"),
       v.literal("Training")
-    ),
-    date: v.number(),
+    )),
+    date: v.optional(v.number()),
     location: v.optional(v.string()),
-    tags: v.array(v.string()),
+    tags: v.optional(v.array(v.string())),
     isPublished: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
@@ -143,15 +143,15 @@ export const createGalleryItem = mutation({
     }
 
     const galleryId = await ctx.db.insert("gallery", {
-      title: args.title,
-      description: args.description,
-      type: args.type,
-      url: args.url,
+      title: args.title || "Untitled",
+      description: args.description || "",
+      type: args.type || "image",
+      url: args.url || "",
       thumbnail: args.thumbnail,
-      category: args.category,
-      date: args.date,
+      category: args.category || "Clinical Services",
+      date: args.date || Date.now(),
       location: args.location,
-      tags: args.tags,
+      tags: args.tags || [],
       createdAt: Date.now(),
       isPublished,
       uploadedBy: user._id,
@@ -285,7 +285,9 @@ export const getGalleryStats = query({
     
     // Count by category
     const categoryStats = allItems.reduce((acc, item) => {
-      acc[item.category] = (acc[item.category] || 0) + 1;
+      if (item.category) {
+        acc[item.category] = (acc[item.category] || 0) + 1;
+      }
       return acc;
     }, {} as Record<string, number>);
     

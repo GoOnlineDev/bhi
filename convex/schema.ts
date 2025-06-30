@@ -95,12 +95,12 @@ export default defineSchema({
 
   // Gallery table for media items (photos and videos)
   gallery: defineTable({
-    title: v.string(),                    // Title of the media item
-    description: v.string(),              // Description of the media item
-    type: v.union(v.literal("image"), v.literal("video")), // Media type
-    url: v.string(),                      // URL of the media file
-    thumbnail: v.optional(v.string()),    // Optional thumbnail URL for videos
-    category: v.union(
+    title: v.optional(v.string()),                    // Title of the media item
+    description: v.optional(v.string()),              // Description of the media item
+    type: v.optional(v.union(v.literal("image"), v.literal("video"))), // Media type
+    url: v.optional(v.string()),                      // URL of the media file
+    thumbnail: v.optional(v.string()),                // Optional thumbnail URL for videos
+    category: v.optional(v.union(
       v.literal("Maternal Health"),
       v.literal("Education"),
       v.literal("Mental Health"),
@@ -112,14 +112,14 @@ export default defineSchema({
       v.literal("Nursing"),
       v.literal("Environmental Health"),
       v.literal("Training")
-    ),
-    date: v.number(),                     // Date when the media was created/taken (timestamp)
-    location: v.optional(v.string()),     // Location where the media was taken
-    tags: v.array(v.string()),           // Tags for categorization and search
-    createdAt: v.number(),               // When the record was created
-    updatedAt: v.optional(v.number()),   // When the record was last updated
-    isPublished: v.boolean(),            // Whether the media is published/visible
-    uploadedBy: v.optional(v.string()),  // User ID who uploaded the media
+    )),                                               // Fixed missing closing parenthesis
+    date: v.optional(v.number()),                     // Date when the media was created/taken (timestamp)
+    location: v.optional(v.string()),                 // Location where the media was taken
+    tags: v.optional(v.array(v.string())),           // Tags for categorization and search
+    createdAt: v.number(),                           // When the record was created
+    updatedAt: v.optional(v.number()),               // When the record was last updated
+    isPublished: v.boolean(),                        // Whether the media is published/visible
+    uploadedBy: v.optional(v.string()),              // User ID who uploaded the media
   })
   .index("by_type", ["type"])
   .index("by_category", ["category"])
