@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { Doc } from "./_generated/dataModel";
 
 // Get all published news, sorted by publishedAt descending
 export const getPublishedNews = query({
@@ -75,6 +76,14 @@ export const getUnpublishedNews = query({
       .withIndex("by_isPublished", q => q.eq("isPublished", false))
       .order("desc")
       .collect();
+  },
+});
+
+// Get all news items
+export const getAllNews = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("news").order("desc").collect();
   },
 });
 
@@ -246,17 +255,7 @@ export const updateNews = mutation({
     const news = await ctx.db.get(args.id);
     if (!news) throw new Error("News not found");
 
-    // Only admin and superadmin can set isPublished to true
-    let isPublished = news.isPublished;
-    if (typeof args.isPublished === "boolean") {
-      if (["admin", "superadmin"].includes(user.role)) {
-        isPublished = args.isPublished;
-      } else {
-        isPublished = false; // Editors cannot approve
-      }
-    }
-
-    await ctx.db.patch(args.id, {
+    const patchData: Partial<Doc<"news">> = {
       ...(args.title !== undefined && { title: args.title }),
       ...(args.content !== undefined && { content: args.content }),
       ...(args.summary !== undefined && { summary: args.summary }),
@@ -265,11 +264,25 @@ export const updateNews = mutation({
       ...(args.category !== undefined && { category: args.category }),
       ...(args.startDate !== undefined && { startDate: args.startDate }),
       ...(args.endDate !== undefined && { endDate: args.endDate }),
-      ...(args.updatedAt !== undefined && { updatedAt: args.updatedAt }),
       ...(args.tags !== undefined && { tags: args.tags }),
       ...(args.institution !== undefined && { institution: args.institution }),
-      isPublished,
-    });
+      updatedAt: Date.now(),
+    };
+
+    // Handle publishing rights
+    if (args.isPublished !== undefined) {
+      if (["admin", "superadmin"].includes(user.role)) {
+        patchData.isPublished = args.isPublished;
+        if (args.isPublished && !news.publishedAt) {
+          patchData.publishedAt = Date.now();
+        }
+      } else if (news.isPublished && !args.isPublished) {
+        // Allow editors to unpublish an article
+        patchData.isPublished = false;
+      }
+    }
+
+    await ctx.db.patch(args.id, patchData);
     return { success: true };
   },
 });

@@ -1,0 +1,180 @@
+"use client";
+
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UploadButton } from "@/utils/uploadthing";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Doc } from "@/convex/_generated/dataModel";
+
+const categories = [
+  "Maternal Health", "Education", "Mental Health", "Clinical Services", 
+  "Laboratory", "Facilities", "Community Outreach", "Youth Services", 
+  "Nursing", "Environmental Health", "Training"
+];
+
+interface GalleryFormProps {
+  setOpen: (open: boolean) => void;
+  initialData?: Doc<"gallery">;
+}
+
+export function GalleryForm({ setOpen, initialData }: GalleryFormProps) {
+  const { toast } = useToast();
+  const createGalleryItem = useMutation(api.gallery.createGalleryItem);
+  const updateGalleryItem = useMutation(api.gallery.updateGalleryItem);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    type: "image" as "image" | "video",
+    url: "",
+    category: categories[0],
+    isPublished: false,
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title || "",
+        description: initialData.description || "",
+        type: initialData.type || "image",
+        url: initialData.url || "",
+        category: initialData.category || categories[0],
+        isPublished: initialData.isPublished || false,
+      });
+    }
+  }, [initialData]);
+
+  const handleSubmit = async () => {
+    try {
+      if (!formData.title.trim() || !formData.url.trim()) {
+        toast({
+          title: "Error",
+          description: "Title and media URL are required.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (initialData) {
+        await updateGalleryItem({
+          id: initialData._id,
+          title: formData.title,
+          description: formData.description,
+          type: formData.type,
+          url: formData.url,
+          category: formData.category as any,
+          isPublished: formData.isPublished,
+        });
+        toast({ title: "Success", description: "Gallery item updated." });
+      } else {
+        await createGalleryItem({
+          title: formData.title,
+          description: formData.description,
+          type: formData.type,
+          url: formData.url,
+          category: formData.category as any,
+          isPublished: formData.isPublished,
+        });
+        toast({ title: "Success", description: "Gallery item created." });
+      }
+
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: `Error ${initialData ? 'updating' : 'creating'} item`,
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+    }
+  };
+  
+  return (
+    <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto p-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="title" className="text-right">
+          Title
+        </Label>
+        <Input
+          id="title"
+          value={formData.title}
+          onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+          className="col-span-3"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="description" className="text-right">
+          Description
+        </Label>
+        <Textarea
+          id="description"
+          value={formData.description}
+          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          className="col-span-3"
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="category" className="text-right">
+          Category
+        </Label>
+        <Select 
+          value={formData.category} 
+          onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+        >
+          <SelectTrigger className="col-span-3">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label className="text-right">
+          Media
+        </Label>
+        <div className="col-span-3">
+          <UploadButton
+            className="ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90"
+            endpoint="galleryMediaUploader"
+            onClientUploadComplete={(res) => {
+              if (res?.[0]) {
+                const fileType = res[0].type.startsWith('image/') ? 'image' : 'video';
+                setFormData(prev => ({ ...prev, url: res[0].url, type: fileType }));
+                toast({ title: "Upload complete" });
+              }
+            }}
+            onUploadError={(error: Error) => {
+              toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+            }}
+          />
+          {formData.url && (
+            <div className="mt-2 text-xs text-muted-foreground truncate">
+              Current URL: {formData.url}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="isPublished" className="text-right">
+          Publish
+        </Label>
+        <Checkbox
+          id="isPublished"
+          checked={formData.isPublished}
+          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublished: !!checked }))}
+        />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+        <Button onClick={handleSubmit}>{initialData ? "Save Changes" : "Create"}</Button>
+      </div>
+    </div>
+  );
+}

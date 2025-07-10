@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { Doc } from "./_generated/dataModel";
 
 // Get all published gallery items, sorted by date descending
 export const getPublishedGallery = query({
@@ -70,6 +71,14 @@ export const getUnpublishedGallery = query({
       .withIndex("by_isPublished", q => q.eq("isPublished", false))
       .order("desc")
       .collect();
+  },
+});
+
+// Get all gallery items
+export const getAllGalleryItems = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("gallery").order("desc").collect();
   },
 });
 
@@ -244,17 +253,7 @@ export const updateGalleryItem = mutation({
     const galleryItem = await ctx.db.get(args.id);
     if (!galleryItem) throw new Error("Gallery item not found");
 
-    // Only admin and superadmin can set isPublished to true
-    let isPublished = galleryItem.isPublished;
-    if (typeof args.isPublished === "boolean") {
-      if (["admin", "superadmin"].includes(user.role)) {
-        isPublished = args.isPublished;
-      } else {
-        isPublished = false; // Editors cannot approve
-      }
-    }
-
-    await ctx.db.patch(args.id, {
+    const patchData: Partial<Doc<"gallery">> = {
       ...(args.title !== undefined && { title: args.title }),
       ...(args.description !== undefined && { description: args.description }),
       ...(args.type !== undefined && { type: args.type }),
@@ -265,8 +264,19 @@ export const updateGalleryItem = mutation({
       ...(args.location !== undefined && { location: args.location }),
       ...(args.tags !== undefined && { tags: args.tags }),
       updatedAt: Date.now(),
-      isPublished,
-    });
+    };
+
+    // Only admin and superadmin can set isPublished to true
+    if (typeof args.isPublished === "boolean") {
+      if (["admin", "superadmin"].includes(user.role)) {
+        patchData.isPublished = args.isPublished;
+      } else if (galleryItem.isPublished && !args.isPublished) {
+        // Allow anyone with permission to unpublish
+        patchData.isPublished = false;
+      }
+    }
+
+    await ctx.db.patch(args.id, patchData);
     return { success: true };
   },
 });

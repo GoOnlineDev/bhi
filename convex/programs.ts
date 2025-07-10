@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { Doc } from "./_generated/dataModel";
 
 // Get all approved programs, sorted by startDate descending
 export const getApprovedPrograms = query({
@@ -184,16 +185,12 @@ export const updateProgram = mutation({
     if (!["editor", "admin", "superadmin"].includes(user.role)) {
       throw new Error("You do not have permission to update programs");
     }
-    // Only admin and superadmin can set approved to true
-    let approved = undefined;
-    if (typeof args.approved === "boolean") {
-      if (["admin", "superadmin"].includes(user.role)) {
-        approved = args.approved;
-      } else {
-        approved = false;
-      }
-    }
-    await ctx.db.patch(args.id, {
+
+    // Get the program
+    const program = await ctx.db.get(args.id);
+    if (!program) throw new Error("Program not found");
+
+    const patchData: Partial<Doc<"programs">> = {
       ...(args.name !== undefined && { name: args.name }),
       ...(args.description !== undefined && { description: args.description }),
       ...(args.goal !== undefined && { goal: args.goal }),
@@ -202,7 +199,6 @@ export const updateProgram = mutation({
       ...(args.location !== undefined && { location: args.location }),
       ...(args.images !== undefined && { images: args.images }),
       ...(args.videos !== undefined && { videos: args.videos }),
-      ...(args.updatedAt !== undefined && { updatedAt: args.updatedAt }),
       ...(args.status !== undefined && { status: args.status }),
       ...(args.contactPerson !== undefined && { contactPerson: args.contactPerson }),
       ...(args.contactPhone !== undefined && { contactPhone: args.contactPhone }),
@@ -210,8 +206,20 @@ export const updateProgram = mutation({
       ...(args.tags !== undefined && { tags: args.tags }),
       ...(args.relatedNewsIds !== undefined && { relatedNewsIds: args.relatedNewsIds }),
       ...(args.isFeatured !== undefined && { isFeatured: args.isFeatured }),
-      ...(approved !== undefined && { approved }),
-    });
+      updatedAt: Date.now(),
+    };
+
+    // Handle approval rights
+    if (args.approved !== undefined) {
+      if (["admin", "superadmin"].includes(user.role)) {
+        patchData.approved = args.approved;
+      } else if (program.approved && !args.approved) {
+        // Allow editors to un-approve a program
+        patchData.approved = false;
+      }
+    }
+    
+    await ctx.db.patch(args.id, patchData);
     return { success: true };
   },
 });
@@ -225,5 +233,13 @@ export const getUnapprovedPrograms = query({
       .withIndex("by_approved", q => q.eq("approved", false))
       .order("desc")
       .collect();
+  },
+});
+
+// Get all programs
+export const getAllPrograms = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("programs").order("desc").collect();
   },
 });
