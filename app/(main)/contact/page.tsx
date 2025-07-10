@@ -1,163 +1,150 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Mail, Clock, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
+const contactInfo = [
+  { icon: MapPin, title: "Location", lines: ["Level 1 Ssebowa House", "Plot 1 Ssekajja Road, Kayunga Central"] },
+  { icon: Phone, title: "Phone", lines: ["+256-772-670-744", "+256-700-304-407"] },
+  { icon: Mail, title: "Email", lines: ["bhi@boosthealthinitiative.org"] },
+  { icon: Clock, title: "Hours", lines: ["Open 24/7, All Days"] }
+];
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitted(false);
+const contactFormSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
+  subject: z.string().min(5, { message: "Subject must be at least 5 characters." }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters." })
+});
+
+type ContactFormValues = z.infer<typeof contactFormSchema>;
+
+export default function ContactPage() {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema)
+  });
+
+  const onSubmit: SubmitHandler<ContactFormValues> = async (data) => {
+    setIsLoading(true);
     try {
       const res = await fetch('/api/send-email/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
       });
+
       if (res.ok) {
-        setSubmitted(true);
+        toast({
+          title: "Message Sent!",
+          description: "Thank you for reaching out. We'll get back to you soon.",
+        });
+        reset();
       } else {
-        alert('There was an error sending your message. Please try again.');
+        throw new Error("Failed to send email");
       }
     } catch (err) {
-      alert('There was an error sending your message. Please try again.');
+      toast({
+        title: "An Error Occurred",
+        description: "There was a problem sending your message. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="font-['Lexend','Noto Sans',sans-serif]">
-      <section className="py-24 text-[#1c140d] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-emerald-500/10 pointer-events-none"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center px-4 py-2 bg-white/10 rounded-full text-orange-500 text-sm font-semibold mb-6 backdrop-blur-sm">
+    <main>
+      {/* Hero Section */}
+      <section id="contact-hero" aria-labelledby="contact-hero-heading" className="bg-background">
+        <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
+            <Badge variant="outline" className="mb-6">
               <Mail className="w-4 h-4 mr-2" />
               Get In Touch
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Make a Difference?</h2>
-            <p className="text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed">
-              Contact us to learn more about our programs or explore partnership opportunities.
+            </Badge>
+            <h1 id="contact-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">Ready to Make a Difference?</h1>
+            <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+              Contact us to learn more about our programs or explore partnership opportunities. We're here to help.
             </p>
-          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact-form" aria-labelledby="contact-form-heading" className="bg-secondary">
+        <div className="container mx-auto px-4 py-16 sm:py-24">
           <div className="grid md:grid-cols-2 gap-12 items-start">
             {/* Contact Form */}
-            <div className="bg-white/90 rounded-2xl shadow-xl p-8 flex flex-col gap-6 border border-[#f4ede7]">
-              <h3 className="text-2xl font-bold mb-2">Send Us a Message</h3>
-              {submitted ? (
-                <div className="text-emerald-600 font-semibold text-lg py-8 text-center">Thank you for reaching out! We'll get back to you soon.</div>
-              ) : (
-                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="name" className="font-medium">Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                      className="rounded-lg border border-[#f4ede7] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
-                    />
+            <Card className="bg-background p-8 shadow-lg">
+              <CardHeader className="p-0 mb-6">
+                <CardTitle id="contact-form-heading" className="text-2xl font-bold">Send Us a Message</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="sr-only">Name</label>
+                    <Input id="name" placeholder="Full Name" {...register("name")} disabled={isLoading} />
+                    {errors.name && <p className="text-destructive text-sm mt-1">{errors.name.message}</p>}
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="email" className="font-medium">Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                      className="rounded-lg border border-[#f4ede7] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
-                    />
+                   <div>
+                    <label htmlFor="email" className="sr-only">Email</label>
+                    <Input id="email" type="email" placeholder="Email Address" {...register("email")} disabled={isLoading} />
+                    {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="phone" className="font-medium">Phone Number</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      required
-                      className="rounded-lg border border-[#f4ede7] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
-                    />
+                   <div>
+                    <label htmlFor="phone" className="sr-only">Phone</label>
+                    <Input id="phone" type="tel" placeholder="Phone Number" {...register("phone")} disabled={isLoading} />
+                    {errors.phone && <p className="text-destructive text-sm mt-1">{errors.phone.message}</p>}
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="subject" className="font-medium">Subject</label>
-                    <input
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      value={form.subject}
-                      onChange={handleChange}
-                      required
-                      className="rounded-lg border border-[#f4ede7] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
-                    />
+                   <div>
+                    <label htmlFor="subject" className="sr-only">Subject</label>
+                    <Input id="subject" placeholder="Subject" {...register("subject")} disabled={isLoading} />
+                    {errors.subject && <p className="text-destructive text-sm mt-1">{errors.subject.message}</p>}
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="message" className="font-medium">Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={form.message}
-                      onChange={handleChange}
-                      required
-                      rows={5}
-                      className="rounded-lg border border-[#f4ede7] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white resize-none"
-                    />
+                   <div>
+                    <label htmlFor="message" className="sr-only">Message</label>
+                    <Textarea id="message" placeholder="Your message..." rows={5} {...register("message")} disabled={isLoading} />
+                    {errors.message && <p className="text-destructive text-sm mt-1">{errors.message.message}</p>}
                   </div>
-                  <Button
-                    type="submit"
-                    className="mt-2 bg-[#f37c1b] hover:bg-orange-500 text-[#1c140d] font-bold rounded-lg px-6 py-3 text-lg shadow-lg transition-all"
-                  >
-                    Send Message
+                  <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                    {isLoading ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
-              )}
-            </div>
-            {/* Contact Info Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="text-center group bg-white/80 rounded-2xl p-6 shadow-md border border-[#f4ede7]">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <MapPin className="h-8 w-8 text-white" />
+              </CardContent>
+            </Card>
+
+            {/* Contact Info */}
+            <div className="space-y-8">
+              {contactInfo.map(({ icon: Icon, title, lines }) => (
+                <div key={title} className="flex items-start gap-6">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground mb-1">{title}</h3>
+                    <div className="text-muted-foreground">
+                      {lines.map(line => <p key={line}>{line}</p>)}
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold mb-3">Location</h3>
-                <p className="text-slate-700 leading-relaxed">Level 1 Ssebowa House, Plot 1 Ssekajja Road, Kayunga Central</p>
-              </div>
-              <div className="text-center group bg-white/80 rounded-2xl p-6 shadow-md border border-[#f4ede7]">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Phone className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-3">Phone</h3>
-                <p className="text-slate-700">+256-772-670-744</p>
-                <p className="text-slate-700">+256-700-304-407</p>
-              </div>
-              <div className="text-center group bg-white/80 rounded-2xl p-6 shadow-md border border-[#f4ede7]">
-                <div className="w-16 h-16 bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Mail className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-3">Email</h3>
-                <p className="text-slate-700">bhi@boosthealthinitiative.org</p>
-              </div>
-              <div className="text-center group bg-white/80 rounded-2xl p-6 shadow-md border border-[#f4ede7]">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-emerald-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Clock className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-3">Hours</h3>
-                <p className="text-slate-700">Open 24/7, All Days</p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 } 

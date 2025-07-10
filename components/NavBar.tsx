@@ -1,61 +1,66 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { SignInButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
+import { SignInButton, SignedIn, SignedOut } from '@clerk/nextjs';
 import BHIUserButton from './user-button';
+import { X, Menu } from 'lucide-react';
 
 export default function NavBar() {
   const [navOpen, setNavOpen] = useState(false);
-  const { user } = useUser();
+
+  useEffect(() => {
+    if (navOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    // Cleanup function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [navOpen]);
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 bg-[#fcfaf8]/95 backdrop-blur-sm border-b border-[#e6e2dc]">
-        <div className="flex items-center justify-between px-4 md:px-10 py-3">
-          {/* Mobile Nav - Logo + Hamburger */}
-          <div className="flex items-center md:hidden w-full justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="relative w-10 h-10">
-                <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
-              </div>
-              <span className="text-[#1c140d] text-lg font-bold">Boost Health Initiative</span>
-            </Link>
+      <header className="fixed top-0 left-0 w-full z-50 bg-background/90 backdrop-blur-sm border-b">
+        <div className="flex items-center justify-between px-4 md:px-10 py-3 max-w-7xl mx-auto">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <div className="relative w-10 h-10">
+              <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Boost Health Initiative Logo" fill className="object-contain" />
+            </div>
+            <span className="text-foreground text-lg md:text-xl font-bold">Boost Health Initiative</span>
+          </Link>
+          
+          {/* Mobile Nav - Hamburger */}
+          <div className="md:hidden">
             <button
               onClick={() => setNavOpen(!navOpen)}
               aria-label="Toggle navigation"
-              className="flex flex-col gap-1 p-2 z-50 relative"
+              aria-expanded={navOpen}
+              className="p-2"
             >
-              <span className={`w-6 h-0.5 bg-[#1c140d] rounded transition-all duration-300 ${navOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-[#1c140d] rounded transition-all duration-300 ${navOpen ? 'opacity-0' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-[#1c140d] rounded transition-all duration-300 ${navOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+              <Menu className="w-6 h-6 text-foreground" />
             </button>
           </div>
 
-          {/* Desktop Nav - Logo + Title */}
-          <Link href="/" className="hidden md:flex items-center gap-4">
-            <div className="relative w-10 h-10">
-              <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
-            </div>
-            <h1 className="text-[#1c140d] text-xl font-bold">Boost Health Initiative</h1>
-          </Link>
-
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-8 text-[#1c140d] font-medium text-sm">
-            <Link href="/" className="hover:text-[#f37c1b] transition-colors">Home</Link>
-            <Link href="/about" className="hover:text-[#f37c1b] transition-colors">About</Link>
-            <Link href="/services" className="hover:text-[#f37c1b] transition-colors">Services</Link>
-            <Link href="/programs" className="hover:text-[#f37c1b] transition-colors">Programs</Link>
-            <Link href="/gallery" className="hover:text-[#f37c1b] transition-colors">Gallery</Link>
-            <Link href="/news" className="hover:text-[#f37c1b] transition-colors">News</Link>
-            <Link href="/contact" className="hover:text-[#f37c1b] transition-colors">Contact</Link>
+          <nav className="hidden md:flex items-center gap-6 text-foreground font-medium text-sm">
+            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+            <Link href="/about" className="hover:text-primary transition-colors">About</Link>
+            <Link href="/services" className="hover:text-primary transition-colors">Services</Link>
+            <Link href="/programs" className="hover:text-primary transition-colors">Programs</Link>
+            <Link href="/gallery" className="hover:text-primary transition-colors">Gallery</Link>
+            <Link href="/news" className="hover:text-primary transition-colors">News</Link>
+            <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
             
             {/* Authentication Section */}
             <div className="ml-4 flex items-center gap-3">
               <SignedOut>
                 <SignInButton mode="modal" fallbackRedirectUrl="/">
-                  <button className="px-4 py-2 rounded-lg bg-[#f37c1b] text-white font-semibold hover:bg-orange-500 transition-all">
+                  <button className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
                     Become a Member
                   </button>
                 </SignInButton>
@@ -69,43 +74,44 @@ export default function NavBar() {
       </header>
 
       {/* Mobile Menu Overlay */}
-      {navOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setNavOpen(false)}
-          />
-          
-          {/* Mobile Menu Panel */}
-          <div className="absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transform transition-transform duration-300 ease-out">
+      <div 
+        className={`fixed inset-0 z-[100] md:hidden transition-opacity duration-300 ${navOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        aria-hidden={!navOpen}
+      >
+        {/* Backdrop */}
+        <div 
+          className="absolute inset-0 bg-black/60"
+          onClick={() => setNavOpen(false)}
+        />
+        
+        {/* Mobile Menu Panel */}
+        <div 
+          className={`absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-background shadow-2xl transform transition-transform duration-300 ease-in-out ${navOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mobile-menu-title"
+        >
             {/* Menu Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="relative w-8 h-8">
-                  <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" fill className="object-contain" />
-                </div>
-                <span className="text-[#1c140d] font-bold text-lg">BHI</span>
-              </div>
+            <div className="flex items-center justify-between p-4 border-b">
+              <span id="mobile-menu-title" className="text-foreground font-bold text-lg">Menu</span>
               <button
                 onClick={() => setNavOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-secondary rounded-full transition-colors"
+                aria-label="Close menu"
               >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-6 h-6 text-foreground" />
               </button>
             </div>
 
             {/* Menu Content */}
             <div className="flex flex-col h-full">
               {/* User Section */}
-              <div className="p-6 bg-gray-50 border-b border-gray-100">
+              <div className="p-4 bg-secondary/50 border-b">
                 <SignedOut>
                   <SignInButton mode="modal" fallbackRedirectUrl="/">
                     <button
                       onClick={() => setNavOpen(false)}
-                      className="w-full py-3 px-4 bg-[#f37c1b] text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
+                      className="w-full py-3 px-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors text-center"
                     >
                       Become a Member
                     </button>
@@ -118,62 +124,30 @@ export default function NavBar() {
 
               {/* Navigation Links */}
               <div className="flex-1 overflow-y-auto py-4">
-                <nav className="space-y-1 px-4">
-                  <Link
-                    href="/"
-                    onClick={() => setNavOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
-                  >
-                    <span className="font-medium">Home</span>
-                  </Link>
-                  <Link
-                    href="/about"
-                    onClick={() => setNavOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
-                  >
-                    <span className="font-medium">About</span>
-                  </Link>
-                  <Link
-                    href="/services"
-                    onClick={() => setNavOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
-                  >
-                    <span className="font-medium">Services</span>
-                  </Link>
-                  <Link
-                    href="/programs"
-                    onClick={() => setNavOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
-                  >
-                    <span className="font-medium">Programs</span>
-                  </Link>
-                  <Link
-                    href="/gallery"
-                    onClick={() => setNavOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
-                  >
-                    <span className="font-medium">Gallery</span>
-                  </Link>
-                  <Link
-                    href="/news"
-                    onClick={() => setNavOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
-                  >
-                    <span className="font-medium">News</span>
-                  </Link>
-                  <Link
-                    href="/contact"
-                    onClick={() => setNavOpen(false)}
-                    className="flex items-center px-4 py-3 text-gray-700 hover:bg-[#f37c1b]/10 hover:text-[#f37c1b] rounded-lg transition-colors"
-                  >
-                    <span className="font-medium">Contact</span>
-                  </Link>
+                <nav className="flex flex-col space-y-1 px-4">
+                  {[
+                    { href: "/", label: "Home" },
+                    { href: "/about", label: "About" },
+                    { href: "/services", label: "Services" },
+                    { href: "/programs", label: "Programs" },
+                    { href: "/gallery", label: "Gallery" },
+                    { href: "/news", label: "News" },
+                    { href: "/contact", label: "Contact" },
+                  ].map(({ href, label }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setNavOpen(false)}
+                      className="flex items-center px-4 py-3 text-foreground hover:bg-primary/10 hover:text-primary rounded-lg transition-colors text-lg"
+                    >
+                      {label}
+                    </Link>
+                  ))}
                 </nav>
               </div>
             </div>
-          </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

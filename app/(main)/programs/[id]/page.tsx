@@ -2,12 +2,15 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayer from "@/components/ui/video-player";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Calendar, MapPin, User, Phone, Mail, ArrowLeft, Clock, X, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useState, useEffect } from "react";
@@ -19,9 +22,54 @@ type MediaItem = {
   index: number;
 };
 
+const ProgramDetailsSkeleton = () => (
+    <div className="bg-background">
+      <header className="bg-card border-b py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+                <Skeleton className="h-6 w-32 rounded-md" />
+                <div className="flex items-center gap-2">
+                    <Skeleton className="h-6 w-20 rounded-md" />
+                    <Skeleton className="h-6 w-24 rounded-md" />
+                </div>
+            </div>
+        </div>
+      </header>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <Skeleton className="aspect-video w-full rounded-xl" />
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <CardContent className="p-6 space-y-4">
+                <Skeleton className="h-8 w-3/4 rounded-md" />
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-5/6 rounded-md" />
+              </CardContent>
+            </div>
+          </div>
+          <div className="space-y-6">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <CardContent className="p-6 space-y-4">
+                <Skeleton className="h-6 w-1/2 rounded-md" />
+                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-md" />
+              </CardContent>
+            </div>
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <CardContent className="p-6 space-y-4">
+                <Skeleton className="h-6 w-1/2 rounded-md" />
+                <Skeleton className="h-10 w-full rounded-md" />
+              </CardContent>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+);
+
 export default function ProgramDetailsPage() {
   const params = useParams();
-  const router = useRouter();
   const programId = params.id as Id<"programs">;
   
   const program = useQuery(api.programs.getProgramById, { id: programId });
@@ -56,6 +104,7 @@ export default function ProgramDetailsPage() {
     if (program) {
       setAllMedia(createMediaArray());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [program]);
 
   const openMediaModal = (media: MediaItem) => {
@@ -110,34 +159,27 @@ export default function ProgramDetailsPage() {
       document.removeEventListener('keydown', handleKeyPress);
       document.body.style.overflow = 'unset';
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMedia, allMedia]);
 
   if (program === undefined) {
-    return (
-      <div className="min-h-screen bg-[#fcfaf8] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f37c1b] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading program details...</p>
-        </div>
-      </div>
-    );
+    return <ProgramDetailsSkeleton />;
   }
 
   if (program === null) {
     return (
-      <div className="min-h-screen bg-[#fcfaf8] flex items-center justify-center">
+      <main className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-[#1c140d] mb-4">Program Not Found</h1>
-          <p className="text-gray-600 mb-6">The program you're looking for doesn't exist or has been removed.</p>
-          <Link 
-            href="/programs"
-            className="inline-flex items-center px-4 py-2 bg-[#f37c1b] text-white rounded-lg hover:bg-[#ff9d4d] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Programs
-          </Link>
+          <h1 className="text-2xl font-bold text-foreground mb-4">Program Not Found</h1>
+          <p className="text-muted-foreground mb-6">The program you're looking for doesn't exist or has been removed.</p>
+          <Button asChild>
+            <Link href="/programs">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Programs
+            </Link>
+          </Button>
         </div>
-      </div>
+      </main>
     );
   }
 
@@ -151,46 +193,49 @@ export default function ProgramDetailsPage() {
       case "completed":
         return "bg-gray-100 text-gray-700 border-gray-200";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return "bg-secondary text-secondary-foreground";
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfaf8]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <header className="bg-card border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <Link 
-              href="/programs"
-              className="inline-flex items-center text-[#f37c1b] hover:text-[#ff9d4d] transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Programs
-            </Link>
+            <Button variant="link" asChild className="p-0 h-auto">
+              <Link 
+                href="/programs"
+                className="inline-flex items-center text-primary hover:text-primary/90 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Back to Programs
+              </Link>
+            </Button>
             <div className="flex items-center gap-2">
               <Badge className={`${getStatusColor(program.status)} border`}>
                 {program.status}
               </Badge>
               {program.isFeatured && (
-                <Badge className="bg-[#f37c1b]/10 text-[#f37c1b] border border-[#f37c1b]/20">
+                <Badge variant="outline" className="border-primary/50 text-primary">
                   Featured
                 </Badge>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-8">
             {/* Hero Image */}
             {program.images && program.images.length > 0 && (
-              <div 
-                className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 cursor-pointer group"
+              <section 
+                aria-labelledby="program-hero"
+                className="relative aspect-video rounded-xl overflow-hidden bg-muted cursor-pointer group"
                 onClick={() => openMediaModal({ type: 'image', url: program.images![0], index: 0 })}
               >
                 <Image
@@ -209,7 +254,7 @@ export default function ProgramDetailsPage() {
                   </div>
                 </div>
                 <div className="absolute bottom-6 left-6 right-6">
-                  <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                  <h1 id="program-hero" className="text-3xl md:text-4xl font-bold text-white mb-2">
                     {program.name}
                   </h1>
                   {program.location && (
@@ -219,50 +264,49 @@ export default function ProgramDetailsPage() {
                     </div>
                   )}
                 </div>
-              </div>
+              </section>
             )}
 
             {/* Program Details */}
-            <Card>
+            <section aria-labelledby="program-details-heading" className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <CardContent className="p-6">
                 {!program.images?.length && (
-                  <h1 className="text-3xl md:text-4xl font-bold text-[#1c140d] mb-6">
+                  <h1 id="program-details-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-6">
                     {program.name}
                   </h1>
                 )}
                 
-                <div className="prose prose-lg max-w-none">
-                  <h2 className="text-xl font-semibold text-[#1c140d] mb-4">About This Program</h2>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                <div className="prose prose-lg max-w-none prose-stone dark:prose-invert">
+                  <h2 className="text-xl font-semibold text-foreground mb-4">About This Program</h2>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
                     {program.description}
                   </p>
                 </div>
 
                 {program.goal && (
-                  <div className="mt-6 p-4 bg-[#f37c1b]/5 rounded-lg border border-[#f37c1b]/10">
-                    <h3 className="font-semibold text-[#f37c1b] mb-2 flex items-center">
+                  <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
+                    <h3 className="font-semibold text-primary mb-2 flex items-center">
                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       Program Goal
                     </h3>
-                    <p className="text-gray-700">{program.goal}</p>
+                    <p className="text-muted-foreground">{program.goal}</p>
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </section>
 
             {/* Media Gallery - Combined Images and Videos */}
-            {((program.images && program.images.length > 1) || (program.videos && program.videos.length > 0)) && (
-              <Card>
+            {allMedia.length > (program.images?.length === 1 ? 0 : 1) && (
+              <section aria-labelledby="media-gallery-heading" className="rounded-lg border bg-card text-card-foreground shadow-sm">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold text-[#1c140d] mb-4">Media Gallery</h2>
+                  <h2 id="media-gallery-heading" className="text-xl font-semibold text-foreground mb-4">Media Gallery</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {/* Additional Images */}
                     {program.images && program.images.slice(1).map((image, index) => (
                       <div 
                         key={`image-${index}`} 
-                        className="relative aspect-video rounded-lg overflow-hidden cursor-pointer group"
+                        className="relative aspect-video rounded-lg overflow-hidden cursor-pointer group bg-muted"
                         onClick={() => openMediaModal({ type: 'image', url: image, index: index + 1 })}
                       >
                         <Image
@@ -281,44 +325,43 @@ export default function ProgramDetailsPage() {
                       </div>
                     ))}
                     
-                    {/* Videos */}
                     {program.videos && program.videos.map((video, index) => (
                       <div 
                         key={`video-${index}`} 
-                        className="relative aspect-video rounded-lg overflow-hidden cursor-pointer group"
+                        className="relative aspect-video rounded-lg overflow-hidden cursor-pointer group bg-muted"
                         onClick={() => openMediaModal({ type: 'video', url: video, index: (program.images?.length || 0) + index })}
                       >
                         <video
-                          src={video}
+                          src={`${video}#t=0.1`}
                           className="w-full h-full object-cover"
                           muted
+                          playsInline
+                          preload="metadata"
                         />
                         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
                           <div className="w-12 h-12 bg-white/80 rounded-full flex items-center justify-center group-hover:bg-white transition-colors duration-300">
-                            <Play className="w-6 h-6 text-[#f37c1b] ml-1" fill="currentColor" />
+                            <Play className="w-6 h-6 text-primary ml-1" fill="currentColor" />
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </CardContent>
-              </Card>
+              </section>
             )}
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Program Info */}
-            <Card>
+          <aside className="space-y-6">
+            <section aria-labelledby="program-info-heading" className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <CardContent className="p-6">
-                <h2 className="text-lg font-semibold text-[#1c140d] mb-4">Program Information</h2>
+                <h2 id="program-info-heading" className="text-lg font-semibold text-foreground mb-4">Program Information</h2>
                 <div className="space-y-4">
-                  {/* Start Date */}
                   <div className="flex items-start gap-3">
-                    <Calendar className="w-5 h-5 text-[#f37c1b] mt-0.5" />
+                    <Calendar className="w-5 h-5 text-primary mt-0.5" />
                     <div>
-                      <p className="font-medium text-gray-900">Start Date</p>
-                      <p className="text-gray-600">
+                      <p className="font-medium text-foreground">Start Date</p>
+                      <p className="text-muted-foreground">
                         {new Date(program.startDate).toLocaleDateString('en-US', {
                           weekday: 'long',
                           year: 'numeric',
@@ -326,19 +369,18 @@ export default function ProgramDetailsPage() {
                           day: 'numeric'
                         })}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground/80">
                         {formatDistanceToNow(new Date(program.startDate), { addSuffix: true })}
                       </p>
                     </div>
                   </div>
 
-                  {/* End Date */}
                   {program.endDate && (
                     <div className="flex items-start gap-3">
-                      <Clock className="w-5 h-5 text-[#f37c1b] mt-0.5" />
+                      <Clock className="w-5 h-5 text-primary mt-0.5" />
                       <div>
-                        <p className="font-medium text-gray-900">End Date</p>
-                        <p className="text-gray-600">
+                        <p className="font-medium text-foreground">End Date</p>
+                        <p className="text-muted-foreground">
                           {new Date(program.endDate).toLocaleDateString('en-US', {
                             weekday: 'long',
                             year: 'numeric',
@@ -350,44 +392,42 @@ export default function ProgramDetailsPage() {
                     </div>
                   )}
 
-                  {/* Location */}
                   {program.location && (
                     <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 text-[#f37c1b] mt-0.5" />
+                      <MapPin className="w-5 h-5 text-primary mt-0.5" />
                       <div>
-                        <p className="font-medium text-gray-900">Location</p>
-                        <p className="text-gray-600">{program.location}</p>
+                        <p className="font-medium text-foreground">Location</p>
+                        <p className="text-muted-foreground">{program.location}</p>
                       </div>
                     </div>
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </section>
 
-            {/* Contact Information */}
             {(program.contactPerson || program.contactEmail || program.contactPhone) && (
-              <Card>
+              <section aria-labelledby="contact-info-heading" className="rounded-lg border bg-card text-card-foreground shadow-sm">
                 <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold text-[#1c140d] mb-4">Contact Information</h2>
+                  <h2 id="contact-info-heading" className="text-lg font-semibold text-foreground mb-4">Contact Information</h2>
                   <div className="space-y-4">
                     {program.contactPerson && (
                       <div className="flex items-start gap-3">
-                        <User className="w-5 h-5 text-[#f37c1b] mt-0.5" />
+                        <User className="w-5 h-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium text-gray-900">Contact Person</p>
-                          <p className="text-gray-600">{program.contactPerson}</p>
+                          <p className="font-medium text-foreground">Contact Person</p>
+                          <p className="text-muted-foreground">{program.contactPerson}</p>
                         </div>
                       </div>
                     )}
 
                     {program.contactEmail && (
                       <div className="flex items-start gap-3">
-                        <Mail className="w-5 h-5 text-[#f37c1b] mt-0.5" />
+                        <Mail className="w-5 h-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium text-gray-900">Email</p>
+                          <p className="font-medium text-foreground">Email</p>
                           <a 
                             href={`mailto:${program.contactEmail}`}
-                            className="text-[#f37c1b] hover:text-[#ff9d4d] transition-colors"
+                            className="text-primary hover:text-primary/90 transition-colors"
                           >
                             {program.contactEmail}
                           </a>
@@ -397,12 +437,12 @@ export default function ProgramDetailsPage() {
 
                     {program.contactPhone && (
                       <div className="flex items-start gap-3">
-                        <Phone className="w-5 h-5 text-[#f37c1b] mt-0.5" />
+                        <Phone className="w-5 h-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium text-gray-900">Phone</p>
+                          <p className="font-medium text-foreground">Phone</p>
                           <a 
                             href={`tel:${program.contactPhone}`}
-                            className="text-[#f37c1b] hover:text-[#ff9d4d] transition-colors"
+                            className="text-primary hover:text-primary/90 transition-colors"
                           >
                             {program.contactPhone}
                           </a>
@@ -411,108 +451,81 @@ export default function ProgramDetailsPage() {
                     )}
                   </div>
                 </CardContent>
-              </Card>
+              </section>
             )}
 
-            {/* Tags */}
             {program.tags && program.tags.length > 0 && (
-              <Card>
+              <section aria-labelledby="tags-heading" className="rounded-lg border bg-card text-card-foreground shadow-sm">
                 <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold text-[#1c140d] mb-4">Tags</h2>
+                  <h2 id="tags-heading" className="text-lg font-semibold text-foreground mb-4">Tags</h2>
                   <div className="flex flex-wrap gap-2">
                     {program.tags.map((tag, index) => (
                       <Badge 
                         key={index}
-                        className="bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                        variant="secondary"
                       >
                         {tag}
                       </Badge>
                     ))}
                   </div>
                 </CardContent>
-              </Card>
+              </section>
             )}
 
-            {/* Call to Action */}
-            <Card className="bg-gradient-to-br from-[#f37c1b]/5 to-[#ff9d4d]/5 border-[#f37c1b]/20">
+            <section className="rounded-lg border text-card-foreground shadow-sm bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
               <CardContent className="p-6 text-center">
-                <h2 className="text-lg font-semibold text-[#1c140d] mb-2">Interested in This Program?</h2>
-                <p className="text-gray-600 mb-4">Get in touch to learn more or participate.</p>
-                <Link 
-                  href="/contact"
-                  className="inline-flex items-center px-4 py-2 bg-[#f37c1b] text-white rounded-lg hover:bg-[#ff9d4d] transition-colors"
-                >
-                  Contact Us
-                </Link>
+                <h2 className="text-lg font-semibold text-foreground mb-2">Interested in This Program?</h2>
+                <p className="text-muted-foreground mb-4">Get in touch to learn more or participate.</p>
+                <Button asChild>
+                  <Link href="/contact">
+                    Contact Us
+                  </Link>
+                </Button>
               </CardContent>
-            </Card>
-          </div>
+            </section>
+          </aside>
         </div>
-      </div>
+      </main>
 
       {/* Media Modal */}
-      {selectedMedia && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
-          <div className="relative w-full h-full flex items-center justify-center p-4">
-            {/* Close Button */}
-            <button
-              onClick={closeMediaModal}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
-
-            {/* Navigation Buttons */}
-            {allMedia.length > 1 && (
-              <>
-                <button
-                  onClick={() => navigateMedia('prev')}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6 text-white" />
-                </button>
-                <button
-                  onClick={() => navigateMedia('next')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6 text-white" />
-                </button>
-              </>
-            )}
-
-            {/* Media Content */}
-            <div className="max-w-5xl max-h-[90vh] w-full h-full flex items-center justify-center">
-              {selectedMedia.type === 'image' ? (
-                <div className="relative w-full h-full">
-                  <Image
-                    src={selectedMedia.url}
-                    alt={`${program.name} - Media`}
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <VideoPlayer
-                    src={selectedMedia.url}
-                    className="max-w-full max-h-full"
-                    controls={true}
-                    autoPlay={true}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Media Counter */}
-            {allMedia.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                {allMedia.findIndex(item => item.type === selectedMedia.type && item.url === selectedMedia.url) + 1} / {allMedia.length}
+      <Dialog open={!!selectedMedia} onOpenChange={(isOpen) => !isOpen && setSelectedMedia(null)}>
+        <DialogContent className="max-w-5xl w-full h-[90vh] flex flex-col p-0 !gap-0">
+          {selectedMedia && (
+            <>
+              <DialogHeader className="p-4 border-b shrink-0">
+                <DialogTitle>{program.name}</DialogTitle>
+                <DialogDescription>
+                  Media {allMedia.findIndex(item => item.url === selectedMedia.url) + 1} of {allMedia.length}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex-1 relative bg-black/10 dark:bg-black/50">
+                {selectedMedia.type === 'image' ? (
+                  <Image src={selectedMedia.url} alt={program.name} fill className="object-contain" />
+                ) : (
+                  <VideoPlayer src={selectedMedia.url} className="w-full h-full object-contain" autoPlay controls />
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
+              
+              {allMedia.length > 1 && (
+                <>
+                  <Button onClick={() => navigateMedia('prev')} variant="outline" size="icon" className="absolute z-10 left-2 top-1/2 -translate-y-1/2 md:left-4 bg-black/30 text-white border-white/20 hover:bg-black/50 hover:text-white">
+                    <ChevronLeft className="w-6 h-6" />
+                    <span className="sr-only">Previous</span>
+                  </Button>
+                  <Button onClick={() => navigateMedia('next')} variant="outline" size="icon" className="absolute z-10 right-2 top-1/2 -translate-y-1/2 md:right-4 bg-black/30 text-white border-white/20 hover:bg-black/50 hover:text-white">
+                    <ChevronRight className="w-6 h-6" />
+                    <span className="sr-only">Next</span>
+                  </Button>
+                </>
+              )}
+              <Button onClick={() => setSelectedMedia(null)} variant="outline" size="icon" className="absolute z-10 top-2 right-2 bg-black/30 text-white border-white/20 hover:bg-black/50 hover:text-white">
+                <X className="w-6 h-6" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 

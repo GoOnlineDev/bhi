@@ -1,11 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import VideoPlayer from "@/components/ui/video-player";
 import { 
   Camera, 
@@ -13,14 +17,11 @@ import {
   X, 
   ChevronLeft, 
   ChevronRight, 
-  Play, 
-  Filter,
   Grid3X3,
   List,
-  Calendar,
-  MapPin,
-  Eye
+  Search
 } from "lucide-react";
+import { format } from "date-fns";
 
 type MediaItem = {
   _id: string;
@@ -31,507 +32,224 @@ type MediaItem = {
   description: string;
   category: string;
   date: number;
-  location?: string;
   tags: string[];
 };
 
-// Sample gallery data - in a real app, this would come from a database/API
-// const galleryData: MediaItem[] = [
-//   ... (commenting out static data)
-// ];
-
 const categories = [
-  "All",
-  "Maternal Health",
-  "Education",
-  "Mental Health",
-  "Clinical Services",
-  "Laboratory",
-  "Facilities",
-  "Community Outreach",
-  "Youth Services",
-  "Nursing",
-  "Environmental Health",
-  "Training"
+  "All", "Maternal Health", "Education", "Mental Health", "Clinical Services", 
+  "Community Outreach", "Youth Services", "Facilities"
 ];
 
 export default function GalleryPage() {
+  const allMedia = useQuery(api.gallery.getPublishedGallery);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [mediaType, setMediaType] = useState<"all" | "images" | "videos">("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchQuery, setSearchQuery] = useState("");
+  const isLoading = allMedia === undefined;
 
-  // Query gallery data from database
-  const galleryData = useQuery(api.gallery.getPublishedGallery);
-  const galleryStats = useQuery(api.gallery.getGalleryStats);
+  const convertedMedia: MediaItem[] = useMemo(() => {
+    if (!allMedia) return [];
+    return allMedia
+      .filter(item => item.type && item.url && item.title && item.description && item.category && item.date)
+      .map(item => ({
+        _id: item._id,
+        type: item.type as 'image' | 'video',
+        url: item.url!,
+        thumbnail: item.thumbnail,
+        title: item.title!,
+        description: item.description!,
+        category: item.category!,
+        date: item.date!,
+        tags: item.tags || [],
+      }));
+  }, [allMedia]);
 
-  // Convert database data to MediaItem format
-  const convertedGalleryData: MediaItem[] = (galleryData || [])
-    .filter(item => item.type && item.url && item.title && item.description && item.category && item.date)
-    .map(item => ({
-      _id: item._id,
-      type: item.type as 'image' | 'video',
-      url: item.url!,
-      thumbnail: item.thumbnail,
-      title: item.title!,
-      description: item.description!,
-      category: item.category!,
-      date: item.date!,
-      location: item.location,
-      tags: item.tags || [],
-    }));
-
-  const [filteredMedia, setFilteredMedia] = useState<MediaItem[]>([]);
-
-  // Filter media based on category and type
-  useEffect(() => {
-    let filtered = convertedGalleryData;
-
-    // Filter by category
-    if (activeCategory !== "All") {
-      filtered = filtered.filter(item => item.category === activeCategory);
-    }
-
-    // Filter by media type
-    if (mediaType === "images") {
-      filtered = filtered.filter(item => item.type === "image");
-    } else if (mediaType === "videos") {
-      filtered = filtered.filter(item => item.type === "video");
-    }
-
-    setFilteredMedia(filtered);
-  }, [activeCategory, mediaType, convertedGalleryData]);
-
-  const openMediaModal = (media: MediaItem) => {
-    setSelectedMedia(media);
-  };
-
-  const closeMediaModal = () => {
-    setSelectedMedia(null);
-  };
+  const filteredMedia = useMemo(() => {
+    return convertedMedia.filter(item => {
+      const categoryMatch = activeCategory === "All" || item.category === activeCategory;
+      const typeMatch = mediaType === "all" || (mediaType === "images" && item.type === "image") || (mediaType === "videos" && item.type === "video");
+      const searchMatch = searchQuery === "" || item.title.toLowerCase().includes(searchQuery.toLowerCase()) || item.description.toLowerCase().includes(searchQuery.toLowerCase()) || (item.tags && item.tags.join(" ").toLowerCase().includes(searchQuery.toLowerCase()));
+      return categoryMatch && typeMatch && searchMatch;
+    });
+  }, [convertedMedia, activeCategory, mediaType, searchQuery]);
 
   const navigateMedia = (direction: 'prev' | 'next') => {
     if (!selectedMedia) return;
-    
     const currentIndex = filteredMedia.findIndex(item => item._id === selectedMedia._id);
-    let newIndex;
-    
-    if (direction === 'prev') {
-      newIndex = currentIndex > 0 ? currentIndex - 1 : filteredMedia.length - 1;
-    } else {
-      newIndex = currentIndex < filteredMedia.length - 1 ? currentIndex + 1 : 0;
-    }
-    
+    const newIndex = direction === 'prev' 
+      ? (currentIndex - 1 + filteredMedia.length) % filteredMedia.length
+      : (currentIndex + 1) % filteredMedia.length;
     setSelectedMedia(filteredMedia[newIndex]);
   };
 
-  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (!selectedMedia) return;
-      
-      switch (e.key) {
-        case 'Escape':
-          closeMediaModal();
-          break;
-        case 'ArrowLeft':
-          navigateMedia('prev');
-          break;
-        case 'ArrowRight':
-          navigateMedia('next');
-          break;
+      if (selectedMedia) {
+        if (e.key === 'ArrowLeft') navigateMedia('prev');
+        if (e.key === 'ArrowRight') navigateMedia('next');
       }
     };
-
-    if (selectedMedia) {
-      document.addEventListener('keydown', handleKeyPress);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-      document.body.style.overflow = 'unset';
-    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
   }, [selectedMedia, filteredMedia]);
 
-  // Show loading state
-  if (!galleryData) {
-    return (
-      <div className="min-h-screen bg-[#fcfaf8] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[#f37c1b] rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Camera className="w-8 h-8 text-white" />
-          </div>
-          <p className="text-gray-600">Loading gallery...</p>
-        </div>
-      </div>
-    );
-  }
+  const renderMediaContent = (item: MediaItem) => {
+    if (item.type === 'video') {
+      return <VideoPlayer src={item.url} className="w-full h-full object-contain" autoPlay controls />;
+    }
+    return <Image src={item.url} alt={item.title} fill className="object-contain" />;
+  };
 
   return (
-    <div className="min-h-screen bg-[#fcfaf8]">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-[#f37c1b] to-[#ff9d4d] text-white">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
-            <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-white text-sm font-semibold mb-6">
+    <main>
+       {/* Hero Section */}
+      <section id="gallery-hero" aria-labelledby="gallery-hero-heading" className="bg-background">
+        <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
+            <Badge variant="outline" className="mb-6">
               <Camera className="w-4 h-4 mr-2" />
               Our Gallery
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Capturing Our Impact
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-              Explore our photo and video gallery showcasing the transformative work of 
-              Boost Health Initiative across Uganda's communities.
+            </Badge>
+            <h1 id="gallery-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">Capturing Our Impact</h1>
+            <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+              Explore our photo and video gallery showcasing the transformative work of Boost Health Initiative across Uganda.
             </p>
-          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Filters and Controls */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-8">
-          {/* Category Filters */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  activeCategory === category
-                    ? "bg-[#f37c1b] text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
+      {/* Gallery Section */}
+      <section id="gallery-grid" aria-labelledby="gallery-grid-heading" className="bg-secondary">
+        <div className="container mx-auto px-4 py-16 sm:py-24">
           {/* Controls */}
-          <div className="flex items-center gap-4">
-            {/* Media Type Filter */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setMediaType("all")}
-                className={`p-2 rounded-lg transition-colors ${
-                  mediaType === "all" ? "bg-[#f37c1b] text-white" : "bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <Filter className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setMediaType("images")}
-                className={`p-2 rounded-lg transition-colors ${
-                  mediaType === "images" ? "bg-[#f37c1b] text-white" : "bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <Camera className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setMediaType("videos")}
-                className={`p-2 rounded-lg transition-colors ${
-                  mediaType === "videos" ? "bg-[#f37c1b] text-white" : "bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <Video className="w-4 h-4" />
-              </button>
+          <div className="mb-12 space-y-8">
+            <div className="flex flex-col md:flex-row gap-4 justify-center">
+              <div className="relative w-full md:w-auto md:flex-1 max-w-lg">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input type="text" placeholder="Search by title or tag..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10"/>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant={mediaType === 'all' ? 'default' : 'outline'} onClick={() => setMediaType('all')}>All</Button>
+                <Button variant={mediaType === 'images' ? 'default' : 'outline'} onClick={() => setMediaType('images')}><Camera className="w-4 h-4 mr-2"/>Images</Button>
+                <Button variant={mediaType === 'videos' ? 'default' : 'outline'} onClick={() => setMediaType('videos')}><Video className="w-4 h-4 mr-2"/>Videos</Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant={viewMode === 'grid' ? 'default' : 'outline'} size="icon" onClick={() => setViewMode('grid')}><Grid3X3 className="w-4 h-4"/></Button>
+                <Button variant={viewMode === 'list' ? 'default' : 'outline'} size="icon" onClick={() => setViewMode('list')}><List className="w-4 h-4"/></Button>
+              </div>
             </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === "grid" ? "bg-[#f37c1b] text-white" : "bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <Grid3X3 className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === "list" ? "bg-[#f37c1b] text-white" : "bg-white text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <List className="w-4 h-4" />
-              </button>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {categories.map(cat => (
+                <Button key={cat} variant={activeCategory === cat ? 'default' : 'outline'} size="sm" onClick={() => setActiveCategory(cat)}>
+                  {cat}
+                </Button>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Results Count */}
-        <div className="mb-6">
-          <p className="text-gray-600">
-            Showing {filteredMedia.length} {filteredMedia.length === 1 ? 'item' : 'items'}
-            {activeCategory !== "All" && ` in ${activeCategory}`}
-            {mediaType !== "all" && ` (${mediaType})`}
-          </p>
-        </div>
-
-        {/* Gallery Grid */}
-        {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredMedia.map((item) => (
-              <Card
-                key={item._id}
-                className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
-                onClick={() => openMediaModal(item)}
-              >
-                <div className="relative aspect-square">
-                  {item.type === "image" ? (
-                    <Image
-                      src={item.url}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <>
-                      <Image
-                        src={item.thumbnail || item.url}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-white/80 rounded-full flex items-center justify-center group-hover:bg-white transition-colors duration-300">
-                          <Play className="w-8 h-8 text-[#f37c1b] ml-1" fill="currentColor" />
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  <div className="absolute top-3 left-3">
-                    <Badge className="bg-[#f37c1b]/90 text-white">
-                      {item.category}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-3 right-3">
-                    {item.type === "video" ? (
-                      <Video className="w-5 h-5 text-white" />
-                    ) : (
-                      <Camera className="w-5 h-5 text-white" />
-                    )}
-                  </div>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
-                    <div className="w-12 h-12 bg-white/0 group-hover:bg-white/20 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <Eye className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-[#1c140d] mb-2 line-clamp-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {item.description}
-                  </p>
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      <span>{new Date(item.date).toLocaleDateString()}</span>
-                    </div>
-                    {item.location && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        <span className="truncate">{item.location}</span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          /* List View */
-          <div className="space-y-4">
-            {filteredMedia.map((item) => (
-              <Card
-                key={item._id}
-                className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden"
-                onClick={() => openMediaModal(item)}
-              >
-                <div className="flex items-center gap-6 p-6">
-                  <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
-                    {item.type === "image" ? (
-                      <Image
-                        src={item.url}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <>
-                        <Image
-                          src={item.thumbnail || item.url}
-                          alt={item.title}
-                          fill
-                          className="object-cover"
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+               {[...Array(8)].map((_, i) => <Skeleton key={i} className="aspect-square rounded-lg" />)}
+            </div>
+          ) : filteredMedia.length > 0 ? (
+            viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredMedia.map(item => (
+                  <Card key={item._id} onClick={() => setSelectedMedia(item)} className="cursor-pointer group overflow-hidden">
+                    <div className="relative aspect-square bg-muted">
+                      {item.type === 'image' ? (
+                        <Image src={item.thumbnail || item.url} alt={item.title} fill className="object-cover group-hover:scale-110 transition-transform duration-300"/>
+                      ) : (
+                        <video
+                            src={`${item.url}#t=0.1`}
+                            className="w-full h-full object-cover"
+                            muted
+                            playsInline
+                            preload="metadata"
                         />
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                          <Play className="w-6 h-6 text-white" fill="currentColor" />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-[#1c140d] mb-2 group-hover:text-[#f37c1b] transition-colors">
-                          {item.title}
-                        </h3>
-                        <p className="text-gray-600 mb-3 line-clamp-2">
-                          {item.description}
-                        </p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <Badge variant="outline">{item.category}</Badge>
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{new Date(item.date).toLocaleDateString()}</span>
-                          </div>
-                          {item.location && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              <span>{item.location}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {item.type === "video" ? (
-                          <Video className="w-5 h-5 text-[#f37c1b]" />
-                        ) : (
-                          <Camera className="w-5 h-5 text-[#f37c1b]" />
-                        )}
-                        <Eye className="w-5 h-5 text-gray-400 group-hover:text-[#f37c1b] transition-colors" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* No Results */}
-        {filteredMedia.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Camera className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No media found</h3>
-            <p className="text-gray-600 mb-6">
-              Try adjusting your filters to see more content.
-            </p>
-            <button
-              onClick={() => {
-                setActiveCategory("All");
-                setMediaType("all");
-              }}
-              className="px-4 py-2 bg-[#f37c1b] text-white rounded-lg hover:bg-[#ff9d4d] transition-colors"
-            >
-              Clear Filters
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Media Modal */}
-      {selectedMedia && (
-        <div className="fixed inset-0 z-[90] bg-black/90 flex items-center justify-center">
-          <div className="relative w-full h-full flex items-center justify-center p-4">
-            {/* Close Button */}
-            <button
-              onClick={closeMediaModal}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
-
-            {/* Navigation Buttons */}
-            {filteredMedia.length > 1 && (
-              <>
-                <button
-                  onClick={() => navigateMedia('prev')}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6 text-white" />
-                </button>
-                <button
-                  onClick={() => navigateMedia('next')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6 text-white" />
-                </button>
-              </>
-            )}
-
-            {/* Media Content */}
-            <div className="max-w-5xl max-h-[90vh] w-full h-full flex flex-col items-center justify-center">
-              <div className="flex-1 flex items-center justify-center w-full">
-                {selectedMedia.type === "image" ? (
-                  <div className="relative w-full h-full max-w-4xl max-h-[80vh]">
-                    <Image
-                      src={selectedMedia.url}
-                      alt={selectedMedia.title}
-                      fill
-                      className="object-contain"
-                      priority
-                    />
-                  </div>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center max-w-4xl max-h-[80vh]">
-                    <VideoPlayer
-                      src={selectedMedia.url}
-                      className="max-w-full max-h-full"
-                      controls={true}
-                      autoPlay={true}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Media Info */}
-              <div className="w-full max-w-4xl bg-black/50 backdrop-blur-sm rounded-lg p-6 mt-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <h2 className="text-xl font-bold text-white mb-2">
-                      {selectedMedia.title}
-                    </h2>
-                    <p className="text-white/80 mb-4">
-                      {selectedMedia.description}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-white/60">
-                      <Badge className="bg-[#f37c1b]">
-                        {selectedMedia.category}
-                      </Badge>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>{new Date(selectedMedia.date).toLocaleDateString()}</span>
-                      </div>
-                      {selectedMedia.location && (
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          <span>{selectedMedia.location}</span>
-                        </div>
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h3 className="text-white font-semibold line-clamp-2">{item.title}</h3>
+                      </div>
+                      {item.type === 'video' && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-white opacity-75 group-hover:opacity-100 transition-opacity"><Video className="w-6 h-6"/></div>}
                     </div>
-                  </div>
-                </div>
+                  </Card>
+                ))}
               </div>
+            ) : (
+              <div className="space-y-4 max-w-4xl mx-auto">
+                {filteredMedia.map(item => (
+                   <Card key={item._id} onClick={() => setSelectedMedia(item)} className="cursor-pointer group overflow-hidden flex flex-col md:flex-row">
+                     <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0 bg-muted">
+                        {item.type === 'image' ? (
+                          <Image src={item.thumbnail || item.url} alt={item.title} fill className="object-cover"/>
+                        ) : (
+                          <video
+                              src={`${item.url}#t=0.1`}
+                              className="w-full h-full object-cover"
+                              muted
+                              playsInline
+                              preload="metadata"
+                          />
+                        )}
+                        {item.type === 'video' && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-white opacity-75 group-hover:opacity-100 transition-opacity"><Video className="w-6 h-6"/></div>}
+                      </div>
+                     <CardContent className="p-6">
+                        <Badge className="mb-2">{item.category}</Badge>
+                        <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{item.description}</p>
+                        <p className="text-xs text-muted-foreground">{format(new Date(item.date), 'MMMM dd, yyyy')}</p>
+                     </CardContent>
+                   </Card>
+                ))}
+              </div>
+            )
+          ) : (
+            <div className="text-center py-16">
+              <h3 className="text-2xl font-semibold text-foreground mb-2">No Media Found</h3>
+              <p className="text-muted-foreground">
+                Try adjusting your filters to find what you're looking for.
+              </p>
             </div>
-
-            {/* Media Counter */}
-            {filteredMedia.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                {filteredMedia.findIndex(item => item._id === selectedMedia._id) + 1} / {filteredMedia.length}
-              </div>
-            )}
-          </div>
+          )}
         </div>
-      )}
-    </div>
+      </section>
+
+      <Dialog open={!!selectedMedia} onOpenChange={(isOpen) => !isOpen && setSelectedMedia(null)}>
+        <DialogContent className="max-w-5xl w-full h-[90vh] flex flex-col p-0 !gap-0">
+          {selectedMedia && (
+            <>
+              <DialogHeader className="p-4 border-b shrink-0">
+                <DialogTitle>{selectedMedia.title}</DialogTitle>
+                <DialogDescription>
+                  {selectedMedia.description}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex-1 relative bg-black/10 dark:bg-black/50">
+                {renderMediaContent(selectedMedia)}
+              </div>
+              
+              {filteredMedia.length > 1 && (
+                <>
+                  <Button onClick={() => navigateMedia('prev')} variant="outline" size="icon" className="absolute z-10 left-2 top-1/2 -translate-y-1/2 md:left-4 bg-black/30 text-white border-white/20 hover:bg-black/50 hover:text-white">
+                    <ChevronLeft className="w-6 h-6" />
+                    <span className="sr-only">Previous</span>
+                  </Button>
+                  <Button onClick={() => navigateMedia('next')} variant="outline" size="icon" className="absolute z-10 right-2 top-1/2 -translate-y-1/2 md:right-4 bg-black/30 text-white border-white/20 hover:bg-black/50 hover:text-white">
+                    <ChevronRight className="w-6 h-6" />
+                    <span className="sr-only">Next</span>
+                  </Button>
+                </>
+              )}
+              <Button onClick={() => setSelectedMedia(null)} variant="outline" size="icon" className="absolute z-10 top-2 right-2 bg-black/30 text-white border-white/20 hover:bg-black/50 hover:text-white">
+                <X className="w-6 h-6" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </main>
   );
 } 
