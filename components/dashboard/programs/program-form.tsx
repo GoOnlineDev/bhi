@@ -123,7 +123,7 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
                 toast({ title: "Upload complete" });
               }
             }}
-            onUploadError={(error: Error) => toast({ title: "Upload failed", description: error.message, variant: "destructive" })}
+
           />
            <div className="mt-2 space-y-2">
             {formData.images.map((url, index) => (
