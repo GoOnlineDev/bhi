@@ -15,34 +15,35 @@ export default function DashboardHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
         <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="shrink-0 md:hidden"
-          >
+          <Button size="icon" variant="outline" className="sm:hidden">
             <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle navigation menu</span>
+            <span className="sr-only">Toggle Menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="flex flex-col">
-          <nav className="grid gap-2 text-lg font-medium">
+        <SheetContent side="left" className="sm:max-w-xs">
+          <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/"
-              className="flex items-center gap-2 text-lg font-semibold mb-4"
+              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
-              <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" width={32} height={32} />
-              <span>BHI Dashboard</span>
+              <Image 
+                src="/BOOST HEALTH PNG LOGO ICON Bckg WHTE.png" 
+                alt="BHI Logo"
+                width={24}
+                height={24}
+              />
+              <span className="sr-only">BHI</span>
             </Link>
             {navLinks.map(({ href, label, icon: Icon }) => (
               <Link
                 key={label}
                 href={href}
                 className={cn(
-                  "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
-                  { "bg-muted text-foreground": pathname === href }
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  { "text-foreground": pathname === href }
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -53,11 +54,11 @@ export default function DashboardHeader() {
         </SheetContent>
       </Sheet>
 
-      <div className="w-full flex-1">
+      <div className="relative ml-auto flex-1 md:grow-0">
         {/* Can add a search bar here later */}
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="relative ml-auto flex-1 md:grow-0">
         <SignedIn>
           <BHIUserButton />
         </SignedIn>

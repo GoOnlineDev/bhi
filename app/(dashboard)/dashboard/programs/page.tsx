@@ -40,7 +40,7 @@ export default function DashboardProgramsPage() {
 
   return (
     <Tabs defaultValue="all">
-      <div className="flex items-center">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <TabsList>
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="approved">Approved</TabsTrigger>
@@ -56,7 +56,7 @@ export default function DashboardProgramsPage() {
                 </span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[825px]">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add Program</DialogTitle>
                 <DialogDescription>

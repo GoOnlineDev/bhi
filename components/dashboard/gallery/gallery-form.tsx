@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UploadButton } from "@/utils/uploadthing";
+import { UploadDropzone } from "@/utils/uploadthing";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Doc } from "@/convex/_generated/dataModel";
+import Image from "next/image";
+import { X, Video } from "lucide-react";
 
 const categories = [
   "Maternal Health", "Education", "Mental Health", "Clinical Services", 
@@ -94,9 +96,13 @@ export function GalleryForm({ setOpen, initialData }: GalleryFormProps) {
       });
     }
   };
+
+  const handleRemoveMedia = () => {
+    setFormData(prev => ({ ...prev, url: "", type: "image" }));
+  };
   
   return (
-    <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto p-4">
+    <div className="grid gap-4 py-4 p-4">
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="title" className="text-right">
           Title
@@ -135,13 +141,37 @@ export function GalleryForm({ setOpen, initialData }: GalleryFormProps) {
           </SelectContent>
         </Select>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label className="text-right">
-          Media
-        </Label>
-        <div className="col-span-3">
-          <UploadButton
-            className="ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90"
+      
+      <div className="grid grid-cols-1 gap-2">
+        <Label>Media</Label>
+        {formData.url ? (
+          <div className="relative group w-full h-64">
+            {formData.type === 'image' ? (
+              <Image
+                src={formData.url}
+                alt={formData.title}
+                fill
+                className="object-contain rounded-md border"
+              />
+            ) : (
+              <video
+                src={formData.url}
+                controls
+                className="w-full h-full object-contain rounded-md border bg-black"
+              />
+            )}
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={handleRemoveMedia}
+              className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Remove media</span>
+            </Button>
+          </div>
+        ) : (
+          <UploadDropzone
             endpoint="galleryMediaUploader"
             onClientUploadComplete={(res) => {
               if (res?.[0]) {
@@ -153,14 +183,11 @@ export function GalleryForm({ setOpen, initialData }: GalleryFormProps) {
             onUploadError={(error: Error) => {
               toast({ title: "Upload failed", description: error.message, variant: "destructive" });
             }}
+            className="ut-label:text-primary ut-upload-icon:text-primary/80 ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90"
           />
-          {formData.url && (
-            <div className="mt-2 text-xs text-muted-foreground truncate">
-              Current URL: {formData.url}
-            </div>
-          )}
-        </div>
+        )}
       </div>
+
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="isPublished" className="text-right">
           Publish

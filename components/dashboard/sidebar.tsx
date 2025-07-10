@@ -9,6 +9,12 @@ import {
   HeartPulse,
   Image as ImageIcon,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Image from "next/image";
 
 export const navLinks = [
@@ -22,34 +28,40 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="hidden border-r bg-background md:block">
-      <div className="flex h-full max-h-screen flex-col gap-2">
-        <div className="flex h-16 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Logo" width={32} height={32} className="object-contain" />
-            <span className="">BHI</span>
-          </Link>
-        </div>
-        <div className="flex-1">
-          <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            {navLinks.map(({ href, label, icon: Icon }) => (
-              <Link
-                key={label}
-                href={href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                  {
-                    "bg-muted text-primary": pathname === href,
-                  }
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
-    </div>
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+        <Link
+          href="/"
+          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full    text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+        >
+          <Image 
+            src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" 
+            alt="BHI Logo"
+            width={20}
+            height={20}
+          />
+          <span className="sr-only">BHI</span>
+        </Link>
+        <TooltipProvider>
+          {navLinks.map(({ href, label, icon: Icon }) => (
+            <Tooltip key={label}>
+              <TooltipTrigger asChild>
+                <Link
+                  href={href}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
+                    { "bg-accent text-accent-foreground": pathname === href }
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="sr-only">{label}</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">{label}</TooltipContent>
+            </Tooltip>
+          ))}
+        </TooltipProvider>
+      </nav>
+    </aside>
   );
 }
