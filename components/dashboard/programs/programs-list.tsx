@@ -96,75 +96,77 @@ export function ProgramsList({ items }: ProgramsListProps) {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="hidden w-[100px] sm:table-cell">
-              <span className="sr-only">Image</span>
-            </TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Approval</TableHead>
-            <TableHead className="hidden md:table-cell">Created at</TableHead>
-            <TableHead>
-              <span className="sr-only">Actions</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {items.map((item) => (
-            <TableRow key={item._id}>
-              <TableCell className="hidden sm:table-cell">
-                {item.images && item.images[0] ? (
-                  <Image
-                    alt={item.name}
-                    className="aspect-square rounded-md object-cover"
-                    height="64"
-                    src={item.images[0]}
-                    width="64"
-                  />
-                ) : (
-                  <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
-                    <HeartPulse className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                )}
-              </TableCell>
-              <TableCell className="font-medium">{item.name}</TableCell>
-              <TableCell>
-                <Badge variant="outline">{item.status}</Badge>
-              </TableCell>
-              <TableCell>
-                <Badge variant={item.approved ? "default" : "secondary"}>
-                  {item.approved ? "Approved" : "Pending"}
-                </Badge>
-              </TableCell>
-              <TableCell className="hidden md:table-cell">
-                {new Date(item._creationTime).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button aria-haspopup="true" size="icon" variant="ghost">
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Toggle menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={() => handleEditClick(item)}>
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => handleDeleteClick(item)} className="text-destructive">
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
+      <div className="relative w-full overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="hidden w-[100px] sm:table-cell">
+                <span className="sr-only">Image</span>
+              </TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Approval</TableHead>
+              <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead>
+                <span className="sr-only">Actions</span>
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {items.map((item) => (
+              <TableRow key={item._id}>
+                <TableCell className="hidden sm:table-cell">
+                  {item.images && item.images[0] ? (
+                    <Image
+                      alt={item.name}
+                      className="aspect-square rounded-md object-cover"
+                      height="64"
+                      src={item.images[0]}
+                      width="64"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
+                      <HeartPulse className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell className="font-medium">{item.name}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">{item.status}</Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={item.approved ? "default" : "secondary"}>
+                    {item.approved ? "Approved" : "Pending"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {new Date(item._creationTime).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Toggle menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onSelect={() => handleEditClick(item)}>
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => handleDeleteClick(item)} className="text-destructive">
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
