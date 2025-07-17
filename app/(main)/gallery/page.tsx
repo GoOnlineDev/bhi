@@ -41,6 +41,20 @@ const categories = [
 ];
 
 export default function GalleryPage() {
+  useEffect(() => {
+    document.title = "Photo & Video Gallery | Boost Health Initiative in Kayunga";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const content = "View our gallery of images and videos showcasing the work of Boost Health Initiative in Kayunga, Uganda. Explore our impact through media.";
+    if (metaDescription) {
+      metaDescription.setAttribute('content', content);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = "description";
+      meta.content = content;
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   const allMedia = useQuery(api.gallery.getPublishedGallery);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -111,9 +125,9 @@ export default function GalleryPage() {
               <Camera className="w-4 h-4 mr-2" />
               Our Gallery
             </Badge>
-            <h1 id="gallery-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">Capturing Our Impact</h1>
+            <h1 id="gallery-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">Capturing Our Impact in Kayunga, Uganda</h1>
             <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              Explore our photo and video gallery showcasing the transformative work of Boost Health Initiative across Uganda.
+              Explore our photo and video gallery showcasing the transformative health work of Boost Health Initiative in Kayunga, Uganda.
             </p>
         </div>
       </section>

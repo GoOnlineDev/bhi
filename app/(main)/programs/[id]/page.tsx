@@ -107,6 +107,48 @@ export default function ProgramDetailsPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [program]);
 
+  useEffect(() => {
+    if (program) {
+      document.title = `${program.name} | Health Program in Kayunga`;
+      const metaDescription = document.querySelector('meta[name="description"]');
+      const content = program.description || `Discover health programs by Boost Health Initiative in Kayunga, Uganda. Learn more about our community impact.`;
+      if (metaDescription) {
+        metaDescription.setAttribute('content', content);
+      } else {
+        const meta = document.createElement('meta');
+        meta.name = "description";
+        meta.content = content;
+        document.head.appendChild(meta);
+      }
+      // Structured data
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'bhi-program-jsonld';
+      script.text = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": program.name,
+        "description": program.description || '',
+        "provider": {
+          "@type": "Organization",
+          "name": "Boost Health Initiative",
+          "url": "https://www.boosthealthinitiative.org"
+        },
+        "areaServed": {
+          "@type": "Place",
+          "name": program.location || 'Kayunga, Uganda'
+        },
+        "serviceType": program.status || 'Health Program',
+        "image": program.images && program.images.length > 0 ? program.images[0] : undefined,
+        "url": typeof window !== 'undefined' ? window.location.href : ''
+      });
+      // Remove old script if exists
+      const old = document.getElementById('bhi-program-jsonld');
+      if (old) old.remove();
+      document.head.appendChild(script);
+    }
+  }, [program]);
+
   const openMediaModal = (media: MediaItem) => {
     setSelectedMedia(media);
   };

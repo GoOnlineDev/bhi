@@ -9,10 +9,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { format } from 'date-fns';
 
 export default function NewsPage() {
+  useEffect(() => {
+    document.title = "Latest News | Boost Health Initiative in Kayunga";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const content = "Stay updated with the latest news and events from Boost Health Initiative in Kayunga, Uganda. Read about our community health impact.";
+    if (metaDescription) {
+      metaDescription.setAttribute('content', content);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = "description";
+      meta.content = content;
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   const newsList = useQuery(api.news.getPublishedNews);
   const [searchQuery, setSearchQuery] = useState("");
   const isLoading = newsList === undefined;
@@ -37,10 +51,10 @@ export default function NewsPage() {
             Latest News
           </Badge>
           <h1 id="news-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Updates from the Field
+            Health News & Updates from Kayunga, Uganda
           </h1>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Stay informed with our recent activities, achievements, and community impact stories from across Uganda.
+            Stay informed with our recent activities, achievements, and community health impact stories from Kayunga, Uganda.
           </p>
         </div>
       </section>

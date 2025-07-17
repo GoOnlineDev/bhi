@@ -108,6 +108,55 @@ export default function NewsDetailsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [news]);
 
+  useEffect(() => {
+    if (news) {
+      document.title = `${news.title} | Boost Health Initiative News, Kayunga`;
+      const metaDescription = document.querySelector('meta[name="description"]');
+      const content = news.summary || `Read the latest news from Boost Health Initiative in Kayunga, Uganda. Community health updates and stories.`;
+      if (metaDescription) {
+        metaDescription.setAttribute('content', content);
+      } else {
+        const meta = document.createElement('meta');
+        meta.name = "description";
+        meta.content = content;
+        document.head.appendChild(meta);
+      }
+      // Structured data
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'bhi-news-jsonld';
+      script.text = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": news.title,
+        "description": news.summary || '',
+        "datePublished": news.publishedAt ? new Date(news.publishedAt).toISOString() : undefined,
+        "dateModified": news.updatedAt ? new Date(news.updatedAt).toISOString() : undefined,
+        "author": {
+          "@type": "Organization",
+          "name": "Boost Health Initiative"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Boost Health Initiative",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.boosthealthinitiative.org/logo.png"
+          }
+        },
+        "image": news.images && news.images.length > 0 ? news.images[0] : undefined,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": typeof window !== 'undefined' ? window.location.href : ''
+        }
+      });
+      // Remove old script if exists
+      const old = document.getElementById('bhi-news-jsonld');
+      if (old) old.remove();
+      document.head.appendChild(script);
+    }
+  }, [news]);
+
   const openMediaModal = (media: MediaItem) => {
     setSelectedMedia(media);
   };

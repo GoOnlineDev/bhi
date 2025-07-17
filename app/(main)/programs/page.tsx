@@ -10,10 +10,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Stethoscope, Search, HandHeart, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import DonateModal from '@/components/DonateModal';
 
 export default function ProgramsPage() {
+  useEffect(() => {
+    document.title = "Our Programs | Boost Health Initiative in Kayunga";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const content = "Discover our health programs in Kayunga, Uganda. We offer maternal health, youth services, and more to empower communities and improve health outcomes.";
+    if (metaDescription) {
+      metaDescription.setAttribute('content', content);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = "description";
+      meta.content = content;
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   const programsList = useQuery(api.programs.getApprovedPrograms);
   const [searchQuery, setSearchQuery] = useState("");
   const [donateOpen, setDonateOpen] = useState(false);
@@ -41,10 +55,10 @@ export default function ProgramsPage() {
             Our Programs
           </Badge>
           <h1 id="programs-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Comprehensive Health Initiatives
+            Comprehensive Health Initiatives in Kayunga, Uganda
           </h1>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Explore our comprehensive initiatives designed to address critical health challenges and empower communities across Uganda.
+            Explore our comprehensive health initiatives designed to address critical health challenges and empower communities in Kayunga, Uganda.
           </p>
         </div>
       </section>

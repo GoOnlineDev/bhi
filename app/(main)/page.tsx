@@ -10,8 +10,51 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, MapPin, CheckCircle, Newspaper, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    document.title = "Boost Health Initiative | Empowering Communities in Kayunga, Uganda";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const content = "Boost Health Initiative improves health outcomes in Kayunga, Uganda through community-centered health programs and services. Learn about our impact and how you can help.";
+    if (metaDescription) {
+      metaDescription.setAttribute('content', content);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = "description";
+      meta.content = content;
+      document.head.appendChild(meta);
+    }
+    // Structured data
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'bhi-org-jsonld';
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Boost Health Initiative",
+      "url": "https://www.boosthealthinitiative.org",
+      "logo": "https://www.boosthealthinitiative.org/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+256-772-670-744",
+        "contactType": "Customer service"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Level 1 Ssebowa House, Plot 1 Ssekajja Road",
+        "addressLocality": "Kayunga",
+        "addressRegion": "Central Uganda",
+        "postalCode": "0000",
+        "addressCountry": "UG"
+      }
+    });
+    // Remove old script if exists
+    const old = document.getElementById('bhi-org-jsonld');
+    if (old) old.remove();
+    document.head.appendChild(script);
+  }, []);
+
   const news = useQuery(api.news.getPublishedNews);
   const featuredPrograms = useQuery(api.programs.getFeaturedApprovedPrograms);
 
@@ -34,7 +77,7 @@ export default function Home() {
         <div className="relative z-10 container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-              Empowering Communities Through Health
+              Empowering Kayunga Communities Through Health
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-slate-200 max-w-2xl mx-auto">
               Boost Health Initiative is dedicated to improving health outcomes and empowering women in rural Uganda through comprehensive programs and community engagement.
@@ -61,7 +104,7 @@ export default function Home() {
             <div className="flex flex-col gap-6 md:order-last">
               <Badge variant="outline">Our Mission</Badge>
               <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-                A Community-Centered Approach to Healthcare
+                A Community-Centered Approach to Healthcare in Kayunga, Uganda
               </h2>
               <p className="text-lg text-muted-foreground">
                 Founded to transform health outcomes, we focus on sustainable solutions that empower individuals and strengthen healthcare systems across Uganda.

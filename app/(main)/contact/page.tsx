@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -31,6 +31,20 @@ const contactFormSchema = z.object({
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export default function ContactPage() {
+  useEffect(() => {
+    document.title = "Contact Us | Boost Health Initiative in Kayunga, Uganda";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const content = "Get in touch with Boost Health Initiative in Kayunga, Uganda. Reach out for partnerships, donations, or volunteer opportunities to support community health.";
+    if (metaDescription) {
+      metaDescription.setAttribute('content', content);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = "description";
+      meta.content = content;
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -76,9 +90,9 @@ export default function ContactPage() {
               <Mail className="w-4 h-4 mr-2" />
               Get In Touch
             </Badge>
-            <h1 id="contact-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">Ready to Make a Difference?</h1>
+            <h1 id="contact-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">Contact Us in Kayunga – Ready to Make a Difference?</h1>
             <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              Contact us to learn more about our programs or explore partnership opportunities. We're here to help.
+              Contact our Kayunga, Uganda team to learn more about our health programs or explore partnership opportunities. We're here to help our community.
             </p>
         </div>
       </section>
