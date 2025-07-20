@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -31,19 +31,6 @@ const contactFormSchema = z.object({
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export default function ContactPage() {
-  useEffect(() => {
-    document.title = "Contact Us | Boost Health Initiative in Kayunga, Uganda";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const content = "Get in touch with Boost Health Initiative in Kayunga, Uganda. Reach out for partnerships, donations, or volunteer opportunities to support community health.";
-    if (metaDescription) {
-      metaDescription.setAttribute('content', content);
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = "description";
-      meta.content = content;
-      document.head.appendChild(meta);
-    }
-  }, []);
 
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);

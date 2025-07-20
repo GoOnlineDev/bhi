@@ -10,23 +10,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Stethoscope, Search, HandHeart, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import DonateModal from '@/components/DonateModal';
 
 export default function ProgramsPage() {
-  useEffect(() => {
-    document.title = "Our Programs | Boost Health Initiative in Kayunga";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const content = "Discover our health programs in Kayunga, Uganda. We offer maternal health, youth services, and more to empower communities and improve health outcomes.";
-    if (metaDescription) {
-      metaDescription.setAttribute('content', content);
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = "description";
-      meta.content = content;
-      document.head.appendChild(meta);
-    }
-  }, []);
 
   const programsList = useQuery(api.programs.getApprovedPrograms);
   const [searchQuery, setSearchQuery] = useState("");

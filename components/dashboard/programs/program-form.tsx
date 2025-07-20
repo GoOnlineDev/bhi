@@ -9,17 +9,22 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UploadDropzone } from "@/utils/uploadthing";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Doc } from "@/convex/_generated/dataModel";
-import Image from "next/image";
-import { X } from "lucide-react";
+import { MediaUpload } from "@/components/ui/media-upload";
 
 const STATUS_OPTIONS = ["upcoming", "ongoing", "completed"];
 
 interface ProgramFormProps {
   setOpen: (open: boolean) => void;
   initialData?: Doc<"programs">;
+}
+
+interface UploadedFile {
+  url: string;
+  type: string;
+  name: string;
+  uploadedBy: string;
 }
 
 export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
@@ -39,6 +44,8 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
     approved: false,
   });
 
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -52,26 +59,62 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
         isFeatured: initialData.isFeatured,
         approved: initialData.approved,
       });
+
+      // Convert existing media to UploadedFile format for display
+      const existingFiles: UploadedFile[] = [];
+      initialData.images?.forEach((url, index) => {
+        existingFiles.push({
+          url,
+          type: 'image/jpeg', // Default type for existing images
+          name: `Image ${index + 1}`,
+          uploadedBy: 'system'
+        });
+      });
+      initialData.videos?.forEach((url, index) => {
+        existingFiles.push({
+          url,
+          type: 'video/mp4', // Default type for existing videos
+          name: `Video ${index + 1}`,
+          uploadedBy: 'system'
+        });
+      });
+      setUploadedFiles(existingFiles);
     }
   }, [initialData]);
 
-  const handleMediaUpload = (res: { url: string; type: string }[]) => {
-    const newImages = res.filter(r => r.type.startsWith('image/')).map(r => r.url);
-    const newVideos = res.filter(r => r.type.startsWith('video/')).map(r => r.url);
+  const handleUploadComplete = (files: UploadedFile[]) => {
+    const newImages: string[] = [];
+    const newVideos: string[] = [];
+
+    files.forEach((file) => {
+      if (file.url && file.type) {
+        if (file.type.startsWith('image/')) {
+          newImages.push(file.url);
+        } else if (file.type.startsWith('video/')) {
+          newVideos.push(file.url);
+        }
+      }
+    });
+
     setFormData(prev => ({
       ...prev,
       images: [...prev.images, ...newImages],
       videos: [...prev.videos, ...newVideos],
     }));
-    toast({ title: "Upload complete" });
+
+    setUploadedFiles(prev => [...prev, ...files]);
   };
 
-  const handleRemoveMedia = (urlToRemove: string, type: 'image' | 'video') => {
-    if (type === 'image') {
-      setFormData(prev => ({ ...prev, images: prev.images.filter(url => url !== urlToRemove) }));
-    } else {
-      setFormData(prev => ({ ...prev, videos: prev.videos.filter(url => url !== urlToRemove) }));
-    }
+  const handleRemoveFile = (urlToRemove: string) => {
+    // Remove from form data
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter(url => url !== urlToRemove),
+      videos: prev.videos.filter(url => url !== urlToRemove),
+    }));
+    
+    // Remove from uploaded files display
+    setUploadedFiles(prev => prev.filter(file => file.url !== urlToRemove));
   };
 
   const handleSubmit = async () => {
@@ -134,42 +177,23 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
           <SelectContent>{STATUS_OPTIONS.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent>
         </Select>
       </div>
-      <div className="grid grid-cols-1 gap-2">
-        <Label>Media</Label>
-        <UploadDropzone
-          endpoint="programMediaUploader"
-          onClientUploadComplete={(res) => {
-            if (res) handleMediaUpload(res);
-          }}
-          onUploadError={(error: Error) => {
-            toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-          }}
-          className="ut-label:text-primary ut-upload-icon:text-primary/80 ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90"
-        />
-        {(formData.images.length > 0 || formData.videos.length > 0) && (
-          <div className="mt-4 space-y-4">
-            <h4 className="font-medium">Uploaded Media</h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {formData.images.map((url) => (
-                <div key={url} className="relative group aspect-square">
-                  <Image src={url} alt="Uploaded image" fill className="object-cover rounded-md border" />
-                  <Button variant="destructive" size="icon" onClick={() => handleRemoveMedia(url, 'image')} className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              {formData.videos.map((url) => (
-                <div key={url} className="relative group aspect-square">
-                  <video src={url} controls className="w-full h-full object-cover rounded-md border bg-black" />
-                  <Button variant="destructive" size="icon" onClick={() => handleRemoveMedia(url, 'video')} className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+      
+      {/* Media Upload Section */}
+      <div className="grid grid-cols-4 items-start gap-4">
+        <Label className="text-right pt-2">Media</Label>
+        <div className="col-span-3">
+          <MediaUpload
+            endpoint="programMediaUploader"
+            onUploadComplete={handleUploadComplete}
+            onRemoveFile={handleRemoveFile}
+            uploadedFiles={uploadedFiles}
+            maxImages={10}
+            maxVideos={5}
+            maxFileSize="16MB"
+          />
+        </div>
       </div>
+
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="isFeatured" className="text-right">Feature</Label>
         <Checkbox id="isFeatured" checked={formData.isFeatured} onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isFeatured: !!checked }))} />

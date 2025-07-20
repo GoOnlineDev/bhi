@@ -9,12 +9,6 @@ import {
   HeartPulse,
   Image as ImageIcon,
 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import Image from "next/image";
 
 export const navLinks = [
@@ -28,39 +22,41 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        <Link
-          href="/"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full    text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        >
-          <Image 
-            src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" 
-            alt="BHI Logo"
-            width={20}
-            height={20}
-          />
-          <span className="sr-only">BHI</span>
-        </Link>
-        <TooltipProvider>
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-56 flex-col border-r bg-background sm:flex">
+              {/* Centered Logo */}
+         <div className="flex flex-col items-center mb-2 mt-3">
+          <Link
+            href="/"
+            className="group flex flex-col items-center gap-2"
+          >
+            <Image 
+              src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" 
+              alt="BHI Logo"
+              width={48}
+              height={48}
+              className="rounded-full"
+            />
+            <span className="font-bold text-lg text-primary-foreground">BHI</span>
+          </Link>
+        </div>
+      <nav className="flex flex-col items-stretch gap-2 px-4 py-6 h-full">
+        {/* Navigation Links */}
+        <div className="flex flex-col gap-2 flex-1">
           {navLinks.map(({ href, label, icon: Icon }) => (
-            <Tooltip key={label}>
-              <TooltipTrigger asChild>
-                <Link
-                  href={href}
-                  className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
-                    { "bg-accent text-accent-foreground": pathname === href }
-                  )}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span className="sr-only">{label}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">{label}</TooltipContent>
-            </Tooltip>
+            <Link
+              key={label}
+              href={href}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-md text-base font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-accent",
+                { "bg-accent text-accent-foreground": pathname === href }
+              )}
+            >
+              <Icon className="h-5 w-5" />
+              <span>{label}</span>
+            </Link>
           ))}
-        </TooltipProvider>
+        </div>
+
       </nav>
     </aside>
   );

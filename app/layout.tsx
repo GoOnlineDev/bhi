@@ -7,8 +7,15 @@ import { ClerkProvider } from '@clerk/nextjs'
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Boost Health Initiative',
-  description: 'Empowering communities through health and education in rural Uganda.',
+  title: {
+    default: 'Boost Health Initiative | Community Health Programs & Suubi Medical Centre, Uganda',
+    template: '%s | Boost Health Initiative | Community Health Programs & Suubi Medical Centre, Uganda',
+  },
+  description: 'Boost Health Initiative (BHI) is a non-profit in Kayunga, Uganda, providing vital health programs like immunization, antenatal care, and adolescent health. Supporting rural communities through Suubi Medical Centre. Open 24/7.',
+  keywords:' Boost Health Initiative, BHI, Suubi Medical Centre, Kayunga, Uganda, rural health, community health, immunization, antenatal care, young mothers, adolescent health, non-profit, government organization, public health Uganda, health programs, health education, health promotion, health awareness, health campaigns, health initiatives, health programs, health education, health promotion, health awareness, health campaigns, health initiatives',
+  twitter: {
+    card: 'summary_large_image',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

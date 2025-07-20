@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 
+
 type MediaItem = {
   _id: string;
   type: 'image' | 'video';
@@ -41,19 +41,6 @@ const categories = [
 ];
 
 export default function GalleryPage() {
-  useEffect(() => {
-    document.title = "Photo & Video Gallery | Boost Health Initiative in Kayunga";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const content = "View our gallery of images and videos showcasing the work of Boost Health Initiative in Kayunga, Uganda. Explore our impact through media.";
-    if (metaDescription) {
-      metaDescription.setAttribute('content', content);
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = "description";
-      meta.content = content;
-      document.head.appendChild(meta);
-    }
-  }, []);
 
   const allMedia = useQuery(api.gallery.getPublishedGallery);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);

@@ -1,10 +1,12 @@
-'use client';
-
-import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Heart, Target, Users, Globe, Award, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us",
+};
 
 const missionData = [
   {
@@ -52,47 +54,6 @@ const sdgTargets = [
 ];
 
 export default function AboutPage() {
-  useEffect(() => {
-    document.title = "About Boost Health Initiative | Healthcare in Kayunga, Uganda";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const content = "Learn about Boost Health Initiative's mission to improve health outcomes in Kayunga, Uganda through community-centered healthcare programs and sustainable solutions.";
-    if (metaDescription) {
-      metaDescription.setAttribute('content', content);
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = "description";
-      meta.content = content;
-      document.head.appendChild(meta);
-    }
-    // Structured data
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.id = 'bhi-org-jsonld';
-    script.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Boost Health Initiative",
-      "url": "https://www.boosthealthinitiative.org",
-      "logo": "https://www.boosthealthinitiative.org/logo.png",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+256-772-670-744",
-        "contactType": "Customer service"
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Level 1 Ssebowa House, Plot 1 Ssekajja Road",
-        "addressLocality": "Kayunga",
-        "addressRegion": "Central Uganda",
-        "postalCode": "0000",
-        "addressCountry": "UG"
-      }
-    });
-    // Remove old script if exists
-    const old = document.getElementById('bhi-org-jsonld');
-    if (old) old.remove();
-    document.head.appendChild(script);
-  }, []);
   return (
     <main>
       {/* Hero Section */}
