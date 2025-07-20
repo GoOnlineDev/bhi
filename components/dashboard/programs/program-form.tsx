@@ -53,6 +53,7 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [tagsInput, setTagsInput] = useState("");
+  const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -156,36 +157,94 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
         return;
       }
 
-      const programData = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        goal: formData.goal.trim(),
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        location: formData.location.trim(),
-        images: formData.images,
-        videos: formData.videos,
-        status: formData.status,
-        contactPerson: formData.contactPerson.trim(),
-        contactPhone: formData.contactPhone.trim(),
-        contactEmail: formData.contactEmail.trim(),
-        tags: formData.tags,
-        isFeatured: formData.isFeatured,
-        approved: formData.approved,
-        createdAt: initialData ? initialData.createdAt : Date.now(),
-        updatedAt: Date.now()
-      };
-
       if (initialData) {
-        await updateProgram({ id: initialData._id, ...programData });
+        // For updates, only send fields that have changed
+        const updateData: any = { id: initialData._id };
+        
+        // Compare each field with the original data
+        if (formData.name.trim() !== initialData.name) {
+          updateData.name = formData.name.trim();
+        }
+        if (formData.description.trim() !== initialData.description) {
+          updateData.description = formData.description.trim();
+        }
+        if (formData.goal.trim() !== (initialData.goal || "")) {
+          updateData.goal = formData.goal.trim();
+        }
+        if (formData.startDate !== initialData.startDate) {
+          updateData.startDate = formData.startDate;
+        }
+        if (formData.endDate !== initialData.endDate) {
+          updateData.endDate = formData.endDate;
+        }
+        if (formData.location.trim() !== (initialData.location || "")) {
+          updateData.location = formData.location.trim();
+        }
+        if (JSON.stringify(formData.images) !== JSON.stringify(initialData.images || [])) {
+          updateData.images = formData.images;
+        }
+        if (JSON.stringify(formData.videos) !== JSON.stringify(initialData.videos || [])) {
+          updateData.videos = formData.videos;
+        }
+        if (formData.status !== initialData.status) {
+          updateData.status = formData.status;
+        }
+        if (formData.contactPerson.trim() !== (initialData.contactPerson || "")) {
+          updateData.contactPerson = formData.contactPerson.trim();
+        }
+        if (formData.contactPhone.trim() !== (initialData.contactPhone || "")) {
+          updateData.contactPhone = formData.contactPhone.trim();
+        }
+        if (formData.contactEmail.trim() !== (initialData.contactEmail || "")) {
+          updateData.contactEmail = formData.contactEmail.trim();
+        }
+        if (JSON.stringify(formData.tags) !== JSON.stringify(initialData.tags || [])) {
+          updateData.tags = formData.tags;
+        }
+        if (formData.isFeatured !== initialData.isFeatured) {
+          updateData.isFeatured = formData.isFeatured;
+        }
+        if (formData.approved !== initialData.approved) {
+          updateData.approved = formData.approved;
+        }
+        
+        // Always include updatedAt
+        updateData.updatedAt = Date.now();
+
+        console.log("Updating program with data:", updateData);
+        
+        await updateProgram(updateData);
         toast({ title: "Success", description: "Program updated successfully." });
       } else {
+        // For new programs, send all required data
+        const programData = {
+          name: formData.name.trim(),
+          description: formData.description.trim(),
+          goal: formData.goal.trim(),
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          location: formData.location.trim(),
+          images: formData.images,
+          videos: formData.videos,
+          status: formData.status,
+          contactPerson: formData.contactPerson.trim(),
+          contactPhone: formData.contactPhone.trim(),
+          contactEmail: formData.contactEmail.trim(),
+          tags: formData.tags,
+          isFeatured: formData.isFeatured,
+          approved: formData.approved,
+          createdAt: Date.now()
+        };
+
+        console.log("Creating program with data:", programData);
+        
         await createProgram(programData);
         toast({ title: "Success", description: "Program created successfully." });
       }
 
       setOpen(false);
     } catch (error) {
+      console.error("Program operation failed:", error);
       toast({ 
         title: `Error ${initialData ? 'updating' : 'creating'} program`, 
         description: (error as Error).message, 
@@ -389,6 +448,47 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
             onCheckedChange={(checked) => setFormData(prev => ({ ...prev, approved: !!checked }))} 
           />
         </div>
+      </div>
+
+      {/* Debug Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Debug Information</h3>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowDebug(!showDebug)}
+          >
+            {showDebug ? "Hide Debug" : "Show Debug"}
+          </Button>
+        </div>
+        
+        {showDebug && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+            <div>
+              <h4 className="font-medium mb-2">Current Form Data:</h4>
+              <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-40">
+                {JSON.stringify(formData, null, 2)}
+              </pre>
+            </div>
+            
+            {initialData && (
+              <div>
+                <h4 className="font-medium mb-2">Original Data:</h4>
+                <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-40">
+                  {JSON.stringify(initialData, null, 2)}
+                </pre>
+              </div>
+            )}
+            
+            <div>
+              <h4 className="font-medium mb-2">Uploaded Files:</h4>
+              <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-40">
+                {JSON.stringify(uploadedFiles, null, 2)}
+              </pre>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}
