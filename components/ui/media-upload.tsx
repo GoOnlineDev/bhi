@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { X, FileImage, Video, Loader2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
 
 interface UploadedFile {
   url: string;
@@ -16,7 +17,7 @@ interface UploadedFile {
 }
 
 interface MediaUploadProps {
-  endpoint: "programMediaUploader" | "newsMediaUploader" | "galleryMediaUploader";
+  endpoint: "imageUploader" | "programMediaUploader" | "newsMediaUploader" | "galleryMediaUploader";
   onUploadComplete: (files: UploadedFile[]) => void;
   onRemoveFile?: (url: string) => void;
   uploadedFiles?: UploadedFile[];
@@ -43,7 +44,7 @@ export function MediaUpload({
   const images = uploadedFiles.filter(file => file.type.startsWith('image/'));
   const videos = uploadedFiles.filter(file => file.type.startsWith('video/'));
 
-  const handleUploadComplete = (res: UploadedFile[]) => {
+  const handleUploadComplete = (res: any[]) => {
     console.log("Upload complete:", res);
     
     if (!res || !Array.isArray(res)) {
@@ -52,7 +53,15 @@ export function MediaUpload({
       return;
     }
 
-    onUploadComplete(res);
+    // Transform the response to match our UploadedFile interface
+    const uploadedFiles: UploadedFile[] = res.map(file => ({
+      url: file.url,
+      type: file.type,
+      name: file.name,
+      uploadedBy: file.uploadedBy
+    }));
+
+    onUploadComplete(uploadedFiles);
     setIsUploading(false);
     setUploadProgress(0);
 
