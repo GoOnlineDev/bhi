@@ -12,7 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Doc } from "@/convex/_generated/dataModel";
 import { MediaUpload } from "@/components/ui/media-upload";
-import { Calendar, MapPin, Phone, Mail, User, Tag } from "lucide-react";
+import { Calendar, MapPin, Phone, Mail, User, Tag, X } from "lucide-react";
+import { UploadDropzone } from "@/utils/uploadthing";
+import Image from "next/image";
 
 const STATUS_OPTIONS = ["upcoming", "ongoing", "completed"];
 
@@ -409,22 +411,50 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
       
       {/* Media Upload Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Media</h3>
-        
-        <div className="grid grid-cols-4 items-start gap-4">
-          <Label className="text-right pt-2">Upload Media</Label>
-          <div className="col-span-3">
-            <MediaUpload
-              endpoint="programMediaUploader"
-              onUploadComplete={handleUploadComplete}
-              onRemoveFile={handleRemoveFile}
-              uploadedFiles={uploadedFiles}
-              maxImages={10}
-              maxVideos={5}
-              maxFileSize="16MB"
-            />
+      <div className="grid grid-cols-1 gap-2">
+        <Label>Media</Label>
+        <UploadDropzone
+          endpoint="programMediaUploader"
+          onClientUploadComplete={(res: any[]) => {
+            if (res) handleUploadComplete(res);
+          }}
+          onUploadError={(error: Error) => {
+            toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+          }}
+          className="ut-label:text-primary ut-upload-icon:text-primary/80 ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90"
+
+          appearance={
+            {
+              button: "bg-orange-600 text-white px-4 py-2 rounded hover:bg-blue-700",
+              label: "text-sm text-gray-600",
+              container: "flex flex-col items-center space-y-4",
+            }
+          }
+        />
+        {(formData.images.length > 0 || formData.videos.length > 0) && (
+          <div className="mt-4 space-y-4">
+            <h4 className="font-medium">Uploaded Media</h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {formData.images.map((url) => (
+                <div key={url} className="relative group aspect-square">
+                  <Image src={url} alt="Uploaded image" fill className="object-cover rounded-md border" />
+                  <Button variant="destructive" size="icon" onClick={() => handleRemoveFile(url)} className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              {formData.videos.map((url) => (
+                <div key={url} className="relative group aspect-square">
+                  <video src={url} controls className="w-full h-full object-cover rounded-md border bg-black" />
+                  <Button variant="destructive" size="icon" onClick={() => handleRemoveFile(url)} className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+      </div>
       </div>
 
       {/* Settings */}
@@ -452,16 +482,6 @@ export function ProgramForm({ setOpen, initialData }: ProgramFormProps) {
 
       {/* Debug Section */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Debug Information</h3>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setShowDebug(!showDebug)}
-          >
-            {showDebug ? "Hide Debug" : "Show Debug"}
-          </Button>
-        </div>
         
         {showDebug && (
           <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">

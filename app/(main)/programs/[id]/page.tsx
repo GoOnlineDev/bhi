@@ -22,6 +22,7 @@ type MediaItem = {
   index: number;
 };
 
+
 const ProgramDetailsSkeleton = () => (
     <div className="bg-background">
       <header className="bg-card border-b py-6">

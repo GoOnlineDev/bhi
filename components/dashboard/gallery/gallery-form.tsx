@@ -184,6 +184,13 @@ export function GalleryForm({ setOpen, initialData }: GalleryFormProps) {
               toast({ title: "Upload failed", description: error.message, variant: "destructive" });
             }}
             className="ut-label:text-primary ut-upload-icon:text-primary/80 ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90"
+            appearance={
+              {
+                button: "bg-orange-600 text-white px-4 py-2 rounded hover:bg-blue-700",
+                label: "text-sm text-gray-600",
+                container: "flex flex-col items-center space-y-4",
+              }
+            }            
           />
         )}
       </div>
