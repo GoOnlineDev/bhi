@@ -71,17 +71,7 @@ export default function Hero() {
                   objectPosition: "center 70%",
                 }}
               />
-              {/* Overlay for better text contrast */}
-              <div
-                className="
-                  absolute inset-0
-                  bg-black/30
-                  sm:bg-black/20
-                  transition-colors
-                  pointer-events-none
-                "
-                aria-hidden="true"
-              />
+              {/* Overlay removed */}
             </div>
           ))}
         </div>
