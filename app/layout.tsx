@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Boost Health Initiative | Community Health Programs & Suubi Medical Centre, Uganda',
+    default: 'Boost Health Initiative',
     template: '%s | Boost Health Initiative | Community Health Programs & Suubi Medical Centre, Uganda',
   },
   description: 'Boost Health Initiative (BHI) is a non-profit in Kayunga, Uganda, providing vital health programs like immunization, antenatal care, and adolescent health. Supporting rural communities through Suubi Medical Centre. Open 24/7.',
