@@ -5,7 +5,7 @@ export async function GET() {
 Allow: /
 Disallow: /dashboard
 Disallow: /api
-Sitemap: https://www.boosthealthinitiative.org/sitemap.xml
+Sitemap: https://www.boosthealthinitiative.com/sitemap.xml
 `;
   return new NextResponse(content, {
     headers: {

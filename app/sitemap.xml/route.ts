@@ -20,7 +20,7 @@ export async function GET() {
     ...programPages,
   ];
 
-  const baseUrl = 'https://www.boosthealthinitiative.org';
+  const baseUrl = 'https://www.boosthealthinitiative.com';
   const urls = allPages.map(
     (path) =>
       `<url><loc>${baseUrl}/${path}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`
