@@ -12,8 +12,12 @@ export default function Home() {
   return (
     <main className="flex-1 w-full">
       <Hero />
-      <LatestUpdates />
-      <MissionSection />
+      <div className="py-8">
+        <LatestUpdates />
+      </div>
+      <div className="py-8">
+        <MissionSection />
+      </div>
     </main>
   );
 }
