@@ -127,7 +127,6 @@ export default function NavBar() {
                   {[
                     { href: "/", label: "Home" },
                     { href: "/about", label: "About" },
-                    { href: "/services", label: "Services" },
                     { href: "/programs", label: "Programs" },
                     { href: "/gallery", label: "Gallery" },
                     { href: "/news", label: "News" },
