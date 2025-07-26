@@ -60,10 +60,10 @@ export default function Hero() {
         <div className="absolute inset-0 z-30 flex items-center justify-center">
           <div className="max-w-3xl mx-auto px-4">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight drop-shadow-lg">
-              Empowering Kayunga Communities Through Health
+            Boosting Health. Empowering Communities. Changing Lives.
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-slate-200 max-w-2xl mx-auto drop-shadow">
-              Boost Health Initiative is dedicated to improving health outcomes and empowering women in rural Uganda through comprehensive programs and community engagement.
+              We improve health outcomes in Uganda through community-driven programs and sustainable solutions that impact lives where it matters most.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">

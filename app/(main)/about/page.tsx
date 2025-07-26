@@ -35,15 +35,15 @@ const achievements = [
 
 const testimonials = [
   {
-    name: "Sarah Nakato",
-    role: "Community Health Worker",
-    content: "BHI has transformed our community's approach to healthcare. The training and support we received has enabled us to help hundreds of families.",
+    name: "Dr Mpooya Simon",
+    role: "Director, Boost Health Initiative",
+    content: "At Boost Health Initiative, we are dedicated to providing accessible, quality healthcare and empowering communities across Uganda. From maternal and child health to adolescent support and health education, our programs are designed to create lasting impact and brighter futures for all.",
     image: '/img/dr1.jpg'
   },
   {
-    name: "Dr. James Mukasa",
-    role: "Regional Health Director",
-    content: "The partnership with Boost Health Initiative has been instrumental in improving health outcomes in rural areas. Their dedication is remarkable.",
+    name: "Dr. John",
+    role: "Doctor at Suubi Medical Centre (a Boost Health Initiative hospital program)",
+    content: "As a doctor at Suubi Medical Centre, a hospital program from Boost Health Initiative supporting our community, I have witnessed firsthand how their partnership has been instrumental in improving health outcomes in rural areas. Their dedication to community health is truly remarkable.",
     image: '/img/dr2.jpg'
   }
 ];
