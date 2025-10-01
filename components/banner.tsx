@@ -49,7 +49,7 @@ export default function Banner() {
               </p>
               <div className="flex justify-center">
                 <Link
-                  href="https://suubi.netlify.app/"
+                  href="https://suubi.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-[#f37c1b] bg-white hover:bg-gray-50 transition-colors duration-200"
@@ -77,7 +77,7 @@ export default function Banner() {
             </div>
             <div className="flex items-center gap-4">
               <Link
-                href="https://suubi.netlify.app/"
+                href="https://suubi.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-[#f37c1b] bg-white hover:bg-gray-50 transition-colors duration-200"
