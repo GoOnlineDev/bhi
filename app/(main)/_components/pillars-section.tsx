@@ -39,11 +39,11 @@ export default function PillarsSection() {
             id="pillars-heading"
             className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
           >
-            Our Focus Areas & Services
+            Our Focus Areas
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Explore the programmes and services BHI delivers across communities — each one rooted in
-            evidence, advocacy, and a commitment to lasting health outcomes.
+            Explore the programmes BHI leads across communities — each one rooted in evidence,
+            advocacy, and a commitment to lasting health outcomes.
           </p>
         </div>
 
@@ -57,10 +57,10 @@ export default function PillarsSection() {
           <div className="text-center py-12 mb-10 rounded-2xl border border-dashed bg-background">
             <Layers className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground max-w-md mx-auto">
-              Our programmes are being updated. Check back soon, or browse all services below.
+              Our programmes are being updated. Check back soon, or explore everything we do below.
             </p>
             <Button asChild className="mt-4" variant="outline">
-              <Link href="/services">Browse all services</Link>
+              <Link href="/services">Explore our work</Link>
             </Button>
           </div>
         ) : (
@@ -137,7 +137,7 @@ export default function PillarsSection() {
         <div className="text-center flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild size="lg" variant="default">
             <Link href="/services">
-              All services <ArrowRight className="w-4 h-4 ml-2" />
+              See everything we do <ArrowRight className="w-4 h-4 ml-2" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline">

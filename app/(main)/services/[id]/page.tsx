@@ -63,16 +63,16 @@ export default function ServiceDetailPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center px-4">
           <Layers className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Service Not Found</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Area Not Found</h1>
           <p className="text-muted-foreground mb-6">
-            This service may have been removed or the link is invalid.
+            This area of work may have been removed or the link is no longer valid.
           </p>
           <Link
             href="/services"
             className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Services
+            Back to What We Do
           </Link>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function ServiceDetailPage() {
           <div className="flex items-center justify-between">
             <Link href="/services" className={`inline-flex items-center ${cfg.textColor} hover:opacity-80 transition-opacity`}>
               <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Services
+              Back to What We Do
             </Link>
             <div className="flex items-center gap-2">
               {service.category && (
@@ -123,7 +123,7 @@ export default function ServiceDetailPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/contact" className="inline-flex items-center px-6 py-3 bg-white text-primary rounded-lg hover:bg-gray-100 transition-colors font-semibold">
-                  Get This Service
+                  Get Involved
                 </Link>
                 <Link href="/programs" className="inline-flex items-center px-6 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-semibold">
                   Related Programs
@@ -165,7 +165,7 @@ export default function ServiceDetailPage() {
             {service.features && service.features.length > 0 && (
               <Card className="border-0 shadow-md">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-foreground">Service Features</CardTitle>
+                  <CardTitle className="text-2xl text-foreground">What This Covers</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -189,7 +189,7 @@ export default function ServiceDetailPage() {
             {service.benefits && service.benefits.length > 0 && (
               <Card className="border-0 shadow-md">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-foreground">Key Benefits</CardTitle>
+                  <CardTitle className="text-2xl text-foreground">How It Helps</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -208,7 +208,7 @@ export default function ServiceDetailPage() {
             {service.process && service.process.length > 0 && (
               <Card className="border-0 shadow-md">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-foreground">Our Process</CardTitle>
+                  <CardTitle className="text-2xl text-foreground">How We Work</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -265,7 +265,7 @@ export default function ServiceDetailPage() {
             {/* Contact */}
             <Card className="border-0 shadow-md">
               <CardHeader>
-                <CardTitle className="text-lg text-foreground">Get This Service</CardTitle>
+                <CardTitle className="text-lg text-foreground">Get Involved</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -318,8 +318,8 @@ export default function ServiceDetailPage() {
                 <div className={`w-14 h-14 ${cfg.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
                   <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="font-semibold text-foreground mb-2">Ready to Get Started?</h3>
-                <p className="text-muted-foreground mb-4 text-sm">Contact us today to access this service.</p>
+                <h3 className="font-semibold text-foreground mb-2">Want to Get Involved?</h3>
+                <p className="text-muted-foreground mb-4 text-sm">Reach out to learn more or get involved in this initiative.</p>
                 <Link
                   href="/contact"
                   className={`inline-flex items-center px-4 py-2 ${cfg.color} text-white rounded-lg hover:opacity-90 transition-opacity w-full justify-center`}
@@ -352,7 +352,7 @@ export default function ServiceDetailPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <Link href="/services" className={`block ${cfg.textColor} hover:opacity-80 transition-opacity text-sm`}>
-                  ← All Services
+                  ← Back to What We Do
                 </Link>
                 <Link href="/programs" className={`block ${cfg.textColor} hover:opacity-80 transition-opacity text-sm`}>
                   Our Programs →

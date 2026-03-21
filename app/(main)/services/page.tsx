@@ -137,7 +137,7 @@ function ServicesPageInner() {
             What We Do
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Our Services & Focus Areas
+            What We Do
           </h1>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
             BHI delivers comprehensive health services across multiple specialties — from Sexual &
@@ -156,7 +156,7 @@ function ServicesPageInner() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search services..."
+                placeholder="Search our work..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 rounded-lg border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -189,7 +189,7 @@ function ServicesPageInner() {
           ) : filtered.length === 0 ? (
             <div className="text-center py-20">
               <Layers className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">No Services Found</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Nothing Found</h3>
               <p className="text-muted-foreground">Try adjusting your search or filter.</p>
             </div>
           ) : (
@@ -198,7 +198,7 @@ function ServicesPageInner() {
                 <div className="mb-12">
                   <div className="flex items-center gap-2 mb-6">
                     <TrendingUp className="w-5 h-5 text-amber-500" />
-                    <h2 className="text-xl font-bold text-foreground">Featured Services</h2>
+                    <h2 className="text-xl font-bold text-foreground">Featured Initiatives</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {featured.map(item => <ServiceCard key={item._id} item={item} />)}
@@ -208,7 +208,7 @@ function ServicesPageInner() {
               {rest.length > 0 && (
                 <div>
                   {featured.length > 0 && (
-                    <h2 className="text-xl font-bold text-foreground mb-6">All Services</h2>
+                    <h2 className="text-xl font-bold text-foreground mb-6">All Initiatives</h2>
                   )}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {rest.map(item => <ServiceCard key={item._id} item={item} />)}
