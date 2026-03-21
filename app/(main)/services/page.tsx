@@ -141,7 +141,7 @@ function ServicesPageInner() {
     if (categoryParam) setActiveCategory(categoryParam);
   }, [categoryParam]);
 
-  const categories = ["All", ...Array.from(new Set((services || []).map(s => s.category).filter(Boolean)))];
+  const categories = ["All", ...Array.from(new Set((services || []).map(s => s.category).filter((c): c is string => typeof c === "string")))];
 
   const filtered = (services || []).filter(s => {
     const matchesSearch =

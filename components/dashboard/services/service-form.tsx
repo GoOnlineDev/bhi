@@ -242,8 +242,14 @@ export function ServiceForm({ setOpen, initialData }: ServiceFormProps) {
         <h3 className="text-base font-semibold border-b pb-2">Images & Videos</h3>
         <UploadDropzone
           endpoint="serviceMediaUploader"
-          onClientUploadComplete={(res: UploadedFile[]) => { if (res) handleUploadComplete(res); }}
-          onUploadError={(error: Error) => toast({ title: "Upload failed", description: error.message, variant: "destructive" })}
+          onClientUploadComplete={(res: any[]) => { if (res) handleUploadComplete(res); }}
+          onUploadError={(error) => {
+            toast({
+              title: "Upload failed",
+              description: error instanceof Error ? error.message : String(error),
+              variant: "destructive",
+            });
+          }}
           appearance={{ button: "bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700", label: "text-sm text-gray-600" }}
         />
         {formData.images.length > 0 && (
