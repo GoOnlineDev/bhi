@@ -42,8 +42,8 @@ export default function PillarsSection() {
             Our Focus Areas & Services
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Spotlight programs you can explore in full detail. Manage these cards from the dashboard
-            by marking services as &quot;Show on home &amp; about&quot; or featuring them.
+            Explore the programmes and services BHI delivers across communities — each one rooted in
+            evidence, advocacy, and a commitment to lasting health outcomes.
           </p>
         </div>
 
@@ -57,8 +57,7 @@ export default function PillarsSection() {
           <div className="text-center py-12 mb-10 rounded-2xl border border-dashed bg-background">
             <Layers className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground max-w-md mx-auto">
-              No spotlight services yet. Publish services in the dashboard and enable{" "}
-              <strong>Show on home &amp; about</strong>, or mark them as <strong>Featured</strong>.
+              Our programmes are being updated. Check back soon, or browse all services below.
             </p>
             <Button asChild className="mt-4" variant="outline">
               <Link href="/services">Browse all services</Link>
