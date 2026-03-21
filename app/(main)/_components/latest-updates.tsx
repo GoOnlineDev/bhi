@@ -131,37 +131,23 @@ export default function LatestUpdates() {
                   <motion.div
                     key={program._id}
                     variants={itemVariants}
-                                         whileHover={{ 
-                       y: -8,
-                       transition: { duration: 0.2, ease: easeOut }
-                     }}
-                    whileTap={{ scale: 0.98 }}
                   >
                     <Link
                       href={`/programs/${program._id}`}
                       className="block group min-w-[320px] max-w-xs flex-shrink-0"
                     >
-                      <motion.div
-                        variants={cardVariants}
-                        whileHover={{ 
-                          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-                          transition: { duration: 0.2 }
-                        }}
-                      >
-                        <Card className="h-full overflow-hidden transition-all duration-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                      <motion.div variants={cardVariants}>
+                        <Card className="h-full overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                           <div className="relative w-full aspect-video">
                             {program.images && program.images[0] ? (
-                              <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                transition={{ duration: 0.3 }}
-                              >
+                              <div className="absolute inset-0">
                                 <Image
                                   src={program.images[0]}
                                   alt={program.name}
                                   fill
                                   className="object-cover"
                                 />
-                              </motion.div>
+                              </div>
                             ) : (
                               <div className="w-full h-full bg-slate-200 dark:bg-slate-700" />
                             )}
@@ -231,22 +217,13 @@ export default function LatestUpdates() {
                 <motion.div
                   key={item._id}
                   variants={newsItemVariants}
-                                     whileHover={{ 
-                     x: 8,
-                     transition: { duration: 0.2, ease: easeOut }
-                   }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <Link
                     href={`/news/${item._id}`}
                     className="group"
                   >
-                    <Card className="flex flex-col sm:flex-row gap-4 p-4 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-colors border border-slate-200 dark:border-slate-700 bg-white/30 dark:bg-slate-800/30">
-                      <motion.div 
-                        className="relative w-full sm:w-32 h-32 sm:h-auto flex-shrink-0 rounded-md overflow-hidden"
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                    <Card className="flex flex-col sm:flex-row gap-4 p-4 border border-slate-200 dark:border-slate-700 bg-white/30 dark:bg-slate-800/30">
+                      <div className="relative w-full sm:w-32 h-32 sm:h-auto flex-shrink-0 rounded-md overflow-hidden">
                         {item.images && item.images[0] ? (
                           <Image
                             src={item.images[0]}
@@ -259,7 +236,7 @@ export default function LatestUpdates() {
                             <Newspaper className="w-8 h-8 text-slate-400 dark:text-slate-500" />
                           </div>
                         )}
-                      </motion.div>
+                      </div>
                       <div className="flex flex-col gap-1 min-w-0">
                         <motion.p 
                           className="text-sm font-semibold text-primary truncate"
