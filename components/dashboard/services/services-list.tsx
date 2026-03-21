@@ -132,9 +132,16 @@ export function ServicesList({ items }: ServicesListProps) {
                 <TableCell className="font-medium">
                   <div>
                     <p>{item.title}</p>
-                    {item.shortTitle && (
-                      <p className="text-xs text-muted-foreground">{item.shortTitle}</p>
-                    )}
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {item.shortTitle && (
+                        <p className="text-xs text-muted-foreground">{item.shortTitle}</p>
+                      )}
+                      {item.showOnHome && (
+                        <Badge variant="outline" className="text-xs text-sky-600 border-sky-300">
+                          Home spotlight
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>

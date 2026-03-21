@@ -1,70 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Heart, Brain, ShieldAlert, Pill } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { ArrowRight, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getCategoryStyle } from "@/lib/service-category-styles";
+import type { Doc } from "@/convex/_generated/dataModel";
 
-const pillars = [
-  {
-    id: "srhr",
-    icon: Heart,
-    color: "bg-rose-500",
-    lightColor: "bg-rose-50",
-    textColor: "text-rose-600",
-    borderColor: "border-rose-200",
-    number: "01",
-    title: "Sexual & Reproductive Health Rights",
-    shortTitle: "SRHR",
-    tagline: "Family Planning · Post-Abortion Care · Teenage Pregnancy",
-    description:
-      "We provide confidential, youth-friendly SRHR services including family planning, post-abortion care, and teenage pregnancy support — addressing one of Uganda's most urgent adolescent health crises.",
-  },
-  {
-    id: "ncd-management",
-    icon: Brain,
-    color: "bg-indigo-500",
-    lightColor: "bg-indigo-50",
-    textColor: "text-indigo-600",
-    borderColor: "border-indigo-200",
-    number: "02",
-    title: "Non-Communicable Diseases",
-    shortTitle: "NCDs",
-    tagline: "Mental Health · Sickle Cell · Diabetes · Hypertension · Epilepsy",
-    description:
-      "NCDs are rising among Uganda's youth, yet most go undiagnosed. BHI delivers NCD screening, management, counseling, and patient support to tackle mental health, sickle cell disease, diabetes, and more.",
-  },
-  {
-    id: "gbv-support",
-    icon: ShieldAlert,
-    color: "bg-purple-500",
-    lightColor: "bg-purple-50",
-    textColor: "text-purple-600",
-    borderColor: "border-purple-200",
-    number: "03",
-    title: "Gender-Based Violence Response",
-    shortTitle: "GBV",
-    tagline: "Counseling · Court Support · Referrals · Welfare Services",
-    description:
-      "BHI provides trauma-informed counseling, court referrals, and survivor case management — creating safe pathways for those facing gender-based violence to access justice and healing.",
-  },
-  {
-    id: "substance-abuse",
-    icon: Pill,
-    color: "bg-amber-500",
-    lightColor: "bg-amber-50",
-    textColor: "text-amber-600",
-    borderColor: "border-amber-200",
-    number: "04",
-    title: "Substance Abuse Prevention & Recovery",
-    shortTitle: "Substance Abuse",
-    tagline: "Counseling · Training · Recovery & Adaptation Support",
-    description:
-      "Through community-based counseling, peer education, and recovery adaptation programs, BHI helps young people break free from substance dependency and rebuild healthy futures.",
-  },
-];
+function taglineFromService(s: Doc<"services">): string {
+  if (s.features && s.features.length > 0) {
+    return s.features
+      .map((f) => f.title)
+      .filter(Boolean)
+      .slice(0, 5)
+      .join(" · ");
+  }
+  if (s.tags && s.tags.length > 0) {
+    return s.tags.slice(0, 5).join(" · ");
+  }
+  return s.shortTitle || s.category || "";
+}
 
 export default function PillarsSection() {
+  const spotlight = useQuery(api.services.getSpotlightServices);
+  const loading = spotlight === undefined;
+
   return (
     <section className="bg-secondary" aria-labelledby="pillars-heading">
       <div className="container mx-auto px-4 py-12 sm:py-20">
@@ -76,70 +39,110 @@ export default function PillarsSection() {
             id="pillars-heading"
             className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
           >
-            Four Pillars of Youth Health Support
+            Our Focus Areas & Services
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Every BHI program addresses one of four critical health challenges facing Uganda&apos;s youth.
-            Our integrated approach ensures no young person falls through the gaps.
+            Spotlight programs you can explore in full detail. Manage these cards from the dashboard
+            by marking services as &quot;Show on home &amp; about&quot; or featuring them.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
-          {pillars.map((pillar) => {
-            const Icon = pillar.icon;
-            return (
-              <Link
-                key={pillar.id}
-                href={`/services?category=${encodeURIComponent(pillar.shortTitle)}`}
-                className="group block"
-              >
-                <div
-                  className={`rounded-2xl p-6 border ${pillar.lightColor} ${pillar.borderColor} hover:shadow-lg transition-all duration-300 h-full`}
+        {loading ? (
+          <div className="grid md:grid-cols-2 gap-6 mb-10">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-48 rounded-2xl" />
+            ))}
+          </div>
+        ) : !spotlight || spotlight.length === 0 ? (
+          <div className="text-center py-12 mb-10 rounded-2xl border border-dashed bg-background">
+            <Layers className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground max-w-md mx-auto">
+              No spotlight services yet. Publish services in the dashboard and enable{" "}
+              <strong>Show on home &amp; about</strong>, or mark them as <strong>Featured</strong>.
+            </p>
+            <Button asChild className="mt-4" variant="outline">
+              <Link href="/services">Browse all services</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6 mb-10">
+            {spotlight.map((service, index) => {
+              const style = getCategoryStyle(service.category);
+              const Icon = style.icon;
+              const tagline = taglineFromService(service);
+              return (
+                <Link
+                  key={service._id}
+                  href={`/services/${service._id}`}
+                  className="group block"
                 >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`w-12 h-12 ${pillar.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-xs font-bold ${pillar.textColor} opacity-60`}>
-                          {pillar.number}
-                        </span>
-                        <Badge
-                          variant="outline"
-                          className={`text-xs ${pillar.textColor} border-current`}
-                        >
-                          {pillar.shortTitle}
-                        </Badge>
+                  <div
+                    className={`rounded-2xl p-6 border ${style.lightColor} ${style.borderColor} hover:shadow-lg transition-all duration-300 h-full`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`w-12 h-12 ${style.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}
+                      >
+                        <Icon className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className={`text-xl font-bold mb-1 ${pillar.textColor} group-hover:underline`}>
-                        {pillar.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mb-3 italic">
-                        {pillar.tagline}
-                      </p>
-                      <p className="text-sm text-foreground leading-relaxed">
-                        {pillar.description}
-                      </p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className={`text-xs font-bold ${style.textColor} opacity-60`}>
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          {service.category && (
+                            <Badge
+                              variant="outline"
+                              className={`text-xs ${style.textColor} border-current`}
+                            >
+                              {service.category}
+                            </Badge>
+                          )}
+                          {service.shortTitle && !service.category && (
+                            <Badge
+                              variant="outline"
+                              className={`text-xs ${style.textColor} border-current`}
+                            >
+                              {service.shortTitle}
+                            </Badge>
+                          )}
+                        </div>
+                        <h3
+                          className={`text-xl font-bold mb-1 ${style.textColor} group-hover:underline`}
+                        >
+                          {service.title}
+                        </h3>
+                        {tagline ? (
+                          <p className="text-xs text-muted-foreground mb-3 italic line-clamp-2">
+                            {tagline}
+                          </p>
+                        ) : null}
+                        <p className="text-sm text-foreground leading-relaxed line-clamp-4">
+                          {service.description}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      className={`flex items-center gap-1 mt-4 text-sm font-medium ${style.textColor}`}
+                    >
+                      Learn more
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
                   </div>
-                  <div className={`flex items-center gap-1 mt-4 text-sm font-medium ${pillar.textColor}`}>
-                    Learn more
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
 
-        <div className="text-center">
-          <Button asChild size="lg">
-            <Link href="/about">
-              Our Full Mission & Story <ArrowRight className="w-4 h-4 ml-2" />
+        <div className="text-center flex flex-col sm:flex-row gap-3 justify-center">
+          <Button asChild size="lg" variant="default">
+            <Link href="/services">
+              All services <ArrowRight className="w-4 h-4 ml-2" />
             </Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="/about">Our full mission &amp; story</Link>
           </Button>
         </div>
       </div>

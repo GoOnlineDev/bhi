@@ -63,6 +63,7 @@ export function ServiceForm({ setOpen, initialData }: ServiceFormProps) {
     videos: [] as string[],
     isPublished: false,
     isFeatured: false,
+    showOnHome: false,
     order: undefined as number | undefined,
     contactPerson: "",
     contactPhone: "",
@@ -91,6 +92,7 @@ export function ServiceForm({ setOpen, initialData }: ServiceFormProps) {
         videos: initialData.videos || [],
         isPublished: initialData.isPublished,
         isFeatured: initialData.isFeatured ?? false,
+        showOnHome: initialData.showOnHome ?? false,
         order: initialData.order,
         contactPerson: initialData.contactPerson || "",
         contactPhone: initialData.contactPhone || "",
@@ -178,6 +180,7 @@ export function ServiceForm({ setOpen, initialData }: ServiceFormProps) {
         tags: formData.tags.length ? formData.tags : undefined,
         isPublished: formData.isPublished,
         isFeatured: formData.isFeatured,
+        showOnHome: formData.showOnHome,
         order: formData.order,
         contactPerson: formData.contactPerson.trim() || undefined,
         contactPhone: formData.contactPhone.trim() || undefined,
@@ -383,6 +386,19 @@ export function ServiceForm({ setOpen, initialData }: ServiceFormProps) {
         <div className="grid grid-cols-4 items-center gap-3">
           <Label className="text-right text-sm">Featured</Label>
           <Checkbox checked={formData.isFeatured} onCheckedChange={c => setFormData(p => ({ ...p, isFeatured: !!c }))} />
+        </div>
+        <div className="grid grid-cols-4 items-start gap-3">
+          <Label className="text-right text-sm pt-2">Home spotlight</Label>
+          <div className="col-span-3 space-y-1">
+            <Checkbox
+              id="showOnHome"
+              checked={formData.showOnHome}
+              onCheckedChange={c => setFormData(p => ({ ...p, showOnHome: !!c }))}
+            />
+            <label htmlFor="showOnHome" className="text-sm text-muted-foreground cursor-pointer block">
+              Show on home &amp; about pages as a spotlight card (must be published). Uses Sort Order above.
+            </label>
+          </div>
         </div>
       </div>
 

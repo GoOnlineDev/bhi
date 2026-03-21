@@ -50,6 +50,50 @@ export const getFeaturedServices = query({
   },
 });
 
+/**
+ * Spotlight services for Home + About pillar sections.
+ * Priority: published + showOnHome → published + featured → up to 6 published (newest).
+ */
+export const getSpotlightServices = query({
+  args: {},
+  returns: v.array(v.any()),
+  handler: async (ctx) => {
+    const homeMarked = await ctx.db
+      .query("services")
+      .withIndex("by_isPublished_showOnHome", (q) =>
+        q.eq("isPublished", true).eq("showOnHome", true),
+      )
+      .collect();
+
+    const sortByOrder = (a: Doc<"services">, b: Doc<"services">) => {
+      const ao = a.order ?? 9999;
+      const bo = b.order ?? 9999;
+      if (ao !== bo) return ao - bo;
+      return b._creationTime - a._creationTime;
+    };
+
+    if (homeMarked.length > 0) {
+      return [...homeMarked].sort(sortByOrder);
+    }
+
+    const featured = await ctx.db
+      .query("services")
+      .withIndex("by_isFeatured", (q) => q.eq("isFeatured", true))
+      .collect();
+
+    const publishedFeatured = featured.filter((s) => s.isPublished);
+    if (publishedFeatured.length > 0) {
+      return [...publishedFeatured].sort(sortByOrder);
+    }
+
+    return await ctx.db
+      .query("services")
+      .withIndex("by_isPublished", (q) => q.eq("isPublished", true))
+      .order("desc")
+      .take(6);
+  },
+});
+
 // Get all services (dashboard)
 export const getAllServices = query({
   args: {},
@@ -84,6 +128,7 @@ export const createService = mutation({
     tags: v.optional(v.array(v.string())),
     isPublished: v.optional(v.boolean()),
     isFeatured: v.optional(v.boolean()),
+    showOnHome: v.optional(v.boolean()),
     order: v.optional(v.number()),
     contactPerson: v.optional(v.string()),
     contactPhone: v.optional(v.string()),
@@ -127,6 +172,7 @@ export const createService = mutation({
       tags: args.tags,
       isPublished,
       isFeatured: args.isFeatured ?? false,
+      showOnHome: args.showOnHome ?? false,
       order: args.order,
       contactPerson: args.contactPerson,
       contactPhone: args.contactPhone,
@@ -163,6 +209,7 @@ export const updateService = mutation({
     tags: v.optional(v.array(v.string())),
     isPublished: v.optional(v.boolean()),
     isFeatured: v.optional(v.boolean()),
+    showOnHome: v.optional(v.boolean()),
     order: v.optional(v.number()),
     contactPerson: v.optional(v.string()),
     contactPhone: v.optional(v.string()),
@@ -202,6 +249,7 @@ export const updateService = mutation({
       ...(args.stats !== undefined && { stats: args.stats }),
       ...(args.tags !== undefined && { tags: args.tags }),
       ...(args.isFeatured !== undefined && { isFeatured: args.isFeatured }),
+      ...(args.showOnHome !== undefined && { showOnHome: args.showOnHome }),
       ...(args.order !== undefined && { order: args.order }),
       ...(args.contactPerson !== undefined && { contactPerson: args.contactPerson }),
       ...(args.contactPhone !== undefined && { contactPhone: args.contactPhone }),

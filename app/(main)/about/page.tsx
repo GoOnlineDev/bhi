@@ -1,37 +1,26 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Heart,
   Target,
   Users,
   Globe,
   Award,
-  CheckCircle,
   AlertTriangle,
-  Baby,
-  Brain,
-  ShieldAlert,
-  Pill,
-  ArrowRight,
-  TrendingUp,
   Lightbulb,
   HandHeart,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from "next";
+import { AboutFocusAreasSection } from "./_components/about-focus-areas";
+import { AboutHeroDynamicLead, AboutMissionDynamicLine } from "./_components/about-dynamic-blurbs";
 
 export const metadata: Metadata = {
   title: "About Us",
 };
 
-const missionData = [
-  {
-    icon: Target,
-    title: "Our Mission",
-    description: "To improve youth health outcomes and empower communities through evidence-based interventions in Sexual & Reproductive Health Rights, Non-Communicable Diseases, Gender-Based Violence response, and Substance Abuse recovery.",
-  },
+const visionAndApproach = [
   {
     icon: Lightbulb,
     title: "Our Vision",
@@ -49,81 +38,6 @@ const crisisStats = [
   { value: "6,200+", label: "teenage pregnancies", context: "recorded in our districts during COVID-19 lockdown alone" },
   { value: "70%", label: "of GBV survivors", context: "in rural Uganda never access formal support or justice" },
   { value: "80%+", label: "of youth with NCDs", context: "like sickle cell and epilepsy lack consistent access to care" },
-];
-
-const pillars = [
-  {
-    id: "srhr",
-    icon: Heart,
-    color: "bg-rose-500",
-    lightColor: "bg-rose-50",
-    textColor: "text-rose-600",
-    borderColor: "border-rose-200",
-    title: "Sexual & Reproductive Health Rights (SRHR)",
-    urgency: "Uganda has one of the highest adolescent pregnancy rates in Africa. Access to reproductive healthcare remains limited in rural districts.",
-    services: [
-      "Family Planning education & contraceptive services",
-      "Post-Abortion Care (PAC)",
-      "Teenage pregnancy prevention & support",
-      "STI screening, treatment & education",
-      "Cervical cancer screening",
-      "Safe motherhood support",
-    ],
-  },
-  {
-    id: "ncd-management",
-    icon: Brain,
-    color: "bg-indigo-500",
-    lightColor: "bg-indigo-50",
-    textColor: "text-indigo-600",
-    borderColor: "border-indigo-200",
-    title: "Non-Communicable Diseases (NCDs)",
-    urgency: "NCDs are rising among Uganda's youth. Mental health, sickle cell, diabetes, and epilepsy often go undiagnosed and untreated in rural communities.",
-    services: [
-      "Mental health counseling & psychosocial support",
-      "Sickle Cell Disease management & education",
-      "Diabetes & Hypertension screening and care",
-      "Obesity prevention programs",
-      "Epilepsy management & community awareness",
-      "NCD patient support groups",
-    ],
-  },
-  {
-    id: "gbv-support",
-    icon: ShieldAlert,
-    color: "bg-purple-500",
-    lightColor: "bg-purple-50",
-    textColor: "text-purple-600",
-    borderColor: "border-purple-200",
-    title: "Gender-Based Violence (GBV) Response",
-    urgency: "GBV remains pervasive in Uganda's rural communities — yet most survivors never access support. BHI provides structured, compassionate pathways to justice and healing.",
-    services: [
-      "Trauma-informed psychosocial counseling",
-      "Court support & legal referrals",
-      "Probation & welfare coordination",
-      "Survivor case management",
-      "Community GBV awareness campaigns",
-      "Safe reporting channels for youth",
-    ],
-  },
-  {
-    id: "substance-abuse",
-    icon: Pill,
-    color: "bg-amber-500",
-    lightColor: "bg-amber-50",
-    textColor: "text-amber-600",
-    borderColor: "border-amber-200",
-    title: "Substance Abuse Prevention & Recovery",
-    urgency: "Youth substance abuse is escalating across Uganda, fueled by poverty, trauma, and limited mental health services. BHI addresses both prevention and recovery.",
-    services: [
-      "Youth substance abuse education & training",
-      "Individual & group counseling",
-      "Recovery support (Adaptation programs)",
-      "Community-based rehabilitation",
-      "Family counseling & reintegration support",
-      "Peer-led prevention campaigns",
-    ],
-  },
 ];
 
 const achievements = [
@@ -169,13 +83,8 @@ export default function AboutPage() {
           <h1 id="about-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Transforming Youth Health in Uganda
           </h1>
-          <p className="text-2xl font-semibold text-primary mb-4">Healthy Minds, Strong Communities.</p>
-          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Boost Health Initiative (BHI) is a Uganda-based nonprofit dedicated to improving health outcomes
-            for young people by tackling the four most pressing youth health challenges: unmet Sexual &
-            Reproductive Health Rights, Non-Communicable Diseases, Gender-Based Violence, and Substance
-            Abuse — through community-driven programs rooted in dignity and evidence.
-          </p>
+          <p className="text-2xl font-semibold text-primary mb-6">Healthy Minds, Strong Communities.</p>
+          <AboutHeroDynamicLead />
         </div>
       </section>
 
@@ -216,17 +125,28 @@ export default function AboutPage() {
               Who We Are
             </Badge>
             <h2 id="our-approach-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Mission, Vision & Approach
+              Mission, Vision &amp; Approach
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {missionData.map(({ icon: Icon, title, description }) => (
-              <Card key={title} className="text-center bg-background shadow-lg border-0">
-                <CardHeader className="items-center pb-4">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl mb-6 flex items-center justify-center">
+            <Card className="text-center bg-background shadow-lg border-0 md:text-left">
+              <CardHeader className="items-center md:items-start pb-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl mb-6 flex items-center justify-center mx-auto md:mx-0">
+                  <Target className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-2xl text-foreground w-full">Our Mission</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AboutMissionDynamicLine />
+              </CardContent>
+            </Card>
+            {visionAndApproach.map(({ icon: Icon, title, description }) => (
+              <Card key={title} className="text-center bg-background shadow-lg border-0 md:text-left">
+                <CardHeader className="items-center md:items-start pb-4">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl mb-6 flex items-center justify-center mx-auto md:mx-0">
                     <Icon className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl text-foreground">{title}</CardTitle>
+                  <CardTitle className="text-2xl text-foreground w-full">{title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">{description}</p>
@@ -237,64 +157,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 4 Core Pillars Section */}
-      <section id="focus-areas" aria-labelledby="focus-areas-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
-          <div className="text-center mb-14">
-            <Badge variant="outline" className="mb-6">
-              <TrendingUp className="w-4 h-4 mr-2" />
-              What We Do
-            </Badge>
-            <h2 id="focus-areas-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Four Core Focus Areas
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Every BHI program is built around one of four health challenges that disproportionately
-              affect Uganda&apos;s youth — and for which community-based intervention can make a lasting
-              difference.
-            </p>
-          </div>
-
-          <div className="space-y-10">
-            {pillars.map((pillar, index) => {
-              const Icon = pillar.icon;
-              return (
-                <div
-                  key={pillar.id}
-                  className={`grid md:grid-cols-2 gap-8 items-start rounded-2xl p-8 ${pillar.lightColor} border ${pillar.borderColor}`}
-                >
-                  <div className={index % 2 === 1 ? "md:order-last" : ""}>
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${pillar.color} text-white text-sm font-semibold mb-4`}>
-                      <Icon className="w-4 h-4" />
-                      Pillar {index + 1}
-                    </div>
-                    <h3 className={`text-2xl font-bold mb-3 ${pillar.textColor}`}>{pillar.title}</h3>
-                    <p className="text-muted-foreground mb-4 leading-relaxed italic border-l-4 border-current pl-4" style={{ borderColor: 'currentColor' }}>
-                      {pillar.urgency}
-                    </p>
-                    <Link href={`/services`}>
-                      <Button variant="outline" className={`${pillar.textColor} border-current hover:bg-current hover:text-white transition-colors`}>
-                        Explore This Pillar <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </Link>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-3">Services under this pillar:</h4>
-                    <ul className="space-y-2">
-                      {pillar.services.map((service) => (
-                        <li key={service} className="flex items-start gap-3">
-                          <CheckCircle className={`w-5 h-5 ${pillar.textColor} flex-shrink-0 mt-0.5`} />
-                          <span className="text-foreground text-sm">{service}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      <AboutFocusAreasSection />
 
       {/* Achievements / Impact Section */}
       <section id="achievements" aria-labelledby="achievements-heading" className="bg-secondary">
@@ -422,13 +285,25 @@ export default function AboutPage() {
               Whether through direct funding, partnerships, in-kind support, or technical collaboration —
               your contribution has a measurable, lasting impact on young people&apos;s lives.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold px-8" asChild>
-                <Link href="/contact">Become a Partner</Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8" asChild>
-                <Link href="/programs">See Our Programs</Link>
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-base font-semibold bg-white text-primary hover:bg-gray-100 transition-colors"
+              >
+                Become a Partner
+              </Link>
+              <Link
+                href="/programs"
+                className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-base font-semibold border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary transition-colors"
+              >
+                See Our Programs
+              </Link>
+              <Link
+                href="/services"
+                className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-base font-semibold border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary transition-colors"
+              >
+                Explore Our Services
+              </Link>
             </div>
           </div>
         </div>

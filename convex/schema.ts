@@ -153,6 +153,8 @@ export default defineSchema({
     tags: v.optional(v.array(v.string())),
     isPublished: v.boolean(),
     isFeatured: v.optional(v.boolean()),
+    /** When true, service is highlighted on Home + About as a spotlight / pillar card (if published). */
+    showOnHome: v.optional(v.boolean()),
     order: v.optional(v.number()),
     contactPerson: v.optional(v.string()),
     contactPhone: v.optional(v.string()),
@@ -163,7 +165,8 @@ export default defineSchema({
   .index("by_isPublished", ["isPublished"])
   .index("by_category", ["category"])
   .index("by_isFeatured", ["isFeatured"])
-  .index("by_createdAt", ["createdAt"]),
+  .index("by_createdAt", ["createdAt"])
+  .index("by_isPublished_showOnHome", ["isPublished", "showOnHome"]),
   cron_state: defineTable({
     key: v.string(), // e.g., "lastCounts"
     value: v.any(),
