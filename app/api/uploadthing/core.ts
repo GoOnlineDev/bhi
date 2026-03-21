@@ -1,5 +1,6 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { auth as clerkAuth } from "@clerk/nextjs/server";
 
 const f = createUploadthing();
 
@@ -123,6 +124,27 @@ export const ourFileRouter = {
         url: file.url,
         type: file.type,
         name: file.name 
+      };
+    }),
+
+  /** Home page hero carousel — multiple wide images per upload. */
+  heroImageUploader: f({
+    image: {
+      maxFileSize: "16MB",
+      maxFileCount: 20,
+    },
+  })
+    .middleware(async () => {
+      const { userId } = await clerkAuth();
+      if (!userId) throw new UploadThingError("Unauthorized");
+      return { userId };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Hero image upload complete for userId:", metadata.userId);
+      return {
+        uploadedBy: metadata.userId,
+        url: file.url,
+        name: file.name,
       };
     }),
 } satisfies FileRouter;

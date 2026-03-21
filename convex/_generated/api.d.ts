@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as crons from "../crons.js";
 import type * as gallery from "../gallery.js";
+import type * as heroSettings from "../heroSettings.js";
 import type * as news from "../news.js";
 import type * as newsemail from "../newsemail.js";
 import type * as programemail from "../programemail.js";
@@ -33,6 +34,7 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   gallery: typeof gallery;
+  heroSettings: typeof heroSettings;
   news: typeof news;
   newsemail: typeof newsemail;
   programemail: typeof programemail;

@@ -8,11 +8,13 @@ import {
   Newspaper,
   HeartPulse,
   Image as ImageIcon,
+  PanelsTopLeft,
 } from "lucide-react";
 import Image from "next/image";
 
 export const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/hero", label: "Home hero", icon: PanelsTopLeft },
   { href: "/dashboard/news", label: "News", icon: Newspaper },
   { href: "/dashboard/programs", label: "Programs", icon: HeartPulse },
   { href: "/dashboard/gallery", label: "Gallery", icon: ImageIcon },

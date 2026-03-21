@@ -135,4 +135,22 @@ export default defineSchema({
     value: v.any(),
   })
   .index("by_key", ["key"]),
+
+  /** Single home-page hero configuration (singleton row with singletonKey "home"). */
+  heroSettings: defineTable({
+    singletonKey: v.literal("home"),
+    headline: v.string(),
+    subheadline: v.string(),
+    primaryCtaLabel: v.string(),
+    secondaryCtaLabel: v.string(),
+    primaryCtaHref: v.string(),
+    secondaryCtaHref: v.string(),
+    slides: v.array(
+      v.object({
+        url: v.string(),
+        alt: v.string(),
+      })
+    ),
+    updatedAt: v.number(),
+  }).index("by_singletonKey", ["singletonKey"]),
 }); 
