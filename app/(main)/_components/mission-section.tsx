@@ -1,17 +1,19 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, HandHeart } from "lucide-react";
 
 export default function MissionSection() {
   return (
     <section className="bg-background flex items-center">
-      <div className="container mx-auto px-4 py-6 sm:py-10">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+      <div className="container mx-auto px-4 py-10 sm:py-16">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="flex flex-col gap-4 md:order-last">
             <div
-              className="inline-block"
+              className="inline-block self-start"
               style={{
                 background: "#f37c1b",
                 padding: "0.5rem 1.5rem",
@@ -20,47 +22,76 @@ export default function MissionSection() {
             >
               <span className="text-white font-semibold text-base">Our Mission</span>
             </div>
-            <h2 className="text-2xl lg:text-3xl font-bold text-foreground" style={{ color: "#f37c1b" }}>
-              A Community-Centered Approach to Healthcare in Kayunga, Uganda
+            <h2 className="text-2xl lg:text-3xl font-bold" style={{ color: "#f37c1b" }}>
+              A Community-Centered Approach to Youth Health in Kayunga, Uganda
             </h2>
             <p className="text-base text-muted-foreground">
-              Founded in Kayunga, Uganda, with a mission to transform health outcomes, we focus on sustainable solutions that empower individuals and strengthen healthcare systems across Uganda.
+              Founded in Kayunga, Uganda, BHI was built on the belief that every young person deserves
+              access to quality healthcare — regardless of where they live. We combine clinical services
+              with community outreach, psychosocial support, and advocacy to address Uganda&apos;s most
+              urgent youth health challenges.
             </p>
-            <div className="space-y-2 mt-2">
+            <div className="space-y-3 mt-1">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-foreground text-base">Evidence-Based Interventions</h3>
-                  <p className="text-muted-foreground text-sm">To improve health and empower communities.</p>
+                  <p className="text-muted-foreground text-sm">
+                    Programs grounded in data, community insight, and global best practices.
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-foreground text-base">Community-Centered Programs</h3>
-                  <p className="text-muted-foreground text-sm">Addressing root causes of health disparities.</p>
+                  <p className="text-muted-foreground text-sm">
+                    Designed with and for the communities we serve — addressing root causes, not
+                    just symptoms.
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-foreground text-base">Local Capacity Building</h3>
-                  <p className="text-muted-foreground text-sm">Fostering local leadership for long-term success.</p>
+                  <p className="text-muted-foreground text-sm">
+                    Fostering local leadership and skills for health systems that sustain long after
+                    we&apos;re there.
+                  </p>
                 </div>
               </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+              <Button asChild>
+                <Link href="/about">
+                  <HandHeart className="w-4 h-4 mr-2" />
+                  Partner With Us
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/programs">View Our Programs</Link>
+              </Button>
             </div>
           </div>
           <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg min-h-[200px]">
             <Image
               src="/img/dr6i.jpg"
-              alt="A group of smiling children in a rural village."
+              alt="Children in a rural community in Kayunga, Uganda, benefiting from BHI health programs."
               fill
               className="object-cover"
               loading="lazy"
             />
+            <div className="absolute bottom-4 left-4 right-4">
+              <Badge
+                className="bg-primary/90 text-white backdrop-blur-sm border-0 text-sm px-4 py-2 shadow"
+              >
+                Serving Kayunga, Mukono, Kamuli & Buyende Districts
+              </Badge>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
-} 
+}

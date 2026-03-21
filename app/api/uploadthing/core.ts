@@ -127,9 +127,35 @@ export const ourFileRouter = {
       };
     }),
 
-  /** Home page hero carousel — multiple wide images per upload. */
-  heroImageUploader: f({
+  // Service media uploader (images and videos)
+  serviceMediaUploader: f({
     image: {
+      maxFileSize: "16MB",
+      maxFileCount: 10,
+    },
+    video: {
+      maxFileSize: "512MB",
+      maxFileCount: 5,
+    },
+  })
+    .middleware(async ({ req }) => {
+      const user = await auth(req);
+      if (!user) throw new UploadThingError("Unauthorized");
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Service media upload complete for userId:", metadata.userId);
+      console.log("file url", file.url);
+      return {
+        uploadedBy: metadata.userId,
+        url: file.url,
+        type: file.type,
+        name: file.name,
+      };
+    }),
+
+  /** Home page hero carousel — multiple wide images per upload. */
+  heroImageUploader: f({    image: {
       maxFileSize: "16MB",
       maxFileCount: 20,
     },

@@ -50,6 +50,7 @@ export default function NavBar() {
           <nav className="hidden md:flex items-center gap-6 text-foreground font-medium text-sm">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <Link href="/about" className="hover:text-primary transition-colors">About</Link>
+            <Link href="/services" className="hover:text-primary transition-colors">Services</Link>
             <Link href="/programs" className="hover:text-primary transition-colors">Programs</Link>
             <Link href="/gallery" className="hover:text-primary transition-colors">Gallery</Link>
             <Link href="/news" className="hover:text-primary transition-colors">News</Link>
@@ -127,6 +128,7 @@ export default function NavBar() {
                   {[
                     { href: "/", label: "Home" },
                     { href: "/about", label: "About" },
+                    { href: "/services", label: "Services" },
                     { href: "/programs", label: "Programs" },
                     { href: "/gallery", label: "Gallery" },
                     { href: "/news", label: "News" },

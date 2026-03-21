@@ -20,6 +20,7 @@ import type * as news from "../news.js";
 import type * as newsemail from "../newsemail.js";
 import type * as programemail from "../programemail.js";
 import type * as programs from "../programs.js";
+import type * as services from "../services.js";
 import type * as subscribers from "../subscribers.js";
 import type * as users from "../users.js";
 
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   newsemail: typeof newsemail;
   programemail: typeof programemail;
   programs: typeof programs;
+  services: typeof services;
   subscribers: typeof subscribers;
   users: typeof users;
 }>;

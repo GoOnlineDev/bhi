@@ -130,6 +130,40 @@ export default defineSchema({
   .index("by_type_isPublished", ["type", "isPublished"]),
 
   // Cron state table for persistent cron job state
+  services: defineTable({
+    title: v.string(),
+    slug: v.optional(v.string()),
+    shortTitle: v.optional(v.string()),
+    description: v.string(),
+    overview: v.optional(v.string()),
+    category: v.optional(v.string()),
+    heroImage: v.optional(v.string()),
+    images: v.array(v.string()),
+    videos: v.optional(v.array(v.string())),
+    features: v.optional(v.array(v.object({
+      title: v.string(),
+      description: v.string(),
+    }))),
+    benefits: v.optional(v.array(v.string())),
+    process: v.optional(v.array(v.string())),
+    stats: v.optional(v.array(v.object({
+      label: v.string(),
+      value: v.string(),
+    }))),
+    tags: v.optional(v.array(v.string())),
+    isPublished: v.boolean(),
+    isFeatured: v.optional(v.boolean()),
+    order: v.optional(v.number()),
+    contactPerson: v.optional(v.string()),
+    contactPhone: v.optional(v.string()),
+    contactEmail: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  })
+  .index("by_isPublished", ["isPublished"])
+  .index("by_category", ["category"])
+  .index("by_isFeatured", ["isFeatured"])
+  .index("by_createdAt", ["createdAt"]),
   cron_state: defineTable({
     key: v.string(), // e.g., "lastCounts"
     value: v.any(),

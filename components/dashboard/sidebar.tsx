@@ -9,6 +9,7 @@ import {
   HeartPulse,
   Image as ImageIcon,
   PanelsTopLeft,
+  Layers,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -17,6 +18,7 @@ export const navLinks = [
   { href: "/dashboard/hero", label: "Home hero", icon: PanelsTopLeft },
   { href: "/dashboard/news", label: "News", icon: Newspaper },
   { href: "/dashboard/programs", label: "Programs", icon: HeartPulse },
+  { href: "/dashboard/services", label: "Services", icon: Layers },
   { href: "/dashboard/gallery", label: "Gallery", icon: ImageIcon },
 ];
 

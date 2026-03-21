@@ -1,164 +1,296 @@
+"use client";
+
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Heart, 
-  Baby, 
-  Users, 
-  Brain, 
-  BookOpen, 
-  Home, 
-  Stethoscope, 
-  Shield, 
-  Leaf, 
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Heart,
+  Brain,
+  ShieldAlert,
+  Pill,
+  Baby,
+  Users,
+  Stethoscope,
+  Leaf,
+  BookOpen,
   UserCheck,
-  ArrowRight
+  Layers,
+  ArrowRight,
+  CheckCircle,
+  TrendingUp,
+  Search,
 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { Doc } from "@/convex/_generated/dataModel";
 
-const services = [
-  {
-    id: "maternal-child-health",
-    title: "Maternal and Child Health",
-    description: "Comprehensive care for mothers and children including prenatal care, delivery support, and child health programs.",
-    icon: Heart,
-  },
-  {
-    id: "sexual-reproductive-health",
-    title: "Sexual and Reproductive Health",
-    description: "Complete reproductive health services including family planning, STI screening, and comprehensive education.",
-    icon: Users,
-  },
-  {
-    id: "mental-health",
-    title: "Mental Health Services",
-    description: "Mental health support programs focused on emotional wellbeing, counseling, and movement therapy.",
-    icon: Brain,
-  },
-  {
-    id: "education-prevention",
-    title: "Education and Prevention",
-    description: "Health education programs covering obesity prevention, general health education, and hygiene planning.",
-    icon: BookOpen,
-  },
-  {
-    id: "community-based",
-    title: "Community-Based Services",
-    description: "Community-focused health interventions and outreach programs to improve healthcare access in rural areas.",
-    icon: Home,
-  },
-  {
-    id: "clinical-services",
-    title: "Clinical Services",
-    description: "Essential clinical services including general health screenings, therapeutic communication, and healthcare access.",
-    icon: Stethoscope,
-  },
-  {
-    id: "nursing-services",
-    title: "Nursing Services",
-    description: "Professional nursing care in clinical settings and community environments, providing essential healthcare support.",
-    icon: UserCheck,
-  },
-  {
-    id: "environmental-health",
-    title: "Environmental Health",
-    description: "Programs addressing climate-related health issues and animal health services for community wellbeing.",
-    icon: Leaf,
-  },
-  {
-    id: "youth-services",
-    title: "Youth Services",
-    description: "Specialized health programs designed for young people, focusing on youth-specific health needs.",
-    icon: Baby,
-  }
-];
+const CATEGORY_CONFIG: Record<string, { color: string; lightColor: string; textColor: string; borderColor: string; icon: React.ElementType }> = {
+  "SRHR": { color: "bg-rose-500", lightColor: "bg-rose-50", textColor: "text-rose-600", borderColor: "border-rose-200", icon: Heart },
+  "NCDs": { color: "bg-indigo-500", lightColor: "bg-indigo-50", textColor: "text-indigo-600", borderColor: "border-indigo-200", icon: Brain },
+  "GBV": { color: "bg-purple-500", lightColor: "bg-purple-50", textColor: "text-purple-600", borderColor: "border-purple-200", icon: ShieldAlert },
+  "Substance Abuse": { color: "bg-amber-500", lightColor: "bg-amber-50", textColor: "text-amber-600", borderColor: "border-amber-200", icon: Pill },
+  "Maternal & Child Health": { color: "bg-pink-500", lightColor: "bg-pink-50", textColor: "text-pink-600", borderColor: "border-pink-200", icon: Baby },
+  "Mental Health": { color: "bg-cyan-500", lightColor: "bg-cyan-50", textColor: "text-cyan-600", borderColor: "border-cyan-200", icon: Brain },
+  "Clinical Services": { color: "bg-red-500", lightColor: "bg-red-50", textColor: "text-red-600", borderColor: "border-red-200", icon: Stethoscope },
+  "Community Outreach": { color: "bg-blue-500", lightColor: "bg-blue-50", textColor: "text-blue-600", borderColor: "border-blue-200", icon: Users },
+  "Environmental Health": { color: "bg-emerald-500", lightColor: "bg-emerald-50", textColor: "text-emerald-600", borderColor: "border-emerald-200", icon: Leaf },
+  "Education & Prevention": { color: "bg-green-500", lightColor: "bg-green-50", textColor: "text-green-600", borderColor: "border-green-200", icon: BookOpen },
+  "Youth Services": { color: "bg-orange-500", lightColor: "bg-orange-50", textColor: "text-orange-600", borderColor: "border-orange-200", icon: Baby },
+  "Nursing Services": { color: "bg-teal-500", lightColor: "bg-teal-50", textColor: "text-teal-600", borderColor: "border-teal-200", icon: UserCheck },
+};
 
-export default function ServicesPage() {
+const DEFAULT_CONFIG = { color: "bg-primary", lightColor: "bg-primary/10", textColor: "text-primary", borderColor: "border-primary/30", icon: Layers };
+
+function getConfig(category?: string) {
+  if (!category) return DEFAULT_CONFIG;
+  return CATEGORY_CONFIG[category] || DEFAULT_CONFIG;
+}
+
+function ServiceCard({ item }: { item: Doc<"services"> }) {
+  const cfg = getConfig(item.category);
+  const Icon = cfg.icon;
+  const heroImg = item.heroImage || item.images?.[0];
+
+  return (
+    <Link href={`/services/${item._id}`} className="group block h-full">
+      <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
+        {heroImg && (
+          <div className="relative h-44 w-full overflow-hidden">
+            <Image src={heroImg} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            {item.isFeatured && (
+              <Badge className="absolute top-3 left-3 bg-amber-500 text-white border-0">Featured</Badge>
+            )}
+          </div>
+        )}
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2 mb-1">
+            <div className={`w-8 h-8 ${cfg.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+              <Icon className="w-4 h-4 text-white" />
+            </div>
+            {item.category && (
+              <Badge variant="outline" className={`text-xs ${cfg.textColor} border-current`}>
+                {item.category}
+              </Badge>
+            )}
+          </div>
+          <CardTitle className={`text-lg text-foreground group-hover:${cfg.textColor} transition-colors duration-300`}>
+            {item.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-4">
+            {item.description}
+          </p>
+          {item.benefits && item.benefits.length > 0 && (
+            <ul className="space-y-1 mb-4">
+              {item.benefits.slice(0, 3).map((b) => (
+                <li key={b} className="flex items-center gap-2 text-xs text-foreground">
+                  <CheckCircle className={`w-3.5 h-3.5 ${cfg.textColor} flex-shrink-0`} />
+                  <span className="line-clamp-1">{b}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className={`flex items-center text-sm font-medium ${cfg.textColor}`}>
+            Learn More <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+function ServicesSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[...Array(6)].map((_, i) => (
+        <Card key={i} className="overflow-hidden border-0 shadow-md">
+          <Skeleton className="h-44 w-full rounded-none" />
+          <CardHeader>
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2 mt-2" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-3 w-full mb-2" />
+            <Skeleton className="h-3 w-5/6 mb-2" />
+            <Skeleton className="h-3 w-4/6" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function ServicesPageInner() {
+  const services = useQuery(api.services.getPublishedServices);
+  const isLoading = services === undefined;
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState(categoryParam || "All");
+
+  useEffect(() => {
+    if (categoryParam) setActiveCategory(categoryParam);
+  }, [categoryParam]);
+
+  const categories = ["All", ...Array.from(new Set((services || []).map(s => s.category).filter(Boolean)))];
+
+  const filtered = (services || []).filter(s => {
+    const matchesSearch =
+      !search ||
+      s.title.toLowerCase().includes(search.toLowerCase()) ||
+      s.description.toLowerCase().includes(search.toLowerCase()) ||
+      s.category?.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = activeCategory === "All" || s.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const featured = filtered.filter(s => s.isFeatured);
+  const rest = filtered.filter(s => !s.isFeatured);
+
   return (
     <main>
-      {/* Hero Section */}
-      <section id="services-hero" aria-labelledby="services-hero-heading" className="bg-background">
+      {/* Hero */}
+      <section className="bg-background">
         <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
           <Badge variant="outline" className="mb-6">
-            <Shield className="w-4 h-4 mr-2" />
-            Our Services
+            <Layers className="w-4 h-4 mr-2" />
+            What We Do
           </Badge>
-          <h1 id="services-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Comprehensive Health Services
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            Our Services & Focus Areas
           </h1>
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Boost Health Initiative provides a full spectrum of health services designed to empower communities 
-            and improve health outcomes across Uganda.
+            BHI delivers comprehensive health services across multiple specialties — from Sexual &
+            Reproductive Health Rights and Gender-Based Violence response, to Non-Communicable
+            Disease management, Substance Abuse recovery, and beyond. Every service is designed to
+            meet youth and communities where they are.
           </p>
         </div>
       </section>
 
-      {/* Services Grid Section */}
-      <section id="services-grid" aria-labelledby="services-grid-heading" className="bg-secondary">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
-          <div className="text-center mb-12">
-            <h2 id="services-grid-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Service Areas
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              We offer comprehensive healthcare services across multiple specialties, 
-              ensuring accessible and quality care for all community members.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => {
-              const IconComponent = service.icon;
-              return (
-                <Link key={service.id} href={`/services/${service.id}`} className="block h-full">
-                  <Card className="group bg-background shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
-                    <CardHeader>
-                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <IconComponent className="w-6 h-6 text-primary" />
-                      </div>
-                      <CardTitle className="text-xl text-foreground group-hover:text-primary transition-colors duration-300">
-                        {service.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-1 flex flex-col justify-between">
-                      <p className="text-muted-foreground leading-relaxed mb-4">
-                        {service.description}
-                      </p>
-                      <div className="flex items-center text-sm font-medium text-primary">
-                        Learn More
-                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
+      {/* Search & Filter */}
+      <section className="bg-secondary sticky top-0 z-10 shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search services..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-lg border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    activeCategory === cat
+                      ? "bg-primary text-white"
+                      : "bg-background text-muted-foreground hover:bg-primary/10"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section id="services-cta" aria-labelledby="services-cta-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
-          <div className="bg-secondary rounded-2xl p-8 md:p-12 text-center">
-            <h2 id="services-cta-heading" className="text-3xl font-bold text-foreground mb-4">
-              Need Our Services?
-            </h2>
-            <p className="text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Our dedicated team is ready to provide you with quality healthcare services. 
-              Contact us today to learn more about how we can help you and your community.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg">
-                <Link href="/contact">Contact Us</Link>
+      {/* Services Grid */}
+      <section className="bg-background">
+        <div className="container mx-auto px-4 py-12 sm:py-16">
+          {isLoading ? (
+            <ServicesSkeleton />
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20">
+              <Layers className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Services Found</h3>
+              <p className="text-muted-foreground">Try adjusting your search or filter.</p>
+            </div>
+          ) : (
+            <>
+              {featured.length > 0 && (
+                <div className="mb-12">
+                  <div className="flex items-center gap-2 mb-6">
+                    <TrendingUp className="w-5 h-5 text-amber-500" />
+                    <h2 className="text-xl font-bold text-foreground">Featured Services</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {featured.map(item => <ServiceCard key={item._id} item={item} />)}
+                  </div>
+                </div>
+              )}
+              {rest.length > 0 && (
+                <div>
+                  {featured.length > 0 && (
+                    <h2 className="text-xl font-bold text-foreground mb-6">All Services</h2>
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {rest.map(item => <ServiceCard key={item._id} item={item} />)}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-secondary">
+        <div className="container mx-auto px-4 py-14 sm:py-20">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-primary rounded-2xl p-8 text-white text-center">
+              <ShieldAlert className="w-10 h-10 mx-auto mb-4 opacity-90" />
+              <h2 className="text-2xl font-bold mb-3">Need Help Right Now?</h2>
+              <p className="text-white/80 mb-6 leading-relaxed">
+                If you or someone you know is facing a health emergency, GBV situation, or substance
+                crisis — reach out. Your inquiry can be kept confidential.
+              </p>
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold w-full" asChild>
+                <Link href="/contact?type=help">Get Help Now</Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/programs">View Programs</Link>
-              </Button>
+            </div>
+            <div className="bg-background rounded-2xl p-8 text-center border border-border">
+              <Users className="w-10 h-10 mx-auto mb-4 text-primary" />
+              <h2 className="text-2xl font-bold text-foreground mb-3">Partner or Fund Our Work</h2>
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                We actively seek partnerships and grants to expand our services and reach more young
+                people across Uganda.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button size="lg" asChild>
+                  <Link href="/contact?type=partner">Become a Partner</Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/programs">View Our Programs</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </section>
     </main>
+  );
+}
+
+export default function ServicesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <ServicesPageInner />
+    </Suspense>
   );
 }
