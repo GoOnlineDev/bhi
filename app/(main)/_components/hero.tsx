@@ -106,6 +106,8 @@ export default function Hero() {
             </div>
           ))}
         </div>
+        {/* Dark gradient overlay to ensure text readability */}
+        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/60 via-black/50 to-black/60" />
       </div>
 
       <div
@@ -122,6 +124,7 @@ export default function Hero() {
         >
           <h1
             className="
+              text-white
               text-2xl
               xs:text-3xl
               sm:text-4xl
@@ -140,7 +143,7 @@ export default function Hero() {
               text-base
               xs:text-lg
               sm:text-xl
-              text-slate-200
+              text-white/90
               max-w-2xl
               mx-auto
               drop-shadow
