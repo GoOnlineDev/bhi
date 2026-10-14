@@ -1,90 +1,69 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { EMAIL_RE, escapeHtml, getMailer, headerSafe, wrapHtml } from '@/lib/server-mail';
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const esc = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
   const email = String(body.email ?? '').trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!EMAIL_RE.test(email)) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
   }
-  const name = esc(body.name);
-  const phone = esc(body.phone);
-  const amount = esc(body.amount);
-  const message = esc(body.message);
+  const rawName = headerSafe(body.name) || 'Donor';
+  const rawPhone = headerSafe(body.phone, 40);
+  const rawAmount = headerSafe(body.amount, 40);
+  const rawMessage = String(body.message ?? '').slice(0, 5000);
+  const [name, phone, amount, message] = [rawName, rawPhone, rawAmount, rawMessage].map(escapeHtml);
 
-  // Set up transporter with TLS (port 587)
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // use TLS
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const logoCid = 'bhi-logo@cid';
-  const logoPath = `${process.cwd()}/public/BOOST HEALTH.png`;
-
-  // Email to Boost Health Initiative
-  const orgMailOptions = {
-    from: `"${name}" <${process.env.EMAIL}>`,
-    to: process.env.EMAIL,
-    subject: `New Donation Received`,
-    replyTo: email,
-    text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nAmount: ${amount}\nMessage: ${message}`,
-    html: `
-      <div style="font-family: 'Lexend', 'Noto Sans', Arial, sans-serif; color: #1c140d;">
-        <img src=\"cid:${logoCid}\" alt=\"Boost Health Initiative Logo\" style=\"height:60px; margin-bottom: 16px;\" />
-        <h2>New Donation Received</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Amount:</strong> UGX ${amount}</p>
-        <p><strong>Message:</strong><br/>${message}</p>
-      </div>
-    `,
-    attachments: [
-      {
-        filename: 'BOOST HEALTH.png',
-        path: logoPath,
-        cid: logoCid,
-      },
-    ],
-  };
-
-  // Auto-reply to donor
-  const userMailOptions = {
-    from: `"Boost Health Initiative" <${process.env.EMAIL}>`,
-    to: email,
-    subject: 'Thank you for your donation to Boost Health Initiative!',
-    text: `Dear ${name},\n\nThank you for your generous donation of UGX ${amount} to Boost Health Initiative. We have received your contribution and will reach out to you soon.\n\nBest regards,\nThe Boost Health Initiative Team`,
-    html: `
-      <div style="font-family: 'Lexend', 'Noto Sans', Arial, sans-serif; color: #1c140d;">
-        <img src=\"cid:${logoCid}\" alt=\"Boost Health Initiative Logo\" style=\"height:60px; margin-bottom: 16px;\" />
-        <h2>Thank you for your donation!</h2>
-        <p>Dear ${name},</p>
-        <p>Thank you for your generous donation of <strong>UGX ${amount}</strong> to Boost Health Initiative. We have received your contribution and will reach out to you soon.</p>
-        <p style=\"margin-top: 24px;\">Best regards,<br/>The Boost Health Initiative Team</p>
-      </div>
-    `,
-    attachments: [
-      {
-        filename: 'BOOST HEALTH.png',
-        path: logoPath,
-        cid: logoCid,
-      },
-    ],
-  };
+  let mailer;
+  try {
+    mailer = getMailer();
+  } catch (err) {
+    console.error('[donate] mail not configured:', err);
+    return NextResponse.json({ success: false, error: 'Email is not configured.' }, { status: 500 });
+  }
+  const { transporter, account, replyTo } = mailer;
 
   try {
-    await transporter.sendMail(orgMailOptions);
-    await transporter.sendMail(userMailOptions);
-    return NextResponse.json({ success: true });
+    await transporter.sendMail({
+      from: { name: `${rawName} via BHI website`, address: account },
+      to: account,
+      replyTo: { name: rawName, address: email },
+      subject: `New Donation Pledge: UGX ${rawAmount}`,
+      text: `Name: ${rawName}\nEmail: ${email}\nPhone: ${rawPhone || '-'}\nAmount: UGX ${rawAmount}\n\n${rawMessage}`,
+      html: wrapHtml(`
+        <h2>New Donation Pledge</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+        <p><strong>Phone:</strong> ${phone || '-'}</p>
+        <p><strong>Amount:</strong> UGX ${amount}</p>
+        <p><strong>Message:</strong><br/>${message.replace(/\n/g, '<br/>')}</p>`),
+    });
   } catch (error) {
-    console.error('Error sending donation email:', error);
+    console.error('[donate] failed to send notification to BHI:', error);
     return NextResponse.json({ success: false, error: 'Failed to send donation email.' }, { status: 500 });
   }
+
+  try {
+    // The form records a pledge; no payment is taken on the site, so the reply says so.
+    await transporter.sendMail({
+      from: { name: 'Boost Health Initiative', address: account },
+      to: email,
+      replyTo,
+      subject: 'Thank you for supporting Boost Health Initiative',
+      text: `Dear ${rawName},\n\nThank you for pledging UGX ${rawAmount} to Boost Health Initiative. Our team will contact you shortly with the next steps to complete your donation.\n\nBest regards,\nThe Boost Health Initiative Team`,
+      html: wrapHtml(`
+        <h2>Thank you for your support!</h2>
+        <p>Dear ${name},</p>
+        <p>Thank you for pledging <strong>UGX ${amount}</strong> to Boost Health Initiative. Our team will contact you shortly with the next steps to complete your donation.</p>
+        <p style="margin-top: 24px;">Best regards,<br/>The Boost Health Initiative Team</p>`),
+    });
+  } catch (error) {
+    console.error('[donate] auto-reply failed (notification was sent):', error);
+  }
+  return NextResponse.json({ success: true });
 }

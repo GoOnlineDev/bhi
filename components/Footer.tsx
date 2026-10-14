@@ -1,12 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
 import Image from 'next/image';
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import NewsletterForm from '@/components/newsletter-form';
 import { Linkedin, MessageCircle } from 'lucide-react';
 
 const socialLinks = [
@@ -35,46 +30,13 @@ const footerNav = [
   {
     heading: "Get Involved",
     links: [
-      { href: "/contact", label: "Partnerships" },
-      { href: "/contact", label: "Volunteer" },
+      { href: "/contact?type=partner", label: "Partnerships" },
+      { href: "/contact?type=volunteer", label: "Volunteer" },
     ]
   }
 ];
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const addSubscriber = useMutation(api.subscribers.addSubscriber);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setIsLoading(true);
-    try {
-      const res = await addSubscriber({ email });
-      toast({
-        title: res.status === "already_subscribed" ? "Already subscribed" : "Subscribed!",
-        description: res.status === "already_subscribed"
-          ? "This email is already on our mailing list."
-          : "Thank you! You'll get an email when we publish new news or programmes.",
-      });
-      setEmail('');
-    } catch (err) {
-      const msg = err instanceof Error && err.message.includes("valid email")
-        ? "Please enter a valid email address."
-        : "An error occurred. Please try again later.";
-      toast({
-        title: "Subscription Failed",
-        description: msg,
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   return (
     <footer className="bg-secondary text-secondary-foreground border-t">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -126,23 +88,9 @@ export default function Footer() {
           <div>
              <h4 className="font-semibold text-foreground mb-4">Subscribe to our Newsletter</h4>
              <p className="text-muted-foreground text-sm mb-4">
-               Get the latest updates and stories from our community.
+               Get an email when we publish new news or programmes. Unsubscribe any time.
              </p>
-            <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>
-              <label htmlFor="footer-email" className="sr-only">Email address</label>
-              <Input
-                id="footer-email"
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                disabled={isLoading}
-              />
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Subscribing..." : "Subscribe"}
-              </Button>
-            </form>
+            <NewsletterForm />
           </div>
         </div>
 
@@ -152,4 +100,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-} 
+} 

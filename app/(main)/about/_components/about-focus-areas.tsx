@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import SmartImage from "@/components/ui/smart-image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,8 @@ function bulletItems(s: Doc<"services">): string[] {
   if (s.features && s.features.length > 0) {
     return s.features.map((f) => f.title).filter(Boolean).slice(0, 8);
   }
-  return [s.description];
+  // Description is already shown above the list, so don't repeat it as a bullet.
+  return [];
 }
 
 export function AboutFocusAreasSection() {
@@ -36,7 +37,7 @@ export function AboutFocusAreasSection() {
             id="focus-areas-heading"
             className="text-3xl md:text-4xl font-bold text-foreground mb-4"
           >
-            What We Do
+            Our Focus Areas in Depth
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Our programs address the most pressing health challenges facing young people and
@@ -71,23 +72,25 @@ export function AboutFocusAreasSection() {
                 <div
                   key={service._id}
                   className={cn(
-                    "grid md:grid-cols-2 gap-8 items-start rounded-2xl p-6 sm:p-8 border shadow-sm",
+                    "grid gap-8 items-center rounded-2xl p-6 sm:p-8 border shadow-sm",
+                    heroImg ? "md:grid-cols-5" : "",
                     style.lightColor,
                     style.borderColor,
                   )}
                 >
-                  <div className={index % 2 === 1 ? "md:order-last" : ""}>
-                    {heroImg && (
-                      <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden mb-5 border bg-muted">
-                        <Image
-                          src={heroImg}
-                          alt={service.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                        />
-                      </div>
-                    )}
+                  {heroImg && (
+                    <SmartImage
+                      src={heroImg}
+                      alt={service.title}
+                      fit="contain"
+                      wrapperClassName={cn(
+                        "w-full aspect-[4/3] rounded-xl border md:col-span-2",
+                        index % 2 === 1 ? "md:order-last" : "",
+                      )}
+                      sizes="(max-width: 768px) 100vw, 40vw"
+                    />
+                  )}
+                  <div className={heroImg ? "md:col-span-3" : ""}>
                     <div
                       className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${style.color} text-white text-sm font-semibold mb-4`}
                     >
@@ -100,46 +103,33 @@ export function AboutFocusAreasSection() {
                     <h3 className={`text-2xl font-bold mb-3 ${style.textColor}`}>
                       {service.title}
                     </h3>
-                    <p className="text-muted-foreground mb-4 leading-relaxed border-l-4 pl-4 border-current">
+                    <p className="text-foreground/80 mb-5 leading-relaxed border-l-4 pl-4 border-current">
                       {service.overview || service.description}
                     </p>
+                    {bullets.length > 0 && (
+                      <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-6">
+                        {bullets.map((line, bi) => (
+                          <li key={`${service._id}-b-${bi}`} className="flex items-start gap-2">
+                            <CheckCircle className={`w-5 h-5 ${style.textColor} flex-shrink-0 mt-0.5`} />
+                            <span className="text-foreground text-sm">{line}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                     <div className="flex flex-wrap gap-2">
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "border-2 bg-background",
-                          style.textColor,
-                          style.borderColor,
-                        )}
-                        asChild
-                      >
+                      <Button className={cn(style.color, "text-white hover:opacity-90")} asChild>
                         <Link href={`/services/${service._id}`}>
                           Full service page <ArrowRight className="w-4 h-4 ml-2" />
                         </Link>
                       </Button>
                       {service.category && (
-                        <Button variant="secondary" size="sm" asChild>
+                        <Button variant="outline" className="bg-background" asChild>
                           <Link href={`/services?category=${encodeURIComponent(service.category)}`}>
                             More in {service.category}
                           </Link>
                         </Button>
                       )}
                     </div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-3">
-                      Highlights &amp; offerings
-                    </h4>
-                    <ul className="space-y-2">
-                      {bullets.map((line, bi) => (
-                        <li key={`${service._id}-b-${bi}`} className="flex items-start gap-3">
-                          <CheckCircle
-                            className={`w-5 h-5 ${style.textColor} flex-shrink-0 mt-0.5`}
-                          />
-                          <span className="text-foreground text-sm">{line}</span>
-                        </li>
-                      ))}
-                    </ul>
                   </div>
                 </div>
               );

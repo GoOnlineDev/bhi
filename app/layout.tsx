@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     default: 'Boost Health Initiative',
     template: '%s | Boost Health Initiative',
   },
-  description: 'Boost Health Initiative (BHI) is a non-profit in Kayunga, Uganda, providing vital health programs like immunization, antenatal care, and adolescent health. Supporting rural communities through Suubi Medical Centre. Open 24/7.',
+  description: 'Boost Health Initiative (BHI) is a non-profit in Kayunga, Uganda, providing vital health programs like immunization, antenatal care, and adolescent health. Supporting rural communities through Suubi Medical Centre.',
   metadataBase: new URL('https://www.boosthealthinitiative.com'),
   alternates: { canonical: '/' },
   openGraph: {

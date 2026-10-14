@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="flex-1 w-full">
+    <div className="flex-1 w-full">
       <Hero />
       <PillarsSection />
       <div className="py-8">
@@ -22,6 +22,6 @@ export default function Home() {
       <div className="py-8">
         <MissionSection />
       </div>
-    </main>
+    </div>
   );
 }

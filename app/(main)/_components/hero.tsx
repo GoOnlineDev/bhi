@@ -165,8 +165,8 @@ export default function Hero() {
             <Button
               asChild
               size="lg"
-              variant="secondary"
-              className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+              variant="outline"
+              className="bg-white text-foreground border-white hover:bg-white/90 hover:text-foreground font-semibold shadow"
             >
               <Link href={secondaryCtaHref}>{secondaryCtaLabel}</Link>
             </Button>

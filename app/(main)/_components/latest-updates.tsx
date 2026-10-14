@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import SmartImage from "@/components/ui/smart-image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, MapPin, Newspaper, Calendar } from "lucide-react";
+import { ArrowRight, MapPin, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, easeOut } from "framer-motion";
 
@@ -81,8 +81,7 @@ export default function LatestUpdates() {
         >
           <h2
             id="latest-updates-heading"
-            className="text-3xl lg:text-4xl font-bold"
-            style={{ color: "#f37c1b" }}
+            className="text-3xl lg:text-4xl font-bold text-foreground"
           >
             Latest Updates
           </h2>
@@ -103,12 +102,16 @@ export default function LatestUpdates() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="flex gap-4 overflow-x-auto pb-2">
-              {[...Array(2)].map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className="min-w-[320px] h-[400px] rounded-lg bg-slate-200 dark:bg-slate-800 flex-shrink-0"
-                />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="rounded-lg border bg-white overflow-hidden">
+                  <Skeleton className="aspect-video w-full rounded-none" />
+                  <div className="p-6 space-y-3">
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                </div>
               ))}
             </div>
             <div className="mt-6 space-y-4">
@@ -122,7 +125,7 @@ export default function LatestUpdates() {
             {/* Programs horizontal scroll */}
             {featuredPrograms && featuredPrograms.length > 0 && (
               <motion.div 
-                className="flex gap-4 overflow-x-auto pb-2 mb-8 -mx-2 px-2"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -131,27 +134,21 @@ export default function LatestUpdates() {
                   <motion.div
                     key={program._id}
                     variants={itemVariants}
+                    className="h-full"
                   >
                     <Link
                       href={`/programs/${program._id}`}
-                      className="block group min-w-[320px] max-w-xs flex-shrink-0"
+                      className="block group h-full"
                     >
-                      <motion.div variants={cardVariants}>
-                        <Card className="h-full overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <div className="relative w-full aspect-video">
-                            {program.images && program.images[0] ? (
-                              <div className="absolute inset-0">
-                                <Image
-                                  src={program.images[0]}
-                                  alt={program.name}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-full h-full bg-slate-200 dark:bg-slate-700" />
-                            )}
-                          </div>
+                      <motion.div variants={cardVariants} className="h-full">
+                        <Card className="h-full flex flex-col overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <SmartImage
+                            src={program.images?.[0]}
+                            alt={program.name}
+                            wrapperClassName="w-full aspect-video"
+                            className="group-hover:scale-105 transition-transform duration-500"
+                            fallbackLabel={program.name}
+                          />
                           <CardContent className="p-6">
                             <motion.p 
                               className="text-sm font-semibold text-primary mb-2"
@@ -162,7 +159,7 @@ export default function LatestUpdates() {
                               Featured Program
                             </motion.p>
                             <motion.h3 
-                              className="text-xl font-bold mb-2 text-slate-900 dark:text-white"
+                              className="text-xl font-bold mb-2 text-slate-900 dark:text-white line-clamp-2"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.4 + index * 0.1 }}
@@ -183,10 +180,12 @@ export default function LatestUpdates() {
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.6 + index * 0.1 }}
                             >
-                              <div className="flex items-center gap-1.5">
-                                <MapPin className="w-4 h-4" />
-                                <span>{program.location}</span>
-                              </div>
+                              {program.location ? (
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                                  <span className="truncate">{program.location}</span>
+                                </div>
+                              ) : null}
                               <Badge
                                 variant={
                                   program.status === "Active"
@@ -220,22 +219,16 @@ export default function LatestUpdates() {
                 >
                   <Link
                     href={`/news/${item._id}`}
-                    className="group"
+                    className="group block"
                   >
                     <Card className="flex flex-col sm:flex-row gap-4 p-4 border border-slate-200 dark:border-slate-700 bg-white/30 dark:bg-slate-800/30">
                       <div className="relative w-full sm:w-32 h-32 sm:h-auto flex-shrink-0 rounded-md overflow-hidden">
-                        {item.images && item.images[0] ? (
-                          <Image
-                            src={item.images[0]}
-                            alt={item.title}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
-                            <Newspaper className="w-8 h-8 text-slate-400 dark:text-slate-500" />
-                          </div>
-                        )}
+                        <SmartImage
+                          src={item.images?.[0]}
+                          alt={item.title}
+                          wrapperClassName="absolute inset-0"
+                          sizes="(max-width: 640px) 100vw, 128px"
+                        />
                       </div>
                       <div className="flex flex-col gap-1 min-w-0">
                         <motion.p 
@@ -289,4 +282,4 @@ export default function LatestUpdates() {
       </div>
     </section>
   );
-}
+}

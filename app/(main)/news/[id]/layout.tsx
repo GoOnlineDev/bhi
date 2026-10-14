@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
@@ -27,6 +28,18 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   return { alternates: { canonical }, robots: { index: false } };
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+// Server-side existence check so unknown/unpublished ids return a real 404 status.
+export default async function Layout({ children, params }: { children: React.ReactNode; params: { id: string } }) {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (url) {
+    let item: unknown = undefined;
+    try {
+      const client: any = new ConvexHttpClient(url);
+      item = await client.query(api.news.getNewsById, { id: params.id as Id<any> });
+    } catch {
+      item = undefined; // Convex unreachable: let the client page handle it
+    }
+    if (item === null) notFound();
+  }
+  return <>{children}</>;
 }

@@ -17,8 +17,11 @@ export const getPublishedNews = query({
 
 // Get a single news article by its id
 export const getNewsById = query({
-  args: { id: v.id("news") },
-  handler: async (ctx, { id }) => {
+  args: { id: v.string() },
+  handler: async (ctx, { id: rawId }) => {
+    // Accept any string so a malformed URL id shows a 404 instead of throwing a validator error.
+    const id = ctx.db.normalizeId("news", rawId);
+    if (!id) return null;
     const item = await ctx.db.get(id);
     if (!item) return null;
     // Drafts are only visible to editors/admins

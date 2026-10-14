@@ -17,8 +17,11 @@ export const getPublishedGallery = query({
 
 // Get a single gallery item by its id
 export const getGalleryItemById = query({
-  args: { id: v.id("gallery") },
-  handler: async (ctx, { id }) => {
+  args: { id: v.string() },
+  handler: async (ctx, { id: rawId }) => {
+    // Accept any string so a malformed URL id shows a 404 instead of throwing a validator error.
+    const id = ctx.db.normalizeId("gallery", rawId);
+    if (!id) return null;
     const item = await ctx.db.get(id);
     if (!item) return null;
     if (!item.isPublished && !(await isContentEditor(ctx))) return null;
@@ -314,4 +317,4 @@ export const getGalleryStats = query({
       categories: categoryStats,
     };
   },
-}); 
+}); 
