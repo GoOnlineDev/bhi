@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc } from "./_generated/dataModel";
+import { isContentEditor } from "./authz";
 
 // Get all published gallery items, sorted by date descending
 export const getPublishedGallery = query({
@@ -18,7 +19,10 @@ export const getPublishedGallery = query({
 export const getGalleryItemById = query({
   args: { id: v.id("gallery") },
   handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+    const item = await ctx.db.get(id);
+    if (!item) return null;
+    if (!item.isPublished && !(await isContentEditor(ctx))) return null;
+    return item;
   },
 });
 
@@ -66,6 +70,7 @@ export const getPublishedGalleryByType = query({
 export const getUnpublishedGallery = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db
       .query("gallery")
       .withIndex("by_isPublished", q => q.eq("isPublished", false))
@@ -78,6 +83,7 @@ export const getUnpublishedGallery = query({
 export const getAllGalleryItems = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db.query("gallery").order("desc").collect();
   },
 });
@@ -308,4 +314,4 @@ export const getGalleryStats = query({
       categories: categoryStats,
     };
   },
-}); 
+}); 

@@ -6,7 +6,9 @@ import PillarsSection from "./_components/pillars-section";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Home ",
+  title: "Community Health Programmes in Kayunga, Uganda",
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
 };
 
 export default function Home() {

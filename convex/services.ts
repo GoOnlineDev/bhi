@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc } from "./_generated/dataModel";
+import { isContentEditor } from "./authz";
 
 // Get all published services
 export const getPublishedServices = query({
@@ -20,7 +21,10 @@ export const getServiceById = query({
   args: { id: v.id("services") },
   returns: v.union(v.any(), v.null()),
   handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+    const item = await ctx.db.get(id);
+    if (!item) return null;
+    if (!item.isPublished && !(await isContentEditor(ctx))) return null;
+    return item;
   },
 });
 
@@ -99,6 +103,7 @@ export const getAllServices = query({
   args: {},
   returns: v.array(v.any()),
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db.query("services").order("desc").collect();
   },
 });

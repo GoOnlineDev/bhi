@@ -7,12 +7,10 @@ import { api } from "@/convex/_generated/api";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Twitter, Facebook, Instagram, Linkedin, MessageCircle } from 'lucide-react';
+import { Linkedin, MessageCircle } from 'lucide-react';
 
 const socialLinks = [
-  { href: "#", label: "X (formerly Twitter)", icon: Twitter },
-  { href: "#", label: "Facebook", icon: Facebook },
-  { href: "#", label: "Instagram", icon: Instagram },
+  // TODO(owner): add real X / Facebook / Instagram URLs here; "#" links were removed.
   { href: "https://www.linkedin.com/company/boosthealthinitiative/", label: "LinkedIn", icon: Linkedin },
   { href: "https://wa.me/256727003409", label: "WhatsApp", icon: MessageCircle },
 ];
@@ -22,7 +20,7 @@ const footerNav = [
     heading: "About BHI",
     links: [
       { href: "/about", label: "Our Mission" },
-      { href: "/services", label: "Services" },
+      { href: "/services", label: "What We Do" },
       { href: "/programs", label: "Programs" },
       { href: "/contact", label: "Contact Us" },
     ]
@@ -32,7 +30,6 @@ const footerNav = [
     links: [
       { href: "/news", label: "News" },
       { href: "/gallery", label: "Gallery" },
-      { href: "/faq", label: "FAQ" },
     ]
   },
   {
@@ -52,20 +49,25 @@ export default function Footer() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) return;
+    if (!email.trim()) return;
 
     setIsLoading(true);
     try {
-      await addSubscriber({ email });
+      const res = await addSubscriber({ email });
       toast({
-        title: "Subscribed!",
-        description: "Thank you for joining our newsletter.",
+        title: res.status === "already_subscribed" ? "Already subscribed" : "Subscribed!",
+        description: res.status === "already_subscribed"
+          ? "This email is already on our mailing list."
+          : "Thank you! You'll get an email when we publish new news or programmes.",
       });
       setEmail('');
     } catch (err) {
+      const msg = err instanceof Error && err.message.includes("valid email")
+        ? "Please enter a valid email address."
+        : "An error occurred. Please try again later.";
       toast({
         title: "Subscription Failed",
-        description: "An error occurred. Please try again later.",
+        description: msg,
         variant: "destructive"
       });
     } finally {
@@ -150,4 +152,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-} 
+} 

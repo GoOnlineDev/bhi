@@ -3,7 +3,16 @@ import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
-  const { name, email, phone, subject, message } = await req.json();
+  const body = await req.json();
+  const esc = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const email = String(body.email ?? '').trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
+  }
+  const name = esc(body.name);
+  const phone = esc(body.phone);
+  const subject = esc(body.subject);
+  const message = esc(body.message);
 
   // Set up transporter with TLS (port 587)
   const transporter = nodemailer.createTransport({

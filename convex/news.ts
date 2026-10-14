@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc } from "./_generated/dataModel";
+import { isContentEditor } from "./authz";
 
 // Get all published news, sorted by publishedAt descending
 export const getPublishedNews = query({
@@ -18,7 +19,11 @@ export const getPublishedNews = query({
 export const getNewsById = query({
   args: { id: v.id("news") },
   handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+    const item = await ctx.db.get(id);
+    if (!item) return null;
+    // Drafts are only visible to editors/admins
+    if (!item.isPublished && !(await isContentEditor(ctx))) return null;
+    return item;
   },
 });
 
@@ -71,6 +76,7 @@ export const getPublishedNewsByInstitution = query({
 export const getUnpublishedNews = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db
       .query("news")
       .withIndex("by_isPublished", q => q.eq("isPublished", false))
@@ -83,6 +89,7 @@ export const getUnpublishedNews = query({
 export const getAllNews = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db.query("news").order("desc").collect();
   },
 });

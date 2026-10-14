@@ -18,6 +18,9 @@ import { AboutHeroDynamicLead, AboutMissionDynamicLine } from "./_components/abo
 
 export const metadata: Metadata = {
   title: "About Us",
+  description: "Who we are: Boost Health Initiative works with Suubi Medical Centre to deliver community health programmes in Kayunga, Uganda.",
+  alternates: { canonical: "/about" },
+  openGraph: { url: "/about" },
 };
 
 const visionAndApproach = [
