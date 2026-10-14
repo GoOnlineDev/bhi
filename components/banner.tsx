@@ -31,7 +31,7 @@ export default function Banner() {
         <p className="text-center">
           Need clinical care? Our partner{' '}
           <Link
-            href="https://suubi.vercel.app/"
+            href="https://www.suubimedicalcentre.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="font-semibold text-primary underline-offset-2 hover:underline inline-flex items-center gap-1"
