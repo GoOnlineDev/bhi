@@ -12,14 +12,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { MapPin, Phone, Mail, Clock, ShieldAlert, HandHeart, Users, MessageSquare } from 'lucide-react';
+import { MapPin, Phone, Mail, CheckCircle2, ShieldAlert, HandHeart, Users, MessageSquare } from 'lucide-react';
 import { Suspense } from 'react';
 
-const contactInfo = [
-  { icon: MapPin, title: "Location", lines: ["Level 1 Ssebowa House", "Plot 1 Ssekajja Road, Kayunga Central"] },
-  { icon: Phone, title: "Phone", lines: ["+256-772-670-744", "+256-700-304-407"] },
-  { icon: Mail, title: "Email", lines: ["bhi@boosthealthinitiative.org"] },
-  { icon: Clock, title: "Hours", lines: ["Open 24/7, All Days"] }
+const contactInfo: { icon: typeof MapPin; title: string; lines: { text: string; href?: string }[] }[] = [
+  { icon: MapPin, title: "Location", lines: [{ text: "Level 1 Ssebowa House" }, { text: "Plot 1 Ssekajja Road, Kayunga Central" }] },
+  { icon: Phone, title: "Phone", lines: [{ text: "+256-772-670-744", href: "tel:+256772670744" }, { text: "+256-700-304-407", href: "tel:+256700304407" }] },
+  { icon: Mail, title: "Email", lines: [{ text: "bhi@boosthealthinitiative.org", href: "mailto:bhi@boosthealthinitiative.org" }] },
 ];
 
 const quickPaths = [
@@ -32,6 +31,7 @@ const quickPaths = [
     textColor: "text-rose-600",
     description: "Facing a health crisis, GBV situation, or substance issue? Reach out — your inquiry can be kept confidential.",
     subject: "I Need Help",
+    key: "help",
   },
   {
     icon: HandHeart,
@@ -42,6 +42,7 @@ const quickPaths = [
     textColor: "text-primary",
     description: "Interested in funding BHI programs or exploring partnership opportunities? We'd love to hear from you.",
     subject: "Partnership / Funding Inquiry",
+    key: "partner",
   },
   {
     icon: Users,
@@ -52,6 +53,7 @@ const quickPaths = [
     textColor: "text-indigo-600",
     description: "Want to volunteer, join our team, or bring your skills to support our mission? Get in touch.",
     subject: "Volunteer / Join BHI",
+    key: "volunteer",
   },
   {
     icon: MessageSquare,
@@ -62,13 +64,15 @@ const quickPaths = [
     textColor: "text-emerald-600",
     description: "Have a question about our programs, services, or community outreach? Send us a message.",
     subject: "General Inquiry",
+    key: "general",
   },
 ];
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
+  // Phone is optional (the placeholder said so, but the old schema required 10+ chars)
+  phone: z.string().trim().refine(v => v === "" || v.replace(/[^\d]/g, "").length >= 9, { message: "Please enter a valid phone number." }),
   subject: z.string().min(5, { message: "Subject must be at least 5 characters." }),
   message: z.string().min(10, { message: "Message must be at least 10 characters." })
 });
@@ -79,17 +83,14 @@ function ContactPageInner() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
-  const type = searchParams.get('type');
-
-  const defaultSubject = type === 'help'
-    ? 'I Need Help'
-    : type === 'partner'
-    ? 'Partnership / Funding Inquiry'
-    : '';
+  const typeParam = searchParams.get('type');
+  const initialType = quickPaths.find(p => p.key === typeParam)?.key ?? null;
+  const [selectedType, setSelectedType] = useState<string | null>(initialType);
+  const defaultSubject = quickPaths.find(p => p.key === initialType)?.subject ?? '';
 
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { subject: defaultSubject },
+    defaultValues: { subject: defaultSubject, phone: '' },
   });
 
   const onSubmit: SubmitHandler<ContactFormValues> = async (data) => {
@@ -122,7 +123,7 @@ function ContactPageInner() {
   };
 
   return (
-    <main>
+    <div>
       {/* Hero Section */}
       <section id="contact-hero" aria-labelledby="contact-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
@@ -136,7 +137,7 @@ function ContactPageInner() {
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
             Whether you need help, want to partner with us, or simply have a question —
             our team in Kayunga, Uganda is ready to listen. All inquiries are treated
-            with care and confidentiality.
+            with care.
           </p>
         </div>
       </section>
@@ -145,16 +146,26 @@ function ContactPageInner() {
       <section id="quick-paths" className="bg-secondary">
         <div className="container mx-auto px-4 py-12">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickPaths.map(({ icon: Icon, label, color, lightColor, borderColor, textColor, description, subject }) => (
+            {quickPaths.map(({ icon: Icon, label, color, lightColor, borderColor, textColor, description, subject, key }) => (
               <button
                 key={label}
                 type="button"
+                aria-pressed={selectedType === key}
                 onClick={() => {
-                  setValue("subject", subject);
+                  setSelectedType(key);
+                  setValue("subject", subject, { shouldValidate: true });
+                  const url = new URL(window.location.href);
+                  url.searchParams.set("type", key);
+                  window.history.replaceState(null, "", url.toString());
                   document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className={`text-left rounded-2xl p-5 border ${lightColor} ${borderColor} hover:shadow-md transition-all duration-200 group`}
+                className={`relative text-left rounded-2xl p-5 border-2 ${lightColor} ${selectedType === key ? "border-current ring-2 ring-offset-2 ring-current shadow-md " + textColor : borderColor} hover:shadow-md transition-all duration-200 group`}
               >
+                {selectedType === key && (
+                  <span className={`absolute top-3 right-3 inline-flex items-center gap-1 text-xs font-semibold ${textColor}`}>
+                    <CheckCircle2 className="w-4 h-4" /> Selected
+                  </span>
+                )}
                 <div className={`w-10 h-10 ${color} rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                   <Icon className="w-5 h-5 text-white" />
                 </div>
@@ -174,15 +185,20 @@ function ContactPageInner() {
             <Card className="bg-background p-8 shadow-lg border">
               <CardHeader className="p-0 mb-6">
                 <CardTitle id="contact-form-heading" className="text-2xl font-bold">Send Us a Message</CardTitle>
+                {selectedType ? (
+                  <p className="text-sm mt-2">
+                    Message type: <span className="font-semibold text-foreground">{quickPaths.find(p => p.key === selectedType)?.label}</span>
+                  </p>
+                ) : null}
                 <p className="text-muted-foreground text-sm mt-1">
-                  All messages are confidential. We respond within 24 hours.
+                  We aim to reply as soon as we can.
                 </p>
               </CardHeader>
               <CardContent className="p-0">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div>
                     <label htmlFor="name" className="sr-only">Name</label>
-                    <Input id="name" placeholder="Full Name (or leave blank to stay anonymous)" {...register("name")} disabled={isLoading} />
+                    <Input id="name" placeholder="Full Name" {...register("name")} disabled={isLoading} />
                     {errors.name && <p className="text-destructive text-sm mt-1">{errors.name.message}</p>}
                   </div>
                   <div>
@@ -209,7 +225,7 @@ function ContactPageInner() {
                     {isLoading ? "Sending..." : "Send Message"}
                   </Button>
                   <p className="text-center text-xs text-muted-foreground">
-                    Your message is confidential. We never share your personal information.
+                    We never share your personal information.
                   </p>
                 </form>
               </CardContent>
@@ -230,7 +246,9 @@ function ContactPageInner() {
                     <div>
                       <h3 className="text-xl font-semibold text-foreground mb-1">{title}</h3>
                       <div className="text-muted-foreground">
-                        {lines.map(line => <p key={line}>{line}</p>)}
+                        {lines.map(line => line.href
+                          ? <a key={line.text} href={line.href} className="block text-primary hover:underline break-all">{line.text}</a>
+                          : <p key={line.text}>{line.text}</p>)}
                       </div>
                     </div>
                   </div>
@@ -260,7 +278,7 @@ function ContactPageInner() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 

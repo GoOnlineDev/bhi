@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
-import Image from "next/image";
+import SmartImage from "@/components/ui/smart-image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,11 +30,13 @@ function ServiceCard({ item }: { item: Doc<"services"> }) {
 
   return (
     <Link href={`/services/${item._id}`} className="group block h-full">
-      <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
-        {heroImg && (
+      <Card className="h-full flex flex-col overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
+        {/* Always render the image area so cards line up; SmartImage shows a branded fallback when empty */}
+        {(
           <div className="relative h-44 w-full overflow-hidden">
-            <Image src={heroImg} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            <SmartImage src={heroImg} alt={item.title} wrapperClassName="absolute inset-0" fallbackLabel={item.category ?? undefined}
+              className="group-hover:scale-105 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
             {item.isFeatured && (
               <Badge className="absolute top-3 left-3 bg-amber-500 text-white border-0">Featured</Badge>
             )}
@@ -128,7 +130,7 @@ function ServicesPageInner() {
   const rest = filtered.filter(s => !s.isFeatured);
 
   return (
-    <main>
+    <div>
       {/* Hero */}
       <section className="bg-background">
         <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
@@ -254,7 +256,7 @@ function ServicesPageInner() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 

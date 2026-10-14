@@ -1,18 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
 import Image from 'next/image';
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { Twitter, Facebook, Instagram, Linkedin, MessageCircle } from 'lucide-react';
+import NewsletterForm from '@/components/newsletter-form';
+import { Linkedin, MessageCircle } from 'lucide-react';
 
 const socialLinks = [
-  { href: "#", label: "X (formerly Twitter)", icon: Twitter },
-  { href: "#", label: "Facebook", icon: Facebook },
-  { href: "#", label: "Instagram", icon: Instagram },
+  // TODO(owner): add real X / Facebook / Instagram URLs here; "#" links were removed.
   { href: "https://www.linkedin.com/company/boosthealthinitiative/", label: "LinkedIn", icon: Linkedin },
   { href: "https://wa.me/256727003409", label: "WhatsApp", icon: MessageCircle },
 ];
@@ -22,7 +15,7 @@ const footerNav = [
     heading: "About BHI",
     links: [
       { href: "/about", label: "Our Mission" },
-      { href: "/services", label: "Services" },
+      { href: "/services", label: "What We Do" },
       { href: "/programs", label: "Programs" },
       { href: "/contact", label: "Contact Us" },
     ]
@@ -32,47 +25,18 @@ const footerNav = [
     links: [
       { href: "/news", label: "News" },
       { href: "/gallery", label: "Gallery" },
-      { href: "/faq", label: "FAQ" },
     ]
   },
   {
     heading: "Get Involved",
     links: [
-      { href: "/contact", label: "Partnerships" },
-      { href: "/contact", label: "Volunteer" },
+      { href: "/contact?type=partner", label: "Partnerships" },
+      { href: "/contact?type=volunteer", label: "Volunteer" },
     ]
   }
 ];
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const addSubscriber = useMutation(api.subscribers.addSubscriber);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email) return;
-
-    setIsLoading(true);
-    try {
-      await addSubscriber({ email });
-      toast({
-        title: "Subscribed!",
-        description: "Thank you for joining our newsletter.",
-      });
-      setEmail('');
-    } catch (err) {
-      toast({
-        title: "Subscription Failed",
-        description: "An error occurred. Please try again later.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   return (
     <footer className="bg-secondary text-secondary-foreground border-t">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -124,23 +88,9 @@ export default function Footer() {
           <div>
              <h4 className="font-semibold text-foreground mb-4">Subscribe to our Newsletter</h4>
              <p className="text-muted-foreground text-sm mb-4">
-               Get the latest updates and stories from our community.
+               Get an email when we publish new news or programmes. Unsubscribe any time.
              </p>
-            <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>
-              <label htmlFor="footer-email" className="sr-only">Email address</label>
-              <Input
-                id="footer-email"
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                disabled={isLoading}
-              />
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Subscribing..." : "Subscribe"}
-              </Button>
-            </form>
+            <NewsletterForm />
           </div>
         </div>
 

@@ -1,64 +1,51 @@
 "use node";
 import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
-import nodemailer from "nodemailer";
-import { api } from "@/convex/_generated/api";
+import { internal } from "./_generated/api";
+import { escapeHtml, sendToSubscribers, siteUrl, BATCH_SIZE, type Recipient } from "./mailer";
 
 export const sendProgramEmail = internalAction({
-  args: {
-    programId: v.id("programs"),
-    programUrl: v.optional(v.string()), // Optional: link to the program on the site
-  },
-  handler: async (ctx, { programId, programUrl }) => {
-    // Fetch the program item
-    const program = await ctx.runQuery(api.programs.getProgramById, { id: programId });
-    if (!program) throw new Error("Program not found");
+  args: { programId: v.id("programs"), offset: v.optional(v.number()) },
+  handler: async (ctx, { programId, offset = 0 }): Promise<{ sent: number; failed: number }> => {
+    const program = await ctx.runQuery(internal.crons.getProgramForEmail, { id: programId });
+    if (!program || !program.approved) return { sent: 0, failed: 0 };
 
-    // Fetch all subscribers
-    const subscribers = await ctx.runQuery(api.subscribers.getAllSubscribers, {});
-    if (!subscribers.length) return;
-
-    // Set up transporter (use env variables for credentials)
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-      port: Number(process.env.EMAIL_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
-    // Email content
-    const subject = `New Program: ${program.name}`;
-    const html = `
-      <div style="font-family: 'Lexend', 'Noto Sans', Arial, sans-serif; color: #1c140d;">
-        <h2>${program.name}</h2>
-        <p><strong>Status:</strong> ${program.status}</p>
-        <p><strong>Description:</strong> ${program.description}</p>
-        ${program.goal ? `<p><strong>Goal:</strong> ${program.goal}</p>` : ""}
-        <p><strong>Start:</strong> ${program.startDate ? new Date(program.startDate).toLocaleString() : "N/A"}</p>
-        ${program.endDate ? `<p><strong>End:</strong> ${new Date(program.endDate).toLocaleString()}</p>` : ""}
-        ${program.location ? `<p><strong>Location:</strong> ${program.location}</p>` : ""}
-        ${program.images && program.images.length > 0 ? `<img src="${program.images[0]}" alt="Program Image" style="max-width: 100%; border-radius: 8px; margin-bottom: 16px;" />` : ""}
-        ${programUrl ? `<a href="${programUrl}" style="display:inline-block; margin-top:16px; background:#1b7cf3; color:#fff; padding:10px 18px; border-radius:8px; text-decoration:none; font-weight:700;">Learn More</a>` : ""}
-        <p style="margin-top: 32px; font-size: 13px; color: #888;">You are receiving this because you subscribed to Boost Health Initiative program updates.</p>
-      </div>
-    `;
-
-    // Send to all subscribers (Bcc)
-    const mailOptions = {
-      from: `"Boost Health Initiative" <${process.env.EMAIL}>`,
-      to: process.env.EMAIL, // org email as "to"
-      bcc: subscribers.map((s: any) => s.email),
-      subject,
-      html,
-    };
-
-    try {
-      await transporter.sendMail(mailOptions);
-    } catch (error) {
-      console.error("Error sending program email:", error);
+    const all = await ctx.runQuery(internal.subscribers.listForMailing, {});
+    const recipients = all.slice(offset, offset + BATCH_SIZE);
+    if (!recipients.length) return { sent: 0, failed: 0 };
+    // Large lists are sent in batches, each in its own action run, to stay inside time limits.
+    if (offset + BATCH_SIZE < all.length) {
+      await ctx.scheduler.runAfter(60_000, internal.programemail.sendProgramEmail, { programId, offset: offset + BATCH_SIZE });
     }
+    const withTokens: Recipient[] = [];
+    for (const r of recipients) {
+      const token: string | null = r.unsubscribeToken ?? (await ctx.runMutation(internal.subscribers.ensureToken, { id: r._id }));
+      if (token) withTokens.push({ _id: r._id, email: r.email, unsubscribeToken: token });
+    }
+
+    const fmt = (t: number) => new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Kampala" });
+    const url = `${siteUrl()}/programs/${program._id}`;
+    const subject = `New Program: ${program.name}`;
+    const body = `
+      <div style="font-family: 'Lexend', 'Noto Sans', Arial, sans-serif; color: #1c140d; max-width: 600px;">
+        ${program.images?.length ? `<img src="${escapeHtml(program.images[0])}" alt="" style="max-width:100%;border-radius:8px;margin-bottom:16px;" />` : ""}
+        <h2>${escapeHtml(program.name)}</h2>
+        <p>${escapeHtml(program.description)}</p>
+        ${program.goal ? `<p><strong>Goal:</strong> ${escapeHtml(program.goal)}</p>` : ""}
+        <p><strong>Starts:</strong> ${program.startDate ? fmt(program.startDate) : "TBA"}${program.endDate ? ` &middot; <strong>Ends:</strong> ${fmt(program.endDate)}` : ""}</p>
+        ${program.location ? `<p><strong>Location:</strong> ${escapeHtml(program.location)}</p>` : ""}
+        <a href="${url}" style="display:inline-block;margin-top:16px;background:#f37c1b;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:700;">Learn more</a>`;
+
+    const text = [
+      program.name,
+      "",
+      program.description,
+      program.goal ? `Goal: ${program.goal}` : "",
+      `Starts: ${program.startDate ? fmt(program.startDate) : "TBA"}${program.endDate ? ` | Ends: ${fmt(program.endDate)}` : ""}`,
+      program.location ? `Location: ${program.location}` : "",
+      "",
+      `Learn more: ${url}`,
+    ].filter((l, i, a) => l !== "" || a[i - 1] !== "").join("\n");
+    return await sendToSubscribers(withTokens, subject, body, text);
   },
 });

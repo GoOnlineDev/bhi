@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Stethoscope, Search, HandHeart, MapPin } from 'lucide-react';
-import Image from 'next/image';
+import SmartImage from '@/components/ui/smart-image';
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import DonateModal from '@/components/DonateModal';
@@ -31,7 +31,7 @@ export default function ProgramsPage() {
   }, [programsList, searchQuery]);
 
   return (
-    <main>
+    <div>
       <DonateModal open={donateOpen} onClose={() => setDonateOpen(false)} />
       
       {/* Hero Section */}
@@ -84,27 +84,22 @@ export default function ProgramsPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPrograms.map((program) => (
                 <Link key={program._id} href={`/programs/${program._id}`} className="group block h-full">
-                  <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-background">
-                    <div className="relative h-48 overflow-hidden">
-                      {program.images && program.images.length > 0 ? (
-                        <Image
-                          src={program.images[0]}
-                          alt={program.name || 'Program image'}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground">
-                          <Stethoscope className="w-12 h-12" />
-                        </div>
-                      )}
+                  <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-background">
+                    <div className="relative h-48 overflow-hidden shrink-0">
+                      <SmartImage
+                        src={program.images?.[0]}
+                        alt={program.name || 'Program image'}
+                        wrapperClassName="absolute inset-0"
+                        className="group-hover:scale-105 transition-transform duration-500"
+                        fallbackLabel={program.name}
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                        <div className="absolute top-4 right-4">
                         {program.status && <Badge variant={program.status === 'Active' ? 'default' : 'secondary'}>{program.status}</Badge>}
                       </div>
                     </div>
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold text-foreground leading-tight line-clamp-2 mb-2 group-hover:text-primary transition-colors">
+                    <CardContent className="p-6 flex flex-col flex-1">
+                      <h3 className="text-lg font-semibold text-foreground leading-tight line-clamp-2 min-h-[2.5em] mb-2 group-hover:text-primary transition-colors">
                         {program.name}
                       </h3>
                       {program.location && (
@@ -154,6 +149,6 @@ export default function ProgramsPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
-} 
+} 

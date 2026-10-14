@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc } from "./_generated/dataModel";
+import { isContentEditor } from "./authz";
 
 // Get all published news, sorted by publishedAt descending
 export const getPublishedNews = query({
@@ -16,9 +17,16 @@ export const getPublishedNews = query({
 
 // Get a single news article by its id
 export const getNewsById = query({
-  args: { id: v.id("news") },
-  handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+  args: { id: v.string() },
+  handler: async (ctx, { id: rawId }) => {
+    // Accept any string so a malformed URL id shows a 404 instead of throwing a validator error.
+    const id = ctx.db.normalizeId("news", rawId);
+    if (!id) return null;
+    const item = await ctx.db.get(id);
+    if (!item) return null;
+    // Drafts are only visible to editors/admins
+    if (!item.isPublished && !(await isContentEditor(ctx))) return null;
+    return item;
   },
 });
 
@@ -71,6 +79,7 @@ export const getPublishedNewsByInstitution = query({
 export const getUnpublishedNews = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db
       .query("news")
       .withIndex("by_isPublished", q => q.eq("isPublished", false))
@@ -83,6 +92,7 @@ export const getUnpublishedNews = query({
 export const getAllNews = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db.query("news").order("desc").collect();
   },
 });

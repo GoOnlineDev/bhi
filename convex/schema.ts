@@ -41,6 +41,7 @@ export default defineSchema({
     publishedAt: v.number(),       // Timestamp (Date.now())
     updatedAt: v.optional(v.number()), // For tracking updates
     isPublished: v.boolean(),      // Toggle visibility on frontend
+    emailedAt: v.optional(v.number()), // When subscribers were notified about this item
     tags: v.optional(v.array(v.string())), // Optional tags like ["covid", "staff", "tips"]
     institution: v.optional(
       v.union(
@@ -77,6 +78,7 @@ export default defineSchema({
     relatedNewsIds: v.optional(v.array(v.id("news"))), // Links to news
     isFeatured: v.boolean(),              // Should it be highlighted?
     approved: v.boolean(),                // Whether the program is approved
+    emailedAt: v.optional(v.number()),    // When subscribers were notified about this program
   })
   .index("by_startDate", ["startDate"])
   .index("by_status", ["status"])
@@ -87,10 +89,12 @@ export default defineSchema({
   
   // Subscribers table for email subscriptions
   subscribers: defineTable({
-    email: v.string(), // Subscriber email address
+    email: v.string(), // Subscriber email address (stored lower-cased)
     createdAt: v.number(), // Timestamp for when the subscription was added
+    unsubscribeToken: v.optional(v.string()), // Secret used in one-click unsubscribe links
   })
   .index("by_email", ["email"])
+  .index("by_unsubscribeToken", ["unsubscribeToken"])
   .index("by_createdAt", ["createdAt"]),
 
   // Gallery table for media items (photos and videos)
@@ -190,4 +194,4 @@ export default defineSchema({
     ),
     updatedAt: v.number(),
   }).index("by_singletonKey", ["singletonKey"]),
-}); 
+}); 

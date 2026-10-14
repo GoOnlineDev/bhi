@@ -6,12 +6,14 @@ import PillarsSection from "./_components/pillars-section";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Home ",
+  title: "Community Health Programmes in Kayunga, Uganda",
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
 };
 
 export default function Home() {
   return (
-    <main className="flex-1 w-full">
+    <div className="flex-1 w-full">
       <Hero />
       <PillarsSection />
       <div className="py-8">
@@ -20,6 +22,6 @@ export default function Home() {
       <div className="py-8">
         <MissionSection />
       </div>
-    </main>
+    </div>
   );
 }

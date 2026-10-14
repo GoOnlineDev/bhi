@@ -3,6 +3,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Image from "next/image";
+import SmartImage from "@/components/ui/smart-image";
+import VideoThumb from "@/components/ui/video-thumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,10 +37,6 @@ type MediaItem = {
   tags: string[];
 };
 
-const categories = [
-  "All", "Maternal Health", "Education", "Mental Health", "Clinical Services", 
-  "Community Outreach", "Youth Services", "Facilities"
-];
 
 export default function GalleryPage() {
 
@@ -53,19 +51,27 @@ export default function GalleryPage() {
   const convertedMedia: MediaItem[] = useMemo(() => {
     if (!allMedia) return [];
     return allMedia
-      .filter(item => item.type && item.url && item.title && item.description && item.category && item.date)
+      // Only url is truly required; previously items missing any optional field
+      // (description, category, date) were silently hidden from the public gallery.
+      .filter(item => item.url)
       .map(item => ({
         _id: item._id,
-        type: item.type as 'image' | 'video',
+        type: (item.type ?? 'image') as 'image' | 'video',
         url: item.url!,
         thumbnail: item.thumbnail,
-        title: item.title!,
-        description: item.description!,
-        category: item.category!,
-        date: item.date!,
+        title: item.title ?? '',
+        description: item.description ?? '',
+        category: item.category ?? '',
+        date: item.date ?? item.createdAt,
         tags: item.tags || [],
       }));
   }, [allMedia]);
+
+  // Category options come from the published items themselves, so every admin category is reachable.
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(convertedMedia.map(m => m.category).filter(Boolean))).sort()],
+    [convertedMedia],
+  );
 
   const filteredMedia = useMemo(() => {
     return convertedMedia.filter(item => {
@@ -100,11 +106,11 @@ export default function GalleryPage() {
     if (item.type === 'video') {
       return <VideoPlayer src={item.url} className="w-full h-full object-contain" autoPlay controls />;
     }
-    return <Image src={item.url} alt={item.title} fill className="object-contain" />;
+    return <Image src={item.url} alt={item.title || "Gallery photo"} fill sizes="100vw" className="object-contain" />;
   };
 
   return (
-    <main>
+    <div>
        {/* Hero Section */}
       <section id="gallery-hero" aria-labelledby="gallery-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
@@ -123,28 +129,37 @@ export default function GalleryPage() {
       <section id="gallery-grid" aria-labelledby="gallery-grid-heading" className="bg-secondary">
         <div className="container mx-auto px-4 py-16 sm:py-24">
           {/* Controls */}
-          <div className="mb-12 space-y-8">
-            <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <div className="relative w-full md:w-auto md:flex-1 max-w-lg">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input type="text" placeholder="Search by title or tag..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10"/>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant={mediaType === 'all' ? 'default' : 'outline'} onClick={() => setMediaType('all')}>All</Button>
-                <Button variant={mediaType === 'images' ? 'default' : 'outline'} onClick={() => setMediaType('images')}><Camera className="w-4 h-4 mr-2"/>Images</Button>
-                <Button variant={mediaType === 'videos' ? 'default' : 'outline'} onClick={() => setMediaType('videos')}><Video className="w-4 h-4 mr-2"/>Videos</Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant={viewMode === 'grid' ? 'default' : 'outline'} size="icon" onClick={() => setViewMode('grid')}><Grid3X3 className="w-4 h-4"/></Button>
-                <Button variant={viewMode === 'list' ? 'default' : 'outline'} size="icon" onClick={() => setViewMode('list')}><List className="w-4 h-4"/></Button>
-              </div>
+          {/* Single filter toolbar (previously two rows that both had an "All" button) */}
+          <div className="mb-10 flex flex-col lg:flex-row gap-3 lg:items-center justify-center">
+            <div className="relative w-full lg:max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input type="text" placeholder="Search by title or tag..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-background" aria-label="Search gallery"/>
             </div>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {categories.map(cat => (
-                <Button key={cat} variant={activeCategory === cat ? 'default' : 'outline'} size="sm" onClick={() => setActiveCategory(cat)}>
-                  {cat}
-                </Button>
+            <label className="sr-only" htmlFor="gallery-category">Category</label>
+            <select
+              id="gallery-category"
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              {categories.map(cat => <option key={cat} value={cat}>{cat === "All" ? "All categories" : cat}</option>)}
+            </select>
+            <div className="inline-flex rounded-md border bg-background p-1" role="group" aria-label="Media type">
+              {([["all", "All media", null], ["images", "Photos", Camera], ["videos", "Videos", Video]] as const).map(([val, label, Icon]) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setMediaType(val)}
+                  aria-pressed={mediaType === val}
+                  className={`px-3 py-1.5 text-sm rounded inline-flex items-center gap-1.5 ${mediaType === val ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"}`}
+                >
+                  {Icon ? <Icon className="w-4 h-4" /> : null}{label}
+                </button>
               ))}
+            </div>
+            <div className="hidden sm:flex items-center gap-1">
+              <Button variant={viewMode === 'grid' ? 'default' : 'outline'} size="icon" onClick={() => setViewMode('grid')} aria-label="Grid view"><Grid3X3 className="w-4 h-4"/></Button>
+              <Button variant={viewMode === 'list' ? 'default' : 'outline'} size="icon" onClick={() => setViewMode('list')} aria-label="List view"><List className="w-4 h-4"/></Button>
             </div>
           </div>
 
@@ -159,21 +174,15 @@ export default function GalleryPage() {
                   <Card key={item._id} onClick={() => setSelectedMedia(item)} className="cursor-pointer group overflow-hidden">
                     <div className="relative aspect-square bg-muted">
                       {item.type === 'image' ? (
-                        <Image src={item.thumbnail || item.url} alt={item.title} fill className="object-cover group-hover:scale-110 transition-transform duration-300"/>
+                        <SmartImage src={item.thumbnail || item.url} alt={item.title || 'Gallery photo'} wrapperClassName="absolute inset-0"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw" className="group-hover:scale-110 transition-transform duration-300"/>
                       ) : (
-                        <video
-                            src={`${item.url}#t=0.1`}
-                            className="w-full h-full object-cover"
-                            muted
-                            playsInline
-                            preload="metadata"
-                        />
+                        <VideoThumb src={item.url} thumbnail={item.thumbnail} title={item.title} className="absolute inset-0" />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none"/>
                       <div className="absolute bottom-4 left-4 right-4">
                         <h3 className="text-white font-semibold line-clamp-2">{item.title}</h3>
                       </div>
-                      {item.type === 'video' && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-white opacity-75 group-hover:opacity-100 transition-opacity"><Video className="w-6 h-6"/></div>}
                     </div>
                   </Card>
                 ))}
@@ -184,23 +193,16 @@ export default function GalleryPage() {
                    <Card key={item._id} onClick={() => setSelectedMedia(item)} className="cursor-pointer group overflow-hidden flex flex-col md:flex-row">
                      <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0 bg-muted">
                         {item.type === 'image' ? (
-                          <Image src={item.thumbnail || item.url} alt={item.title} fill className="object-cover"/>
+                          <SmartImage src={item.thumbnail || item.url} alt={item.title || 'Gallery photo'} wrapperClassName="absolute inset-0" sizes="(max-width: 768px) 100vw, 256px"/>
                         ) : (
-                          <video
-                              src={`${item.url}#t=0.1`}
-                              className="w-full h-full object-cover"
-                              muted
-                              playsInline
-                              preload="metadata"
-                          />
+                          <VideoThumb src={item.url} thumbnail={item.thumbnail} title={item.title} className="absolute inset-0" />
                         )}
-                        {item.type === 'video' && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-white opacity-75 group-hover:opacity-100 transition-opacity"><Video className="w-6 h-6"/></div>}
                       </div>
                      <CardContent className="p-6">
-                        <Badge className="mb-2">{item.category}</Badge>
+                        {item.category && <Badge className="mb-2">{item.category}</Badge>}
                         <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
                         <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{item.description}</p>
-                        <p className="text-xs text-muted-foreground">{format(new Date(item.date), 'MMMM dd, yyyy')}</p>
+                        {item.date ? <p className="text-xs text-muted-foreground">{format(new Date(item.date), 'MMMM dd, yyyy')}</p> : null}
                      </CardContent>
                    </Card>
                 ))}
@@ -222,7 +224,7 @@ export default function GalleryPage() {
           {selectedMedia && (
             <>
               <DialogHeader className="p-4 border-b shrink-0">
-                <DialogTitle>{selectedMedia.title}</DialogTitle>
+                <DialogTitle>{selectedMedia.title || "Gallery"}</DialogTitle>
                 <DialogDescription>
                   {selectedMedia.description}
                 </DialogDescription>
@@ -251,6 +253,6 @@ export default function GalleryPage() {
           )}
         </DialogContent>
       </Dialog>
-    </main>
+    </div>
   );
-} 
+} 

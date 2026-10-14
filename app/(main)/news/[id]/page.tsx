@@ -2,7 +2,9 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
+import SmartImage from "@/components/ui/smart-image";
+import NewsletterForm from "@/components/newsletter-form";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +37,7 @@ const NewsDetailsSkeleton = () => (
             </div>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <Skeleton className="aspect-video w-full rounded-xl" />
@@ -64,7 +66,7 @@ const NewsDetailsSkeleton = () => (
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
 );
 
@@ -141,7 +143,7 @@ export default function NewsDetailsPage() {
           "name": "Boost Health Initiative",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://www.boosthealthinitiative.org/logo.png"
+            "url": "https://www.boosthealthinitiative.com/BOOST%20HEALTH%20PNG%20LOGO%20ICON%20Bckg%20TRANS.png"
           }
         },
         "image": news.images && news.images.length > 0 ? news.images[0] : undefined,
@@ -216,22 +218,7 @@ export default function NewsDetailsPage() {
     return <NewsDetailsSkeleton />;
   }
 
-  if (news === null) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">News Article Not Found</h1>
-          <p className="text-muted-foreground mb-6">The news article you're looking for doesn't exist or has been removed.</p>
-          <Button asChild>
-            <Link href="/news">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to News
-            </Link>
-          </Button>
-        </div>
-      </main>
-    );
-  }
+  if (news === null) notFound();
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -279,7 +266,7 @@ export default function NewsDetailsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-8">
@@ -290,11 +277,12 @@ export default function NewsDetailsPage() {
                 className="relative aspect-video rounded-xl overflow-hidden bg-muted cursor-pointer group"
                 onClick={() => openMediaModal({ type: 'image', url: news.images![0], index: 0 })}
               >
-                <Image
+                <SmartImage
                   src={news.images[0]}
                   alt={news.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  wrapperClassName="absolute inset-0"
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="group-hover:scale-105 transition-transform duration-300"
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -340,7 +328,7 @@ export default function NewsDetailsPage() {
             </article>
 
             {/* Media Gallery - Combined Images and Videos */}
-            {allMedia.length > (news.images?.length === 1 ? 0 : 1) && (
+            {(Math.max((news.images?.length ?? 0) - 1, 0) + (news.videos?.length ?? 0)) > 0 && (
               <section aria-labelledby="media-gallery-heading" className="rounded-lg border bg-card text-card-foreground shadow-sm">
                 <CardContent className="p-6">
                   <h2 id="media-gallery-heading" className="text-xl font-semibold text-foreground mb-4">Media Gallery</h2>
@@ -355,6 +343,7 @@ export default function NewsDetailsPage() {
                           src={image}
                           alt={`${news.title} - Image ${index + 2}`}
                           fill
+                          sizes="(max-width: 768px) 50vw, 22vw"
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
@@ -490,24 +479,17 @@ export default function NewsDetailsPage() {
             <section className="rounded-lg border text-card-foreground shadow-sm bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
               <CardContent className="p-6 text-center">
                 <h2 className="text-lg font-semibold text-foreground mb-2">Stay Updated</h2>
-                <p className="text-muted-foreground mb-4">Get the latest news and updates from our programs.</p>
-                <div className="flex flex-col sm:flex-row justify-center gap-2">
-                  <Button asChild>
-                    <Link href="/news">
-                      More News
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline">
-                    <Link href="/programs">
-                      Our Programs
-                    </Link>
-                  </Button>
+                <p className="text-muted-foreground mb-4">Get an email when we publish new news or programmes.</p>
+                <NewsletterForm />
+                <div className="flex justify-center gap-4 mt-4 text-sm">
+                  <Link href="/news" className="text-primary hover:underline">More news</Link>
+                  <Link href="/programs" className="text-primary hover:underline">Our programmes</Link>
                 </div>
               </CardContent>
             </section>
           </aside>
         </div>
-      </main>
+      </div>
 
       {/* Media Modal */}
       <Dialog open={!!selectedMedia} onOpenChange={(isOpen) => !isOpen && setSelectedMedia(null)}>
@@ -522,7 +504,7 @@ export default function NewsDetailsPage() {
               </DialogHeader>
               <div className="flex-1 relative bg-black/10 dark:bg-black/50">
                 {selectedMedia.type === 'image' ? (
-                  <Image src={selectedMedia.url} alt={news.title} fill className="object-contain" />
+                  <Image src={selectedMedia.url} alt={news.title} fill sizes="100vw" className="object-contain" />
                 ) : (
                   <VideoPlayer src={selectedMedia.url} className="w-full h-full object-contain" autoPlay controls />
                 )}
@@ -550,4 +532,4 @@ export default function NewsDetailsPage() {
       </Dialog>
     </div>
   );
-} 
+} 

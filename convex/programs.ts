@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc } from "./_generated/dataModel";
+import { isContentEditor } from "./authz";
 
 // Get all approved programs, sorted by startDate descending
 export const getApprovedPrograms = query({
@@ -16,9 +17,15 @@ export const getApprovedPrograms = query({
 
 // Get a single program by its id
 export const getProgramById = query({
-  args: { id: v.id("programs") },
-  handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+  args: { id: v.string() },
+  handler: async (ctx, { id: rawId }) => {
+    // Accept any string so a malformed URL id shows a 404 instead of throwing a validator error.
+    const id = ctx.db.normalizeId("programs", rawId);
+    if (!id) return null;
+    const item = await ctx.db.get(id);
+    if (!item) return null;
+    if (!item.approved && !(await isContentEditor(ctx))) return null;
+    return item;
   },
 });
 
@@ -228,6 +235,7 @@ export const updateProgram = mutation({
 export const getUnapprovedPrograms = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db
       .query("programs")
       .withIndex("by_approved", q => q.eq("approved", false))
@@ -240,6 +248,7 @@ export const getUnapprovedPrograms = query({
 export const getAllPrograms = query({
   args: {},
   handler: async (ctx) => {
+    if (!(await isContentEditor(ctx))) return [];
     return await ctx.db.query("programs").order("desc").collect();
   },
 });

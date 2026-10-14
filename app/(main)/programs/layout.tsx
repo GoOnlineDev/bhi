@@ -2,6 +2,9 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Programs",
+  description: "Community health programmes run by Boost Health Initiative in Kayunga, Uganda.",
+  alternates: { canonical: "/programs" },
+  openGraph: { url: "/programs" },
 };
 
 export default function ProgramsLayout({
@@ -10,4 +13,4 @@ export default function ProgramsLayout({
   children: React.ReactNode;
 }) {
   return children;
-} 
+} 

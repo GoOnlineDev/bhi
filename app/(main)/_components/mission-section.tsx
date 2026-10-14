@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import SmartImage from "@/components/ui/smart-image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,17 +12,8 @@ export default function MissionSection() {
       <div className="container mx-auto px-4 py-10 sm:py-16">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="flex flex-col gap-4 md:order-last">
-            <div
-              className="inline-block self-start"
-              style={{
-                background: "#f37c1b",
-                padding: "0.5rem 1.5rem",
-                borderRadius: "0.5rem",
-              }}
-            >
-              <span className="text-white font-semibold text-base">Our Mission</span>
-            </div>
-            <h2 className="text-2xl lg:text-3xl font-bold" style={{ color: "#f37c1b" }}>
+            <Badge variant="outline" className="self-start">Our Mission</Badge>
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
               A Community-Centered Approach to Youth Health in Kayunga, Uganda
             </h2>
             <p className="text-base text-muted-foreground">
@@ -64,7 +55,7 @@ export default function MissionSection() {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <Button asChild>
-                <Link href="/about">
+                <Link href="/contact?type=partner">
                   <HandHeart className="w-4 h-4 mr-2" />
                   Partner With Us
                 </Link>
@@ -75,12 +66,11 @@ export default function MissionSection() {
             </div>
           </div>
           <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg min-h-[200px]">
-            <Image
+            <SmartImage
               src="/img/dr6i.jpg"
               alt="Children in a rural community in Kayunga, Uganda, benefiting from BHI health programs."
-              fill
-              className="object-cover"
-              loading="lazy"
+              wrapperClassName="absolute inset-0"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
             <div className="absolute bottom-4 left-4 right-4">
               <Badge

@@ -60,8 +60,11 @@ export default function NavBar() {
             <div className="ml-4 flex items-center gap-3">
               <SignedOut>
                 <SignInButton mode="modal" fallbackRedirectUrl="/">
-                  <button className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
-                    Become a Member
+                  <button
+                    title="Staff and editor sign in"
+                    className="px-4 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    Sign in
                   </button>
                 </SignInButton>
               </SignedOut>
@@ -111,9 +114,9 @@ export default function NavBar() {
                   <SignInButton mode="modal" fallbackRedirectUrl="/">
                     <button
                       onClick={() => setNavOpen(false)}
-                      className="w-full py-3 px-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors text-center"
+                      className="w-full py-3 px-4 border border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors text-center"
                     >
-                      Become a Member
+                      Sign in (staff)
                     </button>
                   </SignInButton>
                 </SignedOut>

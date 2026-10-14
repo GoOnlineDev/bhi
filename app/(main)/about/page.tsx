@@ -18,6 +18,9 @@ import { AboutHeroDynamicLead, AboutMissionDynamicLine } from "./_components/abo
 
 export const metadata: Metadata = {
   title: "About Us",
+  description: "Who we are: Boost Health Initiative works with Suubi Medical Centre to deliver community health programmes in Kayunga, Uganda.",
+  alternates: { canonical: "/about" },
+  openGraph: { url: "/about" },
 };
 
 const visionAndApproach = [
@@ -72,7 +75,7 @@ const sdgTargets = [
 
 export default function AboutPage() {
   return (
-    <main>
+    <div>
       {/* Hero Section */}
       <section id="about-hero" aria-labelledby="about-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
@@ -287,7 +290,7 @@ export default function AboutPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
               <Link
-                href="/contact"
+                href="/contact?type=partner"
                 className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-base font-semibold bg-white text-primary hover:bg-gray-100 transition-colors"
               >
                 Become a Partner
@@ -302,12 +305,12 @@ export default function AboutPage() {
                 href="/services"
                 className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-base font-semibold border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary transition-colors"
               >
-                Explore Our Services
+                Explore What We Do
               </Link>
             </div>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

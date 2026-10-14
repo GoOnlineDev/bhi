@@ -1,21 +1,19 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
-import Image from "next/image";
+import SmartImage from "@/components/ui/smart-image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Layers,
   Users,
   ArrowLeft,
   Phone,
   Mail,
   MapPin,
-  Clock,
   CheckCircle,
   TrendingUp,
 } from "lucide-react";
@@ -54,34 +52,20 @@ export default function ServiceDetailPage() {
   const serviceId = params.id as string;
 
   const service = useQuery(api.services.getServiceById, { id: serviceId as Id<"services"> });
+  const allServices = useQuery(api.services.getPublishedServices);
   const isLoading = service === undefined;
 
   if (isLoading) return <DetailSkeleton />;
 
-  if (!service) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center px-4">
-          <Layers className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Area Not Found</h1>
-          <p className="text-muted-foreground mb-6">
-            This area of work may have been removed or the link is no longer valid.
-          </p>
-          <Link
-            href="/services"
-            className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to What We Do
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (!service) notFound();
 
   const cfg = getCategoryStyle(service.category);
   const Icon = cfg.icon;
   const heroImg = service.heroImage || service.images?.[0];
+  const related = (allServices ?? [])
+    .filter((s: any) => s._id !== service._id)
+    .sort((a: any, b: any) => Number(b.category === service.category) - Number(a.category === service.category))
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-background">
@@ -125,15 +109,20 @@ export default function ServiceDetailPage() {
                 <Link href="/contact" className="inline-flex items-center px-6 py-3 bg-white text-primary rounded-lg hover:bg-gray-100 transition-colors font-semibold">
                   Get Involved
                 </Link>
-                <Link href="/programs" className="inline-flex items-center px-6 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-semibold">
+                <Link href="/programs" className="inline-flex items-center px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-primary transition-colors font-semibold">
                   Related Programs
                 </Link>
               </div>
             </div>
             {heroImg && (
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm">
-                <Image src={heroImg} alt={service.title} fill className="object-cover" />
-              </div>
+              <SmartImage
+                src={heroImg}
+                alt={service.title}
+                fit="contain"
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                wrapperClassName="aspect-[4/3] rounded-2xl bg-white/10 shadow-xl"
+              />
             )}
           </div>
         </div>
@@ -171,12 +160,12 @@ export default function ServiceDetailPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {service.features.map((feature: { title: string; description: string }, i: number) => (
                       <div key={i} className="flex items-start gap-4">
-                        <div className={`w-10 h-10 ${cfg.lightColor} ${cfg.borderColor} border rounded-lg flex items-center justify-center flex-shrink-0`}>
-                          <Icon className={`w-5 h-5 ${cfg.textColor}`} />
+                        <div className={`w-11 h-11 ${cfg.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                          <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
-                          <p className="text-muted-foreground text-sm">{feature.description}</p>
+                          <h3 className="font-semibold text-lg text-foreground mb-1">{feature.title}</h3>
+                          <p className="text-foreground/75 text-base leading-relaxed">{feature.description}</p>
                         </div>
                       </div>
                     ))}
@@ -196,7 +185,7 @@ export default function ServiceDetailPage() {
                     {service.benefits.map((benefit: string, i: number) => (
                       <div key={i} className="flex items-center gap-3">
                         <CheckCircle className={`w-5 h-5 ${cfg.textColor} flex-shrink-0`} />
-                        <span className="text-foreground text-sm">{benefit}</span>
+                        <span className="text-foreground text-base">{benefit}</span>
                       </div>
                     ))}
                   </div>
@@ -234,9 +223,8 @@ export default function ServiceDetailPage() {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {service.images.map((url: string, i: number) => (
-                      <div key={i} className="relative aspect-square rounded-lg overflow-hidden">
-                        <Image src={url} alt={`${service.title} image ${i + 1}`} fill className="object-cover hover:scale-105 transition-transform duration-300" />
-                      </div>
+                      <SmartImage key={i} src={url} alt={`${service.title} image ${i + 1}`} wrapperClassName="aspect-square rounded-lg"
+                        sizes="(max-width: 768px) 50vw, 25vw" className="hover:scale-105 transition-transform duration-300" />
                     ))}
                   </div>
                 </CardContent>
@@ -262,69 +250,37 @@ export default function ServiceDetailPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Contact */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg text-foreground">Get Involved</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            {/* Contact + CTA (merged; was two separate "Get Involved" cards) */}
+            <Card className={`border-2 ${cfg.borderColor} shadow-md overflow-hidden`}>
+              <div className={`${cfg.color} px-6 py-4 flex items-center gap-3`}>
+                <Icon className="w-6 h-6 text-white" />
+                <h2 className="text-lg font-semibold text-white">Get involved</h2>
+              </div>
+              <CardContent className="space-y-4 pt-6">
+                <p className="text-foreground/80 text-base">Reach out to learn more, refer someone, or support this work.</p>
+                <a href={`tel:${(service.contactPhone || "+256772670744").replace(/[^+\d]/g, "")}`} className="flex items-center gap-3 group">
+                  <span className={`w-10 h-10 rounded-lg ${cfg.lightColor} flex items-center justify-center`}><Phone className={`w-5 h-5 ${cfg.textColor}`} /></span>
+                  <span className="text-foreground text-base group-hover:underline">{service.contactPhone || "+256-772-670-744"}</span>
+                </a>
+                <a href={`mailto:${service.contactEmail || "bhi@boosthealthinitiative.org"}`} className="flex items-center gap-3 group">
+                  <span className={`w-10 h-10 rounded-lg ${cfg.lightColor} flex items-center justify-center`}><Mail className={`w-5 h-5 ${cfg.textColor}`} /></span>
+                  <span className="text-foreground text-base break-all group-hover:underline">{service.contactEmail || "bhi@boosthealthinitiative.org"}</span>
+                </a>
                 <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground text-sm">Phone</p>
-                    <p className="text-muted-foreground text-sm">
-                      {service.contactPhone || "+256-772-670-744"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground text-sm">Email</p>
-                    <p className="text-muted-foreground text-sm">
-                      {service.contactEmail || "bhi@boosthealthinitiative.org"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground text-sm">Location</p>
-                    <p className="text-muted-foreground text-sm">Kayunga, Uganda & surrounding districts</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground text-sm">Hours</p>
-                    <p className="text-muted-foreground text-sm">Open 24/7</p>
-                  </div>
+                  <span className={`w-10 h-10 rounded-lg ${cfg.lightColor} flex items-center justify-center`}><MapPin className={`w-5 h-5 ${cfg.textColor}`} /></span>
+                  <span className="text-foreground text-base">Kayunga, Uganda &amp; surrounding districts</span>
                 </div>
                 {service.contactPerson && (
                   <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-primary" />
-                    <div>
-                      <p className="font-medium text-foreground text-sm">Contact Person</p>
-                      <p className="text-muted-foreground text-sm">{service.contactPerson}</p>
-                    </div>
+                    <span className={`w-10 h-10 rounded-lg ${cfg.lightColor} flex items-center justify-center`}><Users className={`w-5 h-5 ${cfg.textColor}`} /></span>
+                    <span className="text-foreground text-base">{service.contactPerson}</span>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-
-            {/* CTA */}
-            <Card className={`${cfg.lightColor} ${cfg.borderColor} border-0 shadow-md`}>
-              <CardContent className="p-6 text-center">
-                <div className={`w-14 h-14 ${cfg.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                  <Icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">Want to Get Involved?</h3>
-                <p className="text-muted-foreground mb-4 text-sm">Reach out to learn more or get involved in this initiative.</p>
                 <Link
-                  href="/contact"
-                  className={`inline-flex items-center px-4 py-2 ${cfg.color} text-white rounded-lg hover:opacity-90 transition-opacity w-full justify-center`}
+                  href="/contact?type=partner"
+                  className="inline-flex w-full items-center justify-center px-4 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  Contact Us
+                  Contact us
                 </Link>
               </CardContent>
             </Card>
@@ -345,23 +301,31 @@ export default function ServiceDetailPage() {
               </Card>
             )}
 
-            {/* Related links */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="text-base text-foreground">Related</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Link href="/services" className={`block ${cfg.textColor} hover:opacity-80 transition-opacity text-sm`}>
-                  ← Back to What We Do
-                </Link>
-                <Link href="/programs" className={`block ${cfg.textColor} hover:opacity-80 transition-opacity text-sm`}>
-                  Our Programs →
-                </Link>
-                <Link href="/about" className={`block ${cfg.textColor} hover:opacity-80 transition-opacity text-sm`}>
-                  About BHI →
-                </Link>
-              </CardContent>
-            </Card>
+            {/* Related: other areas of work, same category first */}
+            {related.length > 0 && (
+              <Card className="border-0 shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-lg text-foreground">Related areas of work</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {related.map((r: any) => {
+                    const rs = getCategoryStyle(r.category);
+                    return (
+                      <Link key={r._id} href={`/services/${r._id}`} className="flex gap-3 items-center group">
+                        <SmartImage src={r.heroImage || r.images?.[0]} alt={r.title} sizes="64px" wrapperClassName="w-16 h-16 rounded-lg flex-shrink-0" />
+                        <div className="min-w-0">
+                          {r.category && <p className={`text-xs font-semibold ${rs.textColor}`}>{r.category}</p>}
+                          <p className="font-medium text-foreground group-hover:underline line-clamp-2">{r.title}</p>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                  <Link href="/services" className="block pt-2 text-primary font-medium hover:underline">
+                    All areas of work →
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
