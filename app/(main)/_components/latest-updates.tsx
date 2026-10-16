@@ -74,14 +74,14 @@ export default function LatestUpdates() {
     >
       <div className="container mx-auto px-4 py-8 sm:py-10">
         <motion.div 
-          className="flex flex-col sm:flex-row items-baseline justify-between gap-4 mb-8"
+          className="flex flex-row flex-wrap items-baseline justify-between gap-2 sm:gap-4 mb-6 sm:mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <h2
             id="latest-updates-heading"
-            className="text-3xl lg:text-4xl font-bold text-foreground"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground"
           >
             Latest Updates
           </h2>
@@ -102,7 +102,7 @@ export default function LatestUpdates() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="rounded-lg border bg-white overflow-hidden">
                   <Skeleton className="aspect-video w-full rounded-none" />
@@ -125,7 +125,7 @@ export default function LatestUpdates() {
             {/* Programs horizontal scroll */}
             {featuredPrograms && featuredPrograms.length > 0 && (
               <motion.div 
-                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10"
+                className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
@@ -134,7 +134,7 @@ export default function LatestUpdates() {
                   <motion.div
                     key={program._id}
                     variants={itemVariants}
-                    className="h-full"
+                    className="h-full min-w-0"
                   >
                     <Link
                       href={`/programs/${program._id}`}
@@ -149,7 +149,7 @@ export default function LatestUpdates() {
                             className="group-hover:scale-105 transition-transform duration-500"
                             fallbackLabel={program.name}
                           />
-                          <CardContent className="p-6">
+                          <CardContent className="p-4 sm:p-6 min-w-0">
                             <motion.p 
                               className="text-sm font-semibold text-primary mb-2"
                               initial={{ opacity: 0 }}
@@ -282,4 +282,4 @@ export default function LatestUpdates() {
       </div>
     </section>
   );
-}
+}

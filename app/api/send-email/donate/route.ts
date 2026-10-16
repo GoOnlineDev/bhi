@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { EMAIL_RE, escapeHtml, getMailer, headerSafe, wrapHtml } from '@/lib/server-mail';
 
 export async function POST(req: Request) {
+  // What this does: nothing is stored and no payment is taken. It emails BHI the donor's
+  // details (Reply-To = donor, so staff can reply directly) and sends the donor a confirmation.
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -10,12 +12,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
   const email = String(body.email ?? '').trim();
-  if (!EMAIL_RE.test(email)) {
-    return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
-  }
-  const rawName = headerSafe(body.name) || 'Donor';
+  const rawName = headerSafe(body.name);
   const rawPhone = headerSafe(body.phone, 40);
-  const rawAmount = headerSafe(body.amount, 40);
+  const amountNum = Number(String(body.amount ?? '').replace(/[,\s]/g, ''));
+
+  // Validate everything up front and return per-field messages the form can show.
+  const fieldErrors: Record<string, string> = {};
+  if (rawName.length < 2) fieldErrors.name = 'Please enter your name.';
+  if (!EMAIL_RE.test(email)) fieldErrors.email = 'Please enter a valid email address.';
+  if (rawPhone.replace(/[^\d]/g, '').length < 9) fieldErrors.phone = 'Please enter a phone number we can reach you on.';
+  if (!Number.isFinite(amountNum) || amountNum < 1000) fieldErrors.amount = 'Please enter an amount of at least UGX 1,000.';
+  if (Object.keys(fieldErrors).length) {
+    return NextResponse.json({ success: false, error: 'Please check the highlighted fields.', fieldErrors }, { status: 400 });
+  }
+  const rawAmount = Math.round(amountNum).toLocaleString('en-US');
   const rawMessage = String(body.message ?? '').slice(0, 5000);
   const [name, phone, amount, message] = [rawName, rawPhone, rawAmount, rawMessage].map(escapeHtml);
 

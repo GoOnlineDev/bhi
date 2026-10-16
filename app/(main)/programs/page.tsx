@@ -36,15 +36,11 @@ export default function ProgramsPage() {
       
       {/* Hero Section */}
       <section id="programs-hero" aria-labelledby="programs-hero-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
-          <Badge variant="outline" className="mb-6">
-            <Stethoscope className="w-4 h-4 mr-2" />
-            Our Programs
-          </Badge>
-          <h1 id="programs-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
+          <h1 id="programs-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
             Comprehensive Health Initiatives in Kayunga, Uganda
           </h1>
-          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
             Explore our comprehensive health initiatives designed to address critical health challenges and empower communities in Kayunga, Uganda.
           </p>
         </div>
@@ -52,7 +48,7 @@ export default function ProgramsPage() {
       
       {/* Programs Grid Section */}
       <section id="programs-grid" aria-labelledby="programs-grid-heading" className="bg-secondary">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           {/* Search Bar */}
           <div className="flex justify-center mb-12">
             <div className="relative w-full max-w-md">
@@ -131,8 +127,8 @@ export default function ProgramsPage() {
 
       {/* Call to Action Section */}
       <section id="programs-cta" aria-labelledby="programs-cta-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
-          <div className="bg-primary/10 rounded-2xl p-8 md:p-12 text-center flex flex-col items-center">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
+          <div className="bg-primary/10 rounded-2xl p-6 sm:p-8 md:p-12 text-center flex flex-col items-center">
             <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
               <HandHeart className="w-8 h-8 text-primary" />
             </div>
@@ -151,4 +147,4 @@ export default function ProgramsPage() {
       </section>
     </div>
   );
-} 
+} 

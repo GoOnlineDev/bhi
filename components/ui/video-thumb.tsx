@@ -40,7 +40,7 @@ export default function VideoThumb({
         />
       )}
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="w-14 h-14 rounded-full bg-white/90 shadow-lg flex items-center justify-center">
+        <span className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white/90 shadow-lg flex items-center justify-center">
           <Play className="w-6 h-6 text-primary ml-1" fill="currentColor" />
         </span>
       </div>

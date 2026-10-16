@@ -113,13 +113,9 @@ export default function GalleryPage() {
     <div>
        {/* Hero Section */}
       <section id="gallery-hero" aria-labelledby="gallery-hero-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
-            <Badge variant="outline" className="mb-6">
-              <Camera className="w-4 h-4 mr-2" />
-              Our Gallery
-            </Badge>
-            <h1 id="gallery-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">Capturing Our Impact in Kayunga, Uganda</h1>
-            <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
+            <h1 id="gallery-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">Capturing Our Impact in Kayunga, Uganda</h1>
+            <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
               Explore our photo and video gallery showcasing the transformative health work of Boost Health Initiative in Kayunga, Uganda.
             </p>
         </div>
@@ -127,7 +123,7 @@ export default function GalleryPage() {
 
       {/* Gallery Section */}
       <section id="gallery-grid" aria-labelledby="gallery-grid-heading" className="bg-secondary">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           {/* Controls */}
           {/* Single filter toolbar (previously two rows that both had an "All" button) */}
           <div className="mb-10 flex flex-col lg:flex-row gap-3 lg:items-center justify-center">
@@ -164,12 +160,12 @@ export default function GalleryPage() {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                {[...Array(8)].map((_, i) => <Skeleton key={i} className="aspect-square rounded-lg" />)}
             </div>
           ) : filteredMedia.length > 0 ? (
             viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                 {filteredMedia.map(item => (
                   <Card key={item._id} onClick={() => setSelectedMedia(item)} className="cursor-pointer group overflow-hidden">
                     <div className="relative aspect-square bg-muted">
@@ -180,8 +176,8 @@ export default function GalleryPage() {
                         <VideoThumb src={item.url} thumbnail={item.thumbnail} title={item.title} className="absolute inset-0" />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none"/>
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <h3 className="text-white font-semibold line-clamp-2">{item.title}</h3>
+                      <div className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4">
+                        <h3 className="text-white text-sm sm:text-base font-semibold line-clamp-2">{item.title}</h3>
                       </div>
                     </div>
                   </Card>
@@ -255,4 +251,4 @@ export default function GalleryPage() {
       </Dialog>
     </div>
   );
-} 
+} 

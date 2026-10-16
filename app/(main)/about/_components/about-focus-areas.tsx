@@ -27,7 +27,7 @@ export function AboutFocusAreasSection() {
 
   return (
     <section id="focus-areas" aria-labelledby="focus-areas-heading" className="bg-background">
-      <div className="container mx-auto px-4 py-16 sm:py-24">
+      <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
         <div className="text-center mb-14">
           <Badge variant="outline" className="mb-6">
             <Layers className="w-4 h-4 mr-2" />
@@ -35,11 +35,11 @@ export function AboutFocusAreasSection() {
           </Badge>
           <h2
             id="focus-areas-heading"
-            className="text-3xl md:text-4xl font-bold text-foreground mb-4"
+            className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words"
           >
             Our Focus Areas in Depth
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
             Our programs address the most pressing health challenges facing young people and
             communities in Kayunga and partner districts. Explore each area below.
           </p>
@@ -72,7 +72,7 @@ export function AboutFocusAreasSection() {
                 <div
                   key={service._id}
                   className={cn(
-                    "grid gap-8 items-center rounded-2xl p-6 sm:p-8 border shadow-sm",
+                    "grid gap-8 items-center rounded-2xl p-4 sm:p-8 border shadow-sm",
                     heroImg ? "md:grid-cols-5" : "",
                     style.lightColor,
                     style.borderColor,

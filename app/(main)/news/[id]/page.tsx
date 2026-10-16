@@ -28,9 +28,9 @@ const NewsDetailsSkeleton = () => (
     <div className="bg-background">
       <header className="bg-card border-b py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
                 <Skeleton className="h-6 w-32 rounded-md" />
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <Skeleton className="h-6 w-20 rounded-md" />
                     <Skeleton className="h-6 w-24 rounded-md" />
                 </div>
@@ -241,7 +241,7 @@ export default function NewsDetailsPage() {
       {/* Header */}
       <header className="bg-card border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <Button variant="link" asChild className="p-0 h-auto">
               <Link 
                 href="/news"
@@ -251,7 +251,7 @@ export default function NewsDetailsPage() {
                 Back to News
               </Link>
             </Button>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge className={`${getCategoryColor(news.category)} border`}>
                 {news.category}
               </Badge>
@@ -293,11 +293,11 @@ export default function NewsDetailsPage() {
                     </svg>
                   </div>
                 </div>
-                <div className="absolute bottom-6 left-6 right-6">
-                  <h1 id="news-hero" className="text-3xl md:text-4xl font-bold text-white mb-2">
+                <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6">
+                  <h1 id="news-hero" className="text-2xl sm:text-xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2 line-clamp-3">
                     {news.title}
                   </h1>
-                  <p className="text-white/90 text-lg">
+                  <p className="text-white/90 text-sm sm:text-lg line-clamp-2 sm:line-clamp-none">
                     {news.summary}
                   </p>
                 </div>
@@ -309,7 +309,7 @@ export default function NewsDetailsPage() {
               <CardContent className="p-6">
                 {!news.images?.length && (
                   <>
-                    <h1 id="article-content-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                    <h1 id="article-content-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
                       {news.title}
                     </h1>
                     <p className="text-xl text-muted-foreground mb-6">
@@ -532,4 +532,4 @@ export default function NewsDetailsPage() {
       </Dialog>
     </div>
   );
-} 
+} 
