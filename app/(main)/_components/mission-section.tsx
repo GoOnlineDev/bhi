@@ -13,7 +13,7 @@ export default function MissionSection() {
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="flex flex-col gap-4 md:order-last">
             <Badge variant="outline" className="self-start">Our Mission</Badge>
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
               A Community-Centered Approach to Youth Health in Kayunga, Uganda
             </h2>
             <p className="text-base text-muted-foreground">

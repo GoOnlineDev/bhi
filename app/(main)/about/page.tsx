@@ -78,31 +78,27 @@ export default function AboutPage() {
     <div>
       {/* Hero Section */}
       <section id="about-hero" aria-labelledby="about-hero-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
-          <Badge variant="outline" className="mb-6">
-            <Heart className="w-4 h-4 mr-2" />
-            About Our Mission
-          </Badge>
-          <h1 id="about-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
+          <h1 id="about-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
             Transforming Youth Health in Uganda
           </h1>
-          <p className="text-2xl font-semibold text-primary mb-6">Healthy Minds, Strong Communities.</p>
+          <p className="text-lg sm:text-2xl font-semibold text-primary mb-6">Healthy Minds, Strong Communities.</p>
           <AboutHeroDynamicLead />
         </div>
       </section>
 
       {/* The Crisis — Why This Work Matters Now */}
       <section id="the-crisis" aria-labelledby="crisis-heading" className="bg-primary text-white">
-        <div className="container mx-auto px-4 py-16 sm:py-20">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-20">
           <div className="text-center mb-12">
             <Badge className="mb-6 bg-white/20 text-white border-white/30 hover:bg-white/30">
               <AlertTriangle className="w-4 h-4 mr-2" />
               The Crisis We Are Addressing
             </Badge>
-            <h2 id="crisis-heading" className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 id="crisis-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
               Why This Work Is Urgent Right Now
             </h2>
-            <p className="text-xl text-white/80 max-w-3xl mx-auto">
+            <p className="text-base sm:text-xl text-white/80 max-w-3xl mx-auto">
               In Kayunga and surrounding districts, young people face compounding health crises with
               nowhere to turn. The numbers speak for themselves.
             </p>
@@ -121,13 +117,13 @@ export default function AboutPage() {
 
       {/* Mission / Vision / Approach */}
       <section id="our-approach" aria-labelledby="our-approach-heading" className="bg-secondary">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-6">
               <Target className="w-4 h-4 mr-2" />
               Who We Are
             </Badge>
-            <h2 id="our-approach-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 id="our-approach-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Mission, Vision &amp; Approach
             </h2>
           </div>
@@ -164,16 +160,16 @@ export default function AboutPage() {
 
       {/* Achievements / Impact Section */}
       <section id="achievements" aria-labelledby="achievements-heading" className="bg-secondary">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-6">
               <Award className="w-4 h-4 mr-2" />
               Our Impact
             </Badge>
-            <h2 id="achievements-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 id="achievements-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Measurable Results in Our Communities
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
               Demonstrating our commitment to improving health outcomes and empowering communities
               through data-driven, sustained impact.
             </p>
@@ -182,7 +178,7 @@ export default function AboutPage() {
             {achievements.map(({ number, label, description }) => (
               <Card key={label} className="text-center bg-background border-0 shadow-lg">
                 <CardContent className="p-6">
-                  <p className="text-5xl font-bold text-primary mb-2">{number}</p>
+                  <p className="text-4xl sm:text-5xl font-bold text-primary mb-2">{number}</p>
                   <h3 className="text-xl font-semibold text-foreground mb-2">{label}</h3>
                   <p className="text-muted-foreground text-sm">{description}</p>
                 </CardContent>
@@ -194,23 +190,23 @@ export default function AboutPage() {
 
       {/* Testimonials */}
       <section id="testimonials" aria-labelledby="testimonials-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-6">
               <Users className="w-4 h-4 mr-2" />
               Voices from Our Community
             </Badge>
-            <h2 id="testimonials-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 id="testimonials-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               The People Behind BHI
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
               Hear from the dedicated health professionals who make our mission possible every day.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             {testimonials.map(({ name, role, content, image }) => (
               <Card key={name} className="bg-secondary shadow-lg border-0">
-                <CardContent className="p-8">
+                <CardContent className="p-5 sm:p-8">
                   <div className="flex items-center mb-6">
                     <div className="relative w-16 h-16 rounded-full overflow-hidden mr-4">
                       <Image
@@ -237,16 +233,16 @@ export default function AboutPage() {
 
       {/* UN SDG Alignment */}
       <section id="sdg-goals" aria-labelledby="sdg-goals-heading" className="bg-secondary">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-6">
               <Globe className="w-4 h-4 mr-2" />
               UN SDG Alignment
             </Badge>
-            <h2 id="sdg-goals-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 id="sdg-goals-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Contributing to Global Goals
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
               BHI&apos;s work directly advances five of the United Nations Sustainable Development Goals,
               making every investment a contribution to the global development agenda.
             </p>
@@ -269,22 +265,22 @@ export default function AboutPage() {
 
       {/* Fund Our Work CTA */}
       <section id="fund-our-work" aria-labelledby="fund-cta-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
-          <div className="bg-primary rounded-3xl p-10 md:p-16 text-white text-center max-w-5xl mx-auto">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
+          <div className="bg-primary rounded-3xl p-6 sm:p-10 md:p-16 text-white text-center max-w-5xl mx-auto">
             <HandHeart className="w-14 h-14 mx-auto mb-6 opacity-90" />
             <Badge className="mb-6 bg-white/20 text-white border-white/30 hover:bg-white/30">
               <Award className="w-4 h-4 mr-2" />
               Partner With BHI
             </Badge>
-            <h2 id="fund-cta-heading" className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 id="fund-cta-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
               Your Investment Changes Lives
             </h2>
-            <p className="text-xl text-white/85 max-w-3xl mx-auto mb-4 leading-relaxed">
+            <p className="text-base sm:text-xl text-white/85 max-w-3xl mx-auto mb-4 leading-relaxed">
               BHI operates in some of Uganda&apos;s most underserved communities, where youth face compounding
               health crises with inadequate support. Funding our programs enables us to expand our reach,
               train more community health workers, and provide services that no one else is delivering.
             </p>
-            <p className="text-lg text-white/75 max-w-2xl mx-auto mb-10">
+            <p className="text-sm sm:text-lg text-white/75 max-w-2xl mx-auto mb-10">
               Whether through direct funding, partnerships, in-kind support, or technical collaboration —
               your contribution has a measurable, lasting impact on young people&apos;s lives.
             </p>

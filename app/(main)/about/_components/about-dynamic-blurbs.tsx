@@ -16,7 +16,7 @@ export function AboutHeroDynamicLead() {
 
   if (spotlight === undefined) {
     return (
-      <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+      <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
         Boost Health Initiative (BHI) is a Uganda-based nonprofit improving health outcomes for
         young people and communities in Kayunga and surrounding districts.
       </p>
@@ -25,7 +25,7 @@ export function AboutHeroDynamicLead() {
 
   if (!spotlight.length) {
     return (
-      <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+      <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
         Boost Health Initiative (BHI) is a Uganda-based nonprofit improving health outcomes for young
         people and communities in Kayunga and surrounding districts — through clinical care, outreach,
         and partnerships. Explore our{" "}

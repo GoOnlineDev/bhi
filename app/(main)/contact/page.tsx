@@ -126,15 +126,11 @@ function ContactPageInner() {
     <div>
       {/* Hero Section */}
       <section id="contact-hero" aria-labelledby="contact-hero-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24 text-center">
-          <Badge variant="outline" className="mb-6">
-            <Mail className="w-4 h-4 mr-2" />
-            Get In Touch
-          </Badge>
-          <h1 id="contact-hero-heading" className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
+          <h1 id="contact-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
             We&apos;re Here for You. Reach Out Today.
           </h1>
-          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
             Whether you need help, want to partner with us, or simply have a question —
             our team in Kayunga, Uganda is ready to listen. All inquiries are treated
             with care.
@@ -179,10 +175,10 @@ function ContactPageInner() {
 
       {/* Contact Form + Info */}
       <section id="contact-form" aria-labelledby="contact-form-heading" className="bg-background">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <div className="grid md:grid-cols-2 gap-12 items-start">
             {/* Contact Form */}
-            <Card className="bg-background p-8 shadow-lg border">
+            <Card className="bg-background p-5 sm:p-8 shadow-lg border">
               <CardHeader className="p-0 mb-6">
                 <CardTitle id="contact-form-heading" className="text-2xl font-bold">Send Us a Message</CardTitle>
                 {selectedType ? (
@@ -239,7 +235,7 @@ function ContactPageInner() {
                   Reach us directly by phone, email, or visit our office in Kayunga Central.
                 </p>
                 {contactInfo.map(({ icon: Icon, title, lines }) => (
-                  <div key={title} className="flex items-start gap-6 mb-6">
+                  <div key={title} className="flex items-start gap-4 sm:gap-6 mb-6">
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Icon className="w-6 h-6 text-primary" />
                     </div>

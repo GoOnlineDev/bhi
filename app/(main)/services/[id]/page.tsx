@@ -72,12 +72,12 @@ export default function ServiceDetailPage() {
       {/* Back nav */}
       <div className="bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <Link href="/services" className={`inline-flex items-center ${cfg.textColor} hover:opacity-80 transition-opacity`}>
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to What We Do
             </Link>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {service.category && (
                 <Badge variant="outline" className={`${cfg.textColor} border-current`}>
                   {service.category}
@@ -94,15 +94,15 @@ export default function ServiceDetailPage() {
       {/* Hero */}
       <div className={`relative bg-gradient-to-br from-[#f37c1b] to-[#ff9d4d] text-white`}>
         <div className="absolute inset-0 bg-black/20" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
               <div className={`inline-flex items-center px-4 py-2 ${cfg.color} rounded-full text-white text-sm font-semibold mb-6`}>
                 <Icon className="w-4 h-4 mr-2" />
                 {service.shortTitle || service.category || "Health Service"}
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">{service.title}</h1>
-              <p className="text-xl text-white/90 leading-relaxed mb-8">
+              <h1 className="text-3xl sm:text-3xl sm:text-4xl md:text-5xl font-bold mb-6 break-words">{service.title}</h1>
+              <p className="text-base sm:text-xl text-white/90 leading-relaxed mb-8">
                 {service.overview || service.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">

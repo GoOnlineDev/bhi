@@ -13,7 +13,7 @@ export default function GlobalNotFound() {
   return (
     <div className="relative min-h-screen flex flex-col bg-[#fcfaf8] overflow-x-hidden w-full">
       <NavBar />
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full pt-16">
         <NotFoundContent />
       </main>
       <Footer />

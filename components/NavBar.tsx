@@ -25,29 +25,29 @@ export default function NavBar() {
   return (
     <>
       <header className="fixed top-0 left-0 w-full z-50 bg-background/90 backdrop-blur-sm border-b">
-        <div className="flex items-center justify-between px-4 md:px-10 py-3 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between h-16 px-4 md:px-10 max-w-7xl mx-auto gap-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="relative w-10 h-10">
+          <Link href="/" className="flex items-center gap-2 min-w-0">
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0">
               <Image src="/BOOST HEALTH PNG LOGO ICON Bckg TRANS.png" alt="Boost Health Initiative Logo" fill className="object-contain" />
             </div>
-            <span className="text-foreground text-lg md:text-xl font-bold">Boost Health Initiative</span>
+            <span className="text-foreground text-base sm:text-lg md:text-xl font-bold leading-tight truncate">Boost Health Initiative</span>
           </Link>
           
           {/* Mobile Nav - Hamburger */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               onClick={() => setNavOpen(!navOpen)}
               aria-label="Toggle navigation"
               aria-expanded={navOpen}
-              className="p-2"
+              className="p-2 -mr-2"
             >
               <Menu className="w-6 h-6 text-foreground" />
             </button>
           </div>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-foreground font-medium text-sm">
+          <nav className="hidden lg:flex items-center gap-6 text-foreground font-medium text-sm">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <Link href="/about" className="hover:text-primary transition-colors">About</Link>
             <Link href="/services" className="hover:text-primary transition-colors">What We Do</Link>
@@ -78,7 +78,7 @@ export default function NavBar() {
 
       {/* Mobile Menu Overlay */}
       <div 
-        className={`fixed inset-0 z-[100] md:hidden transition-opacity duration-300 ${navOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-[100] lg:hidden transition-opacity duration-300 ${navOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         aria-hidden={!navOpen}
       >
         {/* Backdrop */}
@@ -107,7 +107,7 @@ export default function NavBar() {
             </div>
 
             {/* Menu Content */}
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-[calc(100%-65px)]">
               {/* User Section */}
               <div className="p-4 bg-secondary/50 border-b">
                 <SignedOut>

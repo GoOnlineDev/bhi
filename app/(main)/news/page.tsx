@@ -27,7 +27,7 @@ export default function NewsPage() {
       
       {/* News Grid Section */}
       <section id="news-grid" aria-labelledby="news-grid-heading" className="bg-secondary">
-        <div className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <SearchBar 
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -53,4 +53,4 @@ export default function NewsPage() {
       </section>
     </div>
   );
-} 
+} 

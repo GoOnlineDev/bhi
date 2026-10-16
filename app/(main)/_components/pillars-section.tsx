@@ -30,18 +30,18 @@ export default function PillarsSection() {
 
   return (
     <section className="bg-secondary" aria-labelledby="pillars-heading">
-      <div className="container mx-auto px-4 py-12 sm:py-20">
+      <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-20">
         <div className="text-center mb-12">
           <Badge variant="outline" className="mb-4">
             What We Do
           </Badge>
           <h2
             id="pillars-heading"
-            className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4"
           >
             Our Focus Areas
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
             Explore the programmes BHI leads across communities — each one rooted in evidence,
             advocacy, and a commitment to lasting health outcomes.
           </p>
