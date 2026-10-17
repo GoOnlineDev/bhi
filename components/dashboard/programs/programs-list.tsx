@@ -174,7 +174,7 @@ export function ProgramsList({ items }: ProgramsListProps) {
           <DialogHeader>
             <DialogTitle>Edit Program</DialogTitle>
             <DialogDescription>
-              Make changes to the program here. Click save when you're done.
+              Make changes to the program here. Click save when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
           <ProgramForm 
@@ -201,4 +201,4 @@ export function ProgramsList({ items }: ProgramsListProps) {
       </AlertDialog>
     </>
   );
-} 
+} 

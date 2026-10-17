@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import NewsletterForm from '@/components/newsletter-form';
 import { Linkedin, MessageCircle } from 'lucide-react';
+import { FOCUS_AREAS } from '@/lib/site-content';
 
 const socialLinks = [
   // TODO(owner): add real X / Facebook / Instagram URLs here; "#" links were removed.
@@ -51,6 +52,10 @@ export default function Footer() {
             </Link>
             <p className="text-muted-foreground text-sm max-w-xs text-center md:text-left mb-6">
               Empowering communities through health initiatives and sustainable solutions in Uganda.
+            </p>
+            <p className="text-muted-foreground text-xs max-w-xs text-center md:text-left mb-6">
+              <span className="font-semibold text-foreground">Focus areas: </span>
+              {FOCUS_AREAS.map((a) => a.short).join(" · ")}
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map(({ href, label, icon: Icon }) => (

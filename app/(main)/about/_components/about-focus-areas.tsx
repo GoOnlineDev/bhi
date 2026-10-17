@@ -35,7 +35,7 @@ export function AboutFocusAreasSection() {
           </Badge>
           <h2
             id="focus-areas-heading"
-            className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words"
           >
             Our Focus Areas in Depth
           </h2>

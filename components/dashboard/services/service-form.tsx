@@ -14,22 +14,9 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { UploadDropzone } from "@/utils/uploadthing";
 import Image from "next/image";
 import { X, Plus, Trash2 } from "lucide-react";
+import { SERVICE_CATEGORY_STYLES } from "@/lib/service-category-styles";
 
-export const SERVICE_CATEGORIES = [
-  "SRHR",
-  "NCDs",
-  "GBV",
-  "Substance Abuse",
-  "Maternal & Child Health",
-  "Mental Health",
-  "Clinical Services",
-  "Community Outreach",
-  "Environmental Health",
-  "Education & Prevention",
-  "Youth Services",
-  "Nursing Services",
-  "Other",
-];
+export const SERVICE_CATEGORIES = Object.keys(SERVICE_CATEGORY_STYLES);
 
 interface ServiceFormProps {
   setOpen: (open: boolean) => void;

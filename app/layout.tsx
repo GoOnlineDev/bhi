@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import ConvexClientProvider from '@/provider/convexProviderWithClerk'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from '@/components/ui/toaster'
+import { MISSION } from '@/lib/site-content';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
     default: 'Boost Health Initiative',
     template: '%s | Boost Health Initiative',
   },
-  description: 'Boost Health Initiative (BHI) is a non-profit in Kayunga, Uganda, providing vital health programs like immunization, antenatal care, and adolescent health. Supporting rural communities through Suubi Medical Centre.',
+  description: `Boost Health Initiative (BHI), Kayunga, Uganda. ${MISSION}`,
   metadataBase: new URL('https://www.boosthealthinitiative.com'),
   alternates: { canonical: '/' },
   openGraph: {

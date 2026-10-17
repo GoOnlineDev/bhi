@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Heart,
   Target,
   Users,
   Globe,
@@ -14,21 +13,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from "next";
 import { AboutFocusAreasSection } from "./_components/about-focus-areas";
-import { AboutHeroDynamicLead, AboutMissionDynamicLine } from "./_components/about-dynamic-blurbs";
+import { AboutHeroFocusAreas } from "./_components/about-dynamic-blurbs";
+import { AboutStorySection } from "./_components/about-story";
+import { MISSION, VISION } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Who we are: Boost Health Initiative works with Suubi Medical Centre to deliver community health programmes in Kayunga, Uganda.",
+  description: "Founded in Kayunga in 2020, Boost Health Initiative works to close healthcare disparities by empowering communities with health knowledge and improving access to care for underserved and vulnerable populations in Uganda.",
   alternates: { canonical: "/about" },
   openGraph: { url: "/about" },
 };
 
-const visionAndApproach = [
-  {
-    icon: Lightbulb,
-    title: "Our Vision",
-    description: "A Uganda where every young person has access to quality healthcare, protection from violence, and the holistic support needed to build healthy, productive lives — and in turn, stronger communities.",
-  },
+const missionVisionApproach = [
+  { icon: Target, title: "Our Mission", description: MISSION },
+  { icon: Lightbulb, title: "Our Vision", description: VISION },
   {
     icon: Users,
     title: "Our Approach",
@@ -80,12 +78,14 @@ export default function AboutPage() {
       <section id="about-hero" aria-labelledby="about-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
           <h1 id="about-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Transforming Youth Health in Uganda
+            Closing the Healthcare Gap for Communities in Uganda
           </h1>
-          <p className="text-lg sm:text-2xl font-semibold text-primary mb-6">Healthy Minds, Strong Communities.</p>
-          <AboutHeroDynamicLead />
+          <p className="text-lg sm:text-2xl font-semibold text-primary mb-6">Healthy, Empowered Communities. Equitable Care for All.</p>
+          <AboutHeroFocusAreas />
         </div>
       </section>
+
+      <AboutStorySection />
 
       {/* The Crisis — Why This Work Matters Now */}
       <section id="the-crisis" aria-labelledby="crisis-heading" className="bg-primary text-white">
@@ -123,27 +123,16 @@ export default function AboutPage() {
               <Target className="w-4 h-4 mr-2" />
               Who We Are
             </Badge>
-            <h2 id="our-approach-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="our-approach-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Mission, Vision &amp; Approach
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center bg-background shadow-lg border-0 md:text-left">
-              <CardHeader className="items-center md:items-start pb-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl mb-6 flex items-center justify-center mx-auto md:mx-0">
-                  <Target className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-2xl text-foreground w-full">Our Mission</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AboutMissionDynamicLine />
-              </CardContent>
-            </Card>
-            {visionAndApproach.map(({ icon: Icon, title, description }) => (
-              <Card key={title} className="text-center bg-background shadow-lg border-0 md:text-left">
-                <CardHeader className="items-center md:items-start pb-4">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl mb-6 flex items-center justify-center mx-auto md:mx-0">
-                    <Icon className="h-8 w-8 text-primary" />
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+            {missionVisionApproach.map(({ icon: Icon, title, description }) => (
+              <Card key={title} className="h-full text-center bg-background shadow-lg border-0 md:text-left">
+                <CardHeader className="items-center md:items-start pt-6 pb-4">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-full mb-4 flex items-center justify-center mx-auto md:mx-0 shrink-0">
+                    <Icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary" aria-hidden />
                   </div>
                   <CardTitle className="text-2xl text-foreground w-full">{title}</CardTitle>
                 </CardHeader>
@@ -166,7 +155,7 @@ export default function AboutPage() {
               <Award className="w-4 h-4 mr-2" />
               Our Impact
             </Badge>
-            <h2 id="achievements-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="achievements-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Measurable Results in Our Communities
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
@@ -196,7 +185,7 @@ export default function AboutPage() {
               <Users className="w-4 h-4 mr-2" />
               Voices from Our Community
             </Badge>
-            <h2 id="testimonials-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               The People Behind BHI
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
@@ -239,7 +228,7 @@ export default function AboutPage() {
               <Globe className="w-4 h-4 mr-2" />
               UN SDG Alignment
             </Badge>
-            <h2 id="sdg-goals-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="sdg-goals-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Contributing to Global Goals
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">

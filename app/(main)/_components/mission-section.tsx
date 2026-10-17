@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, HandHeart } from "lucide-react";
+import { FOCUS_AREAS, MISSION } from "@/lib/site-content";
 
 export default function MissionSection() {
   return (
@@ -14,13 +15,12 @@ export default function MissionSection() {
           <div className="flex flex-col gap-4 md:order-last">
             <Badge variant="outline" className="self-start">Our Mission</Badge>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-              A Community-Centered Approach to Youth Health in Kayunga, Uganda
+              Closing Healthcare Disparities in Kayunga and Beyond
             </h2>
-            <p className="text-base text-muted-foreground">
-              Founded in Kayunga, Uganda, BHI was built on the belief that every young person deserves
-              access to quality healthcare — regardless of where they live. We combine clinical services
-              with community outreach, psychosocial support, and advocacy to address Uganda&apos;s most
-              urgent youth health challenges.
+            <p className="text-base text-muted-foreground">{MISSION}</p>
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">Our focus areas: </span>
+              {FOCUS_AREAS.map((a) => a.name).join(" · ")}
             </p>
             <div className="space-y-3 mt-1">
               <div className="flex items-start gap-3">

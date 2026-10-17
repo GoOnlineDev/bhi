@@ -309,7 +309,7 @@ export default function NewsDetailsPage() {
               <CardContent className="p-6">
                 {!news.images?.length && (
                   <>
-                    <h1 id="article-content-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+                    <h1 id="article-content-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
                       {news.title}
                     </h1>
                     <p className="text-xl text-muted-foreground mb-6">
