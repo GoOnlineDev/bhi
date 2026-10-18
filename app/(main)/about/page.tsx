@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Heart,
   Target,
   Users,
   Globe,
@@ -9,38 +8,41 @@ import {
   AlertTriangle,
   Lightbulb,
   HandHeart,
+  MapPin,
+  Baby,
+  ShieldAlert,
+  Activity,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from "next";
 import { AboutFocusAreasSection } from "./_components/about-focus-areas";
-import { AboutHeroDynamicLead, AboutMissionDynamicLine } from "./_components/about-dynamic-blurbs";
+import { AboutHeroFocusAreas } from "./_components/about-dynamic-blurbs";
+import { AboutStorySection } from "./_components/about-story";
+import { MISSION, VISION } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Who we are: Boost Health Initiative works with Suubi Medical Centre to deliver community health programmes in Kayunga, Uganda.",
+  description: "Founded in Kayunga in 2020, Boost Health Initiative works to close healthcare disparities by empowering communities with health knowledge and improving access to care for underserved and vulnerable populations in Uganda.",
   alternates: { canonical: "/about" },
   openGraph: { url: "/about" },
 };
 
-const visionAndApproach = [
-  {
-    icon: Lightbulb,
-    title: "Our Vision",
-    description: "A Uganda where every young person has access to quality healthcare, protection from violence, and the holistic support needed to build healthy, productive lives — and in turn, stronger communities.",
-  },
+const missionVisionApproach = [
+  { icon: Target, title: "Our Mission", description: MISSION },
+  { icon: Lightbulb, title: "Our Vision", description: VISION },
   {
     icon: Users,
     title: "Our Approach",
-    description: "We combine clinical services with community-led outreach, psychosocial support, and referral networks — meeting young people where they are and addressing health challenges at their root causes.",
+    description: "We combine community outreaches, health education, screening and referrals with clinical care through Suubi Medical Centre — meeting families where they are and addressing health challenges at their root causes.",
   },
 ];
 
-const crisisStats = [
-  { value: "1 in 4", label: "adolescent girls in Uganda", context: "becomes pregnant before age 18" },
-  { value: "6,200+", label: "teenage pregnancies", context: "recorded in our districts during COVID-19 lockdown alone" },
-  { value: "70%", label: "of GBV survivors", context: "in rural Uganda never access formal support or justice" },
-  { value: "80%+", label: "of youth with NCDs", context: "like sickle cell and epilepsy lack consistent access to care" },
+const communityChallenges = [
+  { icon: MapPin, title: "Distance and cost", text: "Many families in rural Kayunga live far from health facilities, and the cost of travel and care delays treatment." },
+  { icon: Baby, title: "Mothers, newborns and adolescents", text: "Teenage pregnancy remains common, and many mothers miss antenatal and postnatal care, putting them and their babies at risk." },
+  { icon: ShieldAlert, title: "Violence and silence", text: "Survivors of gender-based violence in rural communities often struggle to reach care, protection and justice." },
+  { icon: Activity, title: "Illness found too late", text: "Limited health information and screening mean that diseases and mental health conditions are often identified late." },
 ];
 
 const achievements = [
@@ -52,7 +54,7 @@ const achievements = [
 
 const testimonials = [
   {
-    name: "Dr Mpooya Simon Suubi",
+    name: "Dr Simon Mpoya",
     role: "Director, Boost Health Initiative",
     content: "At Boost Health Initiative, we are dedicated to providing accessible, quality healthcare and empowering communities across Uganda. From maternal and child health to adolescent support and health education, our programs are designed to create lasting impact and brighter futures for all.",
     image: '/img/dr1.jpg'
@@ -80,12 +82,14 @@ export default function AboutPage() {
       <section id="about-hero" aria-labelledby="about-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
           <h1 id="about-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Transforming Youth Health in Uganda
+            Closing the Healthcare Gap for Communities in Uganda
           </h1>
-          <p className="text-lg sm:text-2xl font-semibold text-primary mb-6">Healthy Minds, Strong Communities.</p>
-          <AboutHeroDynamicLead />
+          <p className="text-lg sm:text-2xl font-semibold text-primary mb-6">Healthy, Empowered Communities. Equitable Care for All.</p>
+          <AboutHeroFocusAreas />
         </div>
       </section>
+
+      <AboutStorySection />
 
       {/* The Crisis — Why This Work Matters Now */}
       <section id="the-crisis" aria-labelledby="crisis-heading" className="bg-primary text-white">
@@ -93,22 +97,24 @@ export default function AboutPage() {
           <div className="text-center mb-12">
             <Badge className="mb-6 bg-white/20 text-white border-white/30 hover:bg-white/30">
               <AlertTriangle className="w-4 h-4 mr-2" />
-              The Crisis We Are Addressing
+              The Challenges We Address
             </Badge>
             <h2 id="crisis-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-              Why This Work Is Urgent Right Now
+              Why This Work Matters
             </h2>
             <p className="text-base sm:text-xl text-white/80 max-w-3xl mx-auto">
-              In Kayunga and surrounding districts, young people face compounding health crises with
-              nowhere to turn. The numbers speak for themselves.
+              In Kayunga and surrounding districts, distance, cost and limited health information stand
+              between many families and the care they need.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {crisisStats.map(({ value, label, context }) => (
-              <div key={label} className="bg-white/10 rounded-2xl p-6 text-center backdrop-blur-sm border border-white/20">
-                <p className="text-4xl font-bold text-white mb-2">{value}</p>
-                <p className="font-semibold text-white/90 mb-1">{label}</p>
-                <p className="text-sm text-white/70">{context}</p>
+            {communityChallenges.map(({ icon: Icon, title, text }) => (
+              <div key={title} className="bg-white/10 rounded-2xl p-6 text-center backdrop-blur-sm border border-white/20">
+                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
+                  <Icon className="w-6 h-6 text-white" aria-hidden />
+                </div>
+                <h3 className="font-semibold text-lg text-white mb-2">{title}</h3>
+                <p className="text-sm text-white/85 leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
@@ -123,27 +129,16 @@ export default function AboutPage() {
               <Target className="w-4 h-4 mr-2" />
               Who We Are
             </Badge>
-            <h2 id="our-approach-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="our-approach-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Mission, Vision &amp; Approach
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center bg-background shadow-lg border-0 md:text-left">
-              <CardHeader className="items-center md:items-start pb-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl mb-6 flex items-center justify-center mx-auto md:mx-0">
-                  <Target className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-2xl text-foreground w-full">Our Mission</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AboutMissionDynamicLine />
-              </CardContent>
-            </Card>
-            {visionAndApproach.map(({ icon: Icon, title, description }) => (
-              <Card key={title} className="text-center bg-background shadow-lg border-0 md:text-left">
-                <CardHeader className="items-center md:items-start pb-4">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl mb-6 flex items-center justify-center mx-auto md:mx-0">
-                    <Icon className="h-8 w-8 text-primary" />
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+            {missionVisionApproach.map(({ icon: Icon, title, description }) => (
+              <Card key={title} className="h-full text-center bg-background shadow-lg border-0 md:text-left">
+                <CardHeader className="items-center md:items-start pt-6 pb-4">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-full mb-4 flex items-center justify-center mx-auto md:mx-0 shrink-0">
+                    <Icon className="h-7 w-7 sm:h-8 sm:w-8 text-primary" aria-hidden />
                   </div>
                   <CardTitle className="text-2xl text-foreground w-full">{title}</CardTitle>
                 </CardHeader>
@@ -166,7 +161,7 @@ export default function AboutPage() {
               <Award className="w-4 h-4 mr-2" />
               Our Impact
             </Badge>
-            <h2 id="achievements-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="achievements-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Measurable Results in Our Communities
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
@@ -196,7 +191,7 @@ export default function AboutPage() {
               <Users className="w-4 h-4 mr-2" />
               Voices from Our Community
             </Badge>
-            <h2 id="testimonials-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               The People Behind BHI
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
@@ -239,7 +234,7 @@ export default function AboutPage() {
               <Globe className="w-4 h-4 mr-2" />
               UN SDG Alignment
             </Badge>
-            <h2 id="sdg-goals-heading" className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+            <h2 id="sdg-goals-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
               Contributing to Global Goals
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
@@ -276,13 +271,13 @@ export default function AboutPage() {
               Your Investment Changes Lives
             </h2>
             <p className="text-base sm:text-xl text-white/85 max-w-3xl mx-auto mb-4 leading-relaxed">
-              BHI operates in some of Uganda&apos;s most underserved communities, where youth face compounding
-              health crises with inadequate support. Funding our programs enables us to expand our reach,
-              train more community health workers, and provide services that no one else is delivering.
+              BHI works in underserved rural communities where distance, cost and limited health information
+              keep many families from care. Funding our programmes helps us expand our reach, support more
+              community health volunteers, and bring essential services closer to the people who need them.
             </p>
             <p className="text-sm sm:text-lg text-white/75 max-w-2xl mx-auto mb-10">
               Whether through direct funding, partnerships, in-kind support, or technical collaboration —
-              your contribution has a measurable, lasting impact on young people&apos;s lives.
+              your contribution has a lasting impact on the health of families and communities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
               <Link

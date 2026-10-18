@@ -208,7 +208,7 @@ export default function GalleryPage() {
             <div className="text-center py-16">
               <h3 className="text-2xl font-semibold text-foreground mb-2">No Media Found</h3>
               <p className="text-muted-foreground">
-                Try adjusting your filters to find what you're looking for.
+                Try adjusting your filters to find what you&apos;re looking for.
               </p>
             </div>
           )}

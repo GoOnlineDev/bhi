@@ -35,13 +35,13 @@ export function AboutFocusAreasSection() {
           </Badge>
           <h2
             id="focus-areas-heading"
-            className="text-2xl sm:text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words"
           >
             Our Focus Areas in Depth
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
-            Our programs address the most pressing health challenges facing young people and
-            communities in Kayunga and partner districts. Explore each area below.
+            Our programmes address pressing health challenges facing communities in Kayunga and
+            partner districts. Explore our spotlight areas below.
           </p>
         </div>
 

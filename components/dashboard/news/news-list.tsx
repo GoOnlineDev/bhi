@@ -168,7 +168,7 @@ export function NewsList({ items }: NewsListProps) {
           <DialogHeader>
             <DialogTitle>Edit News Article</DialogTitle>
             <DialogDescription>
-              Make changes to the article here. Click save when you're done.
+              Make changes to the article here. Click save when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
           <NewsForm 
@@ -196,4 +196,4 @@ export function NewsList({ items }: NewsListProps) {
       </AlertDialog>
     </>
   );
-} 
+} 

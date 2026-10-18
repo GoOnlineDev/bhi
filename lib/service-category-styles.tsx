@@ -1,5 +1,8 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Activity,
+  FlaskConical,
+  Network,
   Heart,
   Brain,
   ShieldAlert,
@@ -43,7 +46,28 @@ export const SERVICE_CATEGORY_STYLES: Record<string, ServiceCategoryStyle> = {
     lightColor: "bg-indigo-50",
     textColor: "text-indigo-600",
     borderColor: "border-indigo-200",
-    icon: Brain,
+    icon: Activity,
+  },
+  MCH: {
+    color: "bg-pink-500",
+    lightColor: "bg-pink-50",
+    textColor: "text-pink-600",
+    borderColor: "border-pink-200",
+    icon: Baby,
+  },
+  "Community Health Systems": {
+    color: "bg-blue-500",
+    lightColor: "bg-blue-50",
+    textColor: "text-blue-600",
+    borderColor: "border-blue-200",
+    icon: Network,
+  },
+  Research: {
+    color: "bg-emerald-600",
+    lightColor: "bg-emerald-50",
+    textColor: "text-emerald-700",
+    borderColor: "border-emerald-200",
+    icon: FlaskConical,
   },
   GBV: {
     color: "bg-purple-500",

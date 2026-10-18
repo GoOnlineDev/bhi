@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 // Global 404 for unmatched URLs (e.g. /faq): same header/footer as the public site.
 export default function GlobalNotFound() {
   return (
-    <div className="relative min-h-screen flex flex-col bg-[#fcfaf8] overflow-x-hidden w-full">
+    <div className="relative min-h-screen flex flex-col bg-background overflow-x-hidden w-full">
       <NavBar />
       <main className="flex-1 w-full pt-16">
         <NotFoundContent />

@@ -3,141 +3,94 @@
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { ArrowRight, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCategoryStyle } from "@/lib/service-category-styles";
+import { FOCUS_AREAS, findServiceForArea, focusAreaHref } from "@/lib/site-content";
 import type { Doc } from "@/convex/_generated/dataModel";
 
-function taglineFromService(s: Doc<"services">): string {
-  if (s.features && s.features.length > 0) {
-    return s.features
-      .map((f) => f.title)
-      .filter(Boolean)
-      .slice(0, 5)
-      .join(" · ");
-  }
-  if (s.tags && s.tags.length > 0) {
-    return s.tags.slice(0, 5).join(" · ");
-  }
-  return s.shortTitle || s.category || "";
+type PillarCard = { key: string; href: string; label: string; title: string; text: string; styleKey?: string; icon?: LucideIcon };
+
+// Seven core programmes in the owner's order; admin services supply link and wording where they match.
+function buildCards(spotlight: Doc<"services">[], published: Doc<"services">[]): PillarCard[] {
+  const used = new Set<string>();
+  const core = FOCUS_AREAS.map((area): PillarCard => {
+    const hit = findServiceForArea(area, spotlight) ?? findServiceForArea(area, published);
+    if (hit) used.add(hit._id);
+    return {
+      key: area.short,
+      href: hit ? `/services/${hit._id}` : focusAreaHref(area, undefined),
+      label: area.short,
+      title: area.name,
+      text: hit?.description || area.summary,
+      styleKey: area.styleKey,
+      icon: area.icon,
+    };
+  });
+  // Admin spotlight items outside the seven areas stay visible after them.
+  const extra = spotlight
+    .filter((s) => !used.has(s._id))
+    .map((s): PillarCard => ({ key: s._id, href: `/services/${s._id}`, label: s.shortTitle || s.category || "Programme", title: s.title, text: s.description, styleKey: s.category }));
+  return [...core, ...extra];
+}
+
+function Pillar({ card, index }: { card: PillarCard; index: number }) {
+  const style = getCategoryStyle(card.styleKey);
+  const Icon = card.icon ?? style.icon;
+  return (
+    <Link href={card.href} className="group block h-full">
+      <div className={`rounded-2xl p-5 border ${style.lightColor} ${style.borderColor} hover:shadow-lg transition-shadow duration-300 h-full flex flex-col`}>
+        <div className="flex items-center gap-3 mb-3">
+          <div className={`w-11 h-11 ${style.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+            <Icon className="w-5 h-5 text-white" aria-hidden />
+          </div>
+          <span className={`text-xs font-bold ${style.textColor}`}>{String(index + 1).padStart(2, "0")}</span>
+          <Badge variant="outline" className={`text-xs ${style.textColor} border-current`}>{card.label}</Badge>
+        </div>
+        <h3 className={`text-lg font-bold mb-2 ${style.textColor} group-hover:underline`}>{card.title}</h3>
+        <p className="text-sm text-foreground leading-relaxed line-clamp-4 flex-1">{card.text}</p>
+        <div className={`flex items-center gap-1 mt-4 text-sm font-medium ${style.textColor}`}>
+          Learn more
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" aria-hidden />
+        </div>
+      </div>
+    </Link>
+  );
 }
 
 export default function PillarsSection() {
   const spotlight = useQuery(api.services.getSpotlightServices);
-  const loading = spotlight === undefined;
+  const published = useQuery(api.services.getPublishedServices);
+  const loading = spotlight === undefined || published === undefined;
+  const cards = loading ? [] : buildCards(spotlight, published);
 
   return (
     <section className="bg-secondary" aria-labelledby="pillars-heading">
       <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-20">
         <div className="text-center mb-12">
-          <Badge variant="outline" className="mb-4">
-            What We Do
-          </Badge>
-          <h2
-            id="pillars-heading"
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4"
-          >
-            Our Focus Areas
+          <Badge variant="outline" className="mb-4">What We Do</Badge>
+          <h2 id="pillars-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            Our Core Programmes
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
-            Explore the programmes BHI leads across communities — each one rooted in evidence,
-            advocacy, and a commitment to lasting health outcomes.
+            Seven areas of work that bring health knowledge, screening, referrals and care closer to
+            communities in Kayunga and beyond.
           </p>
         </div>
 
-        {loading ? (
-          <div className="grid md:grid-cols-2 gap-6 mb-10">
-            {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-48 rounded-2xl" />
-            ))}
-          </div>
-        ) : !spotlight || spotlight.length === 0 ? (
-          <div className="text-center py-12 mb-10 rounded-2xl border border-dashed bg-background">
-            <Layers className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Our programmes are being updated. Check back soon, or explore everything we do below.
-            </p>
-            <Button asChild className="mt-4" variant="outline">
-              <Link href="/services">Explore our work</Link>
-            </Button>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-6 mb-10">
-            {spotlight.map((service, index) => {
-              const style = getCategoryStyle(service.category);
-              const Icon = style.icon;
-              const tagline = taglineFromService(service);
-              return (
-                <Link
-                  key={service._id}
-                  href={`/services/${service._id}`}
-                  className="group block"
-                >
-                  <div
-                    className={`rounded-2xl p-6 border ${style.lightColor} ${style.borderColor} hover:shadow-lg transition-all duration-300 h-full`}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div
-                        className={`w-12 h-12 ${style.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}
-                      >
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className={`text-xs font-bold ${style.textColor} opacity-60`}>
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                          {service.category && (
-                            <Badge
-                              variant="outline"
-                              className={`text-xs ${style.textColor} border-current`}
-                            >
-                              {service.category}
-                            </Badge>
-                          )}
-                          {service.shortTitle && !service.category && (
-                            <Badge
-                              variant="outline"
-                              className={`text-xs ${style.textColor} border-current`}
-                            >
-                              {service.shortTitle}
-                            </Badge>
-                          )}
-                        </div>
-                        <h3
-                          className={`text-xl font-bold mb-1 ${style.textColor} group-hover:underline`}
-                        >
-                          {service.title}
-                        </h3>
-                        {tagline ? (
-                          <p className="text-xs text-muted-foreground mb-3 italic line-clamp-2">
-                            {tagline}
-                          </p>
-                        ) : null}
-                        <p className="text-sm text-foreground leading-relaxed line-clamp-4">
-                          {service.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div
-                      className={`flex items-center gap-1 mt-4 text-sm font-medium ${style.textColor}`}
-                    >
-                      Learn more
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+          {loading
+            ? FOCUS_AREAS.map((a) => <Skeleton key={a.short} className="h-56 rounded-2xl" />)
+            : cards.map((card, i) => <Pillar key={card.key} card={card} index={i} />)}
+        </div>
 
         <div className="text-center flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild size="lg" variant="default">
             <Link href="/services">
-              See everything we do <ArrowRight className="w-4 h-4 ml-2" />
+              See everything we do <ArrowRight className="w-4 h-4 ml-2" aria-hidden />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline">

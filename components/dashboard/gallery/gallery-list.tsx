@@ -168,7 +168,7 @@ export function GalleryList({ items }: GalleryListProps) {
           <DialogHeader>
             <DialogTitle>Edit Gallery Item</DialogTitle>
             <DialogDescription>
-              Make changes to your media item here. Click save when you're done.
+              Make changes to your media item here. Click save when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
           <GalleryForm 
@@ -196,4 +196,4 @@ export function GalleryList({ items }: GalleryListProps) {
       </AlertDialog>
     </>
   );
-} 
+} 
