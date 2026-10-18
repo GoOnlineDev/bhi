@@ -3,7 +3,7 @@ import { SUUBI_URL } from "@/lib/site-content";
 
 const paragraphs = [
   "In the rural communities of Kayunga District, Uganda, access to healthcare has never been just about the existence of health facilities. For many families, distance, financial hardship, limited health information, and missed opportunities for early diagnosis can stand between them and a healthier life. For young people, mothers, and vulnerable families, these barriers can have lifelong consequences.",
-  "It was against this reality that Mr Simon Mpooya envisioned a different approach to community health. In 2020, this vision gave birth to Boost Health Initiative (BHI), founded on a simple but powerful belief: communities should not be left behind because of where they live or what they can afford.",
+  "It was against this reality that Dr Simon Mpoya envisioned a different approach to community health. In 2020, this vision gave birth to Boost Health Initiative (BHI), founded on a simple but powerful belief: communities should not be left behind because of where they live or what they can afford.",
   "The name Boost Health Initiative reflects this founding vision—to do more than respond to illness, but to actively boost the health, knowledge, and wellbeing of communities. It represents our commitment to bringing healthcare closer to people, strengthening prevention, promoting health awareness, and connecting underserved families to essential services.",
 ];
 

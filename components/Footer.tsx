@@ -3,7 +3,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import NewsletterForm from '@/components/newsletter-form';
 import { Linkedin, MessageCircle } from 'lucide-react';
-import { FOCUS_AREAS } from '@/lib/site-content';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { FOCUS_AREAS, focusAreaHref } from '@/lib/site-content';
 
 const socialLinks = [
   // TODO(owner): add real X / Facebook / Instagram URLs here; "#" links were removed.
@@ -38,6 +40,7 @@ const footerNav = [
 ];
 
 export default function Footer() {
+  const services = useQuery(api.services.getPublishedServices);
   return (
     <footer className="bg-secondary text-secondary-foreground border-t">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -55,7 +58,12 @@ export default function Footer() {
             </p>
             <p className="text-muted-foreground text-xs max-w-xs text-center md:text-left mb-6">
               <span className="font-semibold text-foreground">Focus areas: </span>
-              {FOCUS_AREAS.map((a) => a.short).join(" · ")}
+              {FOCUS_AREAS.map((a, i) => (
+                <span key={a.short}>
+                  {i > 0 ? " · " : null}
+                  <Link href={focusAreaHref(a, services)} className="hover:text-primary hover:underline">{a.short}</Link>
+                </span>
+              ))}
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map(({ href, label, icon: Icon }) => (

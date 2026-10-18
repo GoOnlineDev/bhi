@@ -127,14 +127,14 @@ export default function VideoPlayer({
             <div className="flex items-center gap-3">
               <button
                 onClick={togglePlay}
-                className="text-white hover:text-[#f37c1b] transition-colors"
+                className="text-white hover:text-primary transition-colors"
               >
                 {isPlaying ? <Pause size={20} /> : <Play size={20} />}
               </button>
               
               <button
                 onClick={toggleMute}
-                className="text-white hover:text-[#f37c1b] transition-colors"
+                className="text-white hover:text-primary transition-colors"
               >
                 {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
               </button>
@@ -146,7 +146,7 @@ export default function VideoPlayer({
             
             <button
               onClick={toggleFullscreen}
-              className="text-white hover:text-[#f37c1b] transition-colors"
+              className="text-white hover:text-primary transition-colors"
             >
               <Maximize size={20} />
             </button>
@@ -159,7 +159,7 @@ export default function VideoPlayer({
         <div className="absolute inset-0 flex items-center justify-center">
           <button
             onClick={togglePlay}
-            className="bg-[#f37c1b]/80 hover:bg-[#f37c1b] text-white rounded-full p-4 transition-colors"
+            className="bg-primary/80 hover:bg-primary text-white rounded-full p-4 transition-colors"
           >
             <Play size={32} />
           </button>
@@ -167,4 +167,4 @@ export default function VideoPlayer({
       )}
     </div>
   );
-} 
+} 

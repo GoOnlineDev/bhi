@@ -20,28 +20,28 @@ import {
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { Doc } from "@/convex/_generated/dataModel";
 import { getCategoryStyle } from "@/lib/service-category-styles";
+import { unclaimedCorePrograms, type ServiceContent } from "@/lib/core-programs";
 
-function ServiceCard({ item }: { item: Doc<"services"> }) {
+type ListItem = ServiceContent & { key: string; href: string };
+
+function ServiceCard({ item }: { item: ListItem }) {
   const cfg = getCategoryStyle(item.category);
   const Icon = cfg.icon;
   const heroImg = item.heroImage || item.images?.[0];
 
   return (
-    <Link href={`/services/${item._id}`} className="group block h-full">
+    <Link href={item.href} className="group block h-full">
       <Card className="h-full flex flex-col overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
         {/* Always render the image area so cards line up; SmartImage shows a branded fallback when empty */}
-        {(
-          <div className="relative h-44 w-full overflow-hidden">
+        <div className="relative h-44 w-full overflow-hidden">
             <SmartImage src={heroImg} alt={item.title} wrapperClassName="absolute inset-0" fallbackLabel={item.category ?? undefined}
               className="group-hover:scale-105 transition-transform duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
             {item.isFeatured && (
               <Badge className="absolute top-3 left-3 bg-amber-500 text-white border-0">Featured</Badge>
             )}
-          </div>
-        )}
+        </div>
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2 mb-1">
             <div className={`w-8 h-8 ${cfg.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
@@ -102,8 +102,13 @@ function ServicesSkeleton() {
 }
 
 function ServicesPageInner() {
-  const services = useQuery(api.services.getPublishedServices);
-  const isLoading = services === undefined;
+  const convexServices = useQuery(api.services.getPublishedServices);
+  const isLoading = convexServices === undefined;
+  // Built-in core programme pages fill gaps until admins publish a matching service.
+  const services: ListItem[] | undefined = convexServices && [
+    ...convexServices.map((s) => ({ ...s, key: s._id, href: `/services/${s._id}` })),
+    ...unclaimedCorePrograms(convexServices).map((p) => ({ ...p, key: p.slug, href: `/services/${p.slug}` })),
+  ];
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
 
@@ -138,10 +143,10 @@ function ServicesPageInner() {
             What We Do
           </h1>
           <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            BHI delivers comprehensive health services across multiple specialties — from Sexual &
-            Reproductive Health Rights and Gender-Based Violence response, to Non-Communicable
-            Disease management, Substance Abuse recovery, and beyond. Every service is designed to
-            meet youth and communities where they are.
+            BHI works across seven core programmes — from maternal, newborn and child health and
+            sexual and reproductive health to gender-based violence, disease prevention, mental
+            health, community health systems and research — bringing health information, screening
+            and referrals closer to communities in Kayunga and beyond.
           </p>
         </div>
       </section>
@@ -155,6 +160,7 @@ function ServicesPageInner() {
               <input
                 type="text"
                 placeholder="Search our work..."
+                aria-label="Search our work"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 rounded-lg border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -165,6 +171,7 @@ function ServicesPageInner() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
+                  aria-pressed={activeCategory === cat}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     activeCategory === cat
                       ? "bg-primary text-white"
@@ -199,7 +206,7 @@ function ServicesPageInner() {
                     <h2 className="text-xl font-bold text-foreground">Featured Initiatives</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {featured.map(item => <ServiceCard key={item._id} item={item} />)}
+                    {featured.map(item => <ServiceCard key={item.key} item={item} />)}
                   </div>
                 </div>
               )}
@@ -209,7 +216,7 @@ function ServicesPageInner() {
                     <h2 className="text-xl font-bold text-foreground mb-6">All Initiatives</h2>
                   )}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {rest.map(item => <ServiceCard key={item._id} item={item} />)}
+                    {rest.map(item => <ServiceCard key={item.key} item={item} />)}
                   </div>
                 </div>
               )}
@@ -237,8 +244,8 @@ function ServicesPageInner() {
               <Users className="w-10 h-10 mx-auto mb-4 text-primary" />
               <h2 className="text-2xl font-bold text-foreground mb-3">Partner or Fund Our Work</h2>
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                We actively seek partnerships and grants to expand our services and reach more young
-                people across Uganda.
+                We actively seek partnerships and grants to expand our services and reach more
+                communities across Uganda.
               </p>
               <div className="flex flex-col gap-3">
                 <Button size="lg" asChild>

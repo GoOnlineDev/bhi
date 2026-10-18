@@ -25,7 +25,7 @@ export default function VideoThumb({
 }) {
   const [frameReady, setFrameReady] = useState(false);
   return (
-    <div className={cn("relative overflow-hidden bg-gradient-to-br from-primary/80 to-[#7a3a0c]", className)}>
+    <div className={cn("relative overflow-hidden bg-gradient-to-br from-primary/80 to-foreground/80", className)}>
       {thumbnail ? (
         <SmartImage src={thumbnail} alt={title ?? "Video thumbnail"} wrapperClassName="absolute inset-0" sizes={sizes} />
       ) : (
