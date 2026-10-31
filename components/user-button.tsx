@@ -58,7 +58,7 @@ export default function BHIUserButton({ className, isMobile, onMobileMenuClose }
     );
   }
 
-  const isAdmin = currentUser.role === 'admin';
+  const isAdmin = currentUser.role === 'admin' || currentUser.role === 'superadmin';
   const isEditor = currentUser.role === 'editor';
   const isPatient = currentUser.role === 'patient';
 
@@ -92,6 +92,11 @@ export default function BHIUserButton({ className, isMobile, onMobileMenuClose }
           label: 'Manage Programs',
           href: '/dashboard/programs',
           icon: Stethoscope,
+        },
+        {
+          label: 'Manage Users',
+          href: '/dashboard/users',
+          icon: Users,
         },
       ];
     }

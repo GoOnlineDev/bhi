@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import DashboardHeader from '../../components/dashboard/header';
 import DashboardSidebar from '../../components/dashboard/sidebar';
 import DashboardFooter from '../../components/dashboard/footer';
+import DashboardAccessGate from '../../components/dashboard/access-gate';
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -11,13 +12,13 @@ export const metadata: Metadata = {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen w-full bg-muted/40">
+    <div className="min-h-screen w-full bg-muted/40">
       <DashboardSidebar />
-      <div className="flex flex-1 flex-col sm:pl-14">
+      <div className="flex min-h-screen flex-col lg:pl-64">
         <DashboardHeader />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="mx-auto w-full max-w-7xl">
-            {children}
+            <DashboardAccessGate>{children}</DashboardAccessGate>
           </div>
         </main>
         <DashboardFooter />
