@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { roleValidator } from "./roles";
 
 export default defineSchema({
   users: defineTable({
@@ -8,15 +9,17 @@ export default defineSchema({
     firstName: v.optional(v.string()),
     lastName: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
-    role: v.union(
-      v.literal("admin"),
-      v.literal("patient"),
-      v.literal("doctor"),
-      v.literal("superadmin"),
-      v.literal("editor")
-    )
+    role: roleValidator,
   })
-  .index("by_clerkId", ["clerkId"]),
+  .index("by_clerkId", ["clerkId"])
+  .index("by_email", ["email"]),
+  // Role pre-assigned by an admin, applied when someone signs up with this email.
+  userInvites: defineTable({
+    email: v.string(),
+    role: roleValidator,
+    invitedBy: v.id("users"),
+  })
+  .index("by_email", ["email"]),
   news: defineTable({
     title: v.string(),             // Headline of the news article
     content: v.string(),           // Main body/content
@@ -194,4 +197,4 @@ export default defineSchema({
     ),
     updatedAt: v.number(),
   }).index("by_singletonKey", ["singletonKey"]),
-}); 
+}); 

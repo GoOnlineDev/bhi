@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ROLE_META } from "@/components/dashboard/role-meta";
 
 export default function Dashboard() {
   const currentUser = useQuery(api.users.getCurrentUser);
@@ -30,6 +31,7 @@ export default function Dashboard() {
   const unpublishedNews = useQuery(api.news.getUnpublishedNews);
   const approvedPrograms = useQuery(api.programs.getApprovedPrograms);
   const unapprovedPrograms = useQuery(api.programs.getUnapprovedPrograms);
+  const team = useQuery(api.users.listUsers);
 
   const totalNews = (publishedNews?.length || 0) + (unpublishedNews?.length || 0);
   const totalPrograms = (approvedPrograms?.length || 0) + (unapprovedPrograms?.length || 0);
@@ -59,7 +61,7 @@ export default function Dashboard() {
             Welcome back{currentUser?.firstName ? `, ${currentUser.firstName}` : ''}!
           </CardTitle>
           <Badge variant="outline" className="text-sm">
-            {currentUser?.role?.toUpperCase() || 'USER'}
+            {currentUser ? ROLE_META[currentUser.role].label : 'User'}
           </Badge>
         </CardHeader>
         <CardContent>
@@ -153,6 +155,16 @@ export default function Dashboard() {
                 <HeartPulse className="mr-2 h-4 w-4" /> Manage Programs
               </Button>
             </Link>
+            {team && (
+              <Link href="/dashboard/users" className="sm:col-span-3">
+                <Button variant="outline" className="w-full">
+                  <Users className="mr-2 h-4 w-4" /> Manage Users
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    {team.users.length} accounts{team.invites.length ? ` · ${team.invites.length} pending` : ''}
+                  </span>
+                </Button>
+              </Link>
+            )}
           </CardContent>
         </Card>
 
