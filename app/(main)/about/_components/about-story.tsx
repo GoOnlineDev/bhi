@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { SUUBI_URL } from "@/lib/site-content";
+import { BELIEF, SUUBI_URL } from "@/lib/site-content";
 
 const paragraphs = [
-  "In the rural communities of Kayunga District, Uganda, access to healthcare has never been just about the existence of health facilities. For many families, distance, financial hardship, limited health information, and missed opportunities for early diagnosis can stand between them and a healthier life. For young people, mothers, and vulnerable families, these barriers can have lifelong consequences.",
-  "It was against this reality that Dr Simon Mpoya envisioned a different approach to community health. In 2020, this vision gave birth to Boost Health Initiative (BHI), founded on a simple but powerful belief: communities should not be left behind because of where they live or what they can afford.",
-  "The name Boost Health Initiative reflects this founding vision—to do more than respond to illness, but to actively boost the health, knowledge, and wellbeing of communities. It represents our commitment to bringing healthcare closer to people, strengthening prevention, promoting health awareness, and connecting underserved families to essential services.",
+  "Healthcare inequalities remain a significant challenge for many rural communities in Uganda. In Kayunga District and neighbouring communities, many people live far from healthcare facilities and face challenges accessing timely medical attention, preventive services and reliable health information.",
+  "For some, healthcare is sought only when illness becomes severe. Others live with undiagnosed conditions or lack the information necessary to make informed health decisions.",
+  "These realities inspired Dr Simon Mpoya to establish Boost Health Initiative (BHI) in 2020. He envisioned an organisation that would go beyond conventional healthcare delivery by actively engaging communities, taking essential services closer to people and working with healthcare providers and other stakeholders to address barriers to healthcare access.",
+  "The name reflects that vision: to do more than respond to illness, and to actively boost the health, knowledge and wellbeing of communities.",
 ];
 
 const afterSuubi = [
-  "Our journey is driven by the understanding that healthier communities begin when people have the knowledge, opportunities, and support to protect their health.",
-  "We are Boost Health Initiative—not simply because we provide health services, but because we believe in boosting the potential of every person and every community to live a healthier life.",
+  "Today we work at the intersection of community health, clinical service delivery, health education and health systems strengthening, bridging the gap between communities and the healthcare system.",
 ];
 
 const pClass = "text-base sm:text-lg text-muted-foreground leading-relaxed";
@@ -24,7 +24,7 @@ export function AboutStorySection() {
               Our Story
             </h2>
             <p className="text-lg sm:text-xl font-semibold text-primary">
-              A Vision Born in the Community. A Mission to Boost Health.
+              Born in Kayunga. Driven by Community. Built to Boost Health.
             </p>
           </div>
           <div className="space-y-5">
@@ -32,21 +32,22 @@ export function AboutStorySection() {
               <p key={text.slice(0, 24)} className={pClass}>{text}</p>
             ))}
             <p className={pClass}>
-              Rooted in Kayunga, BHI has continued to pursue practical, community-centred solutions that bridge the gap
-              between rural communities and healthcare systems. Through community outreaches, health education,
-              screening, referrals, partnerships, and our clinical platform,{" "}
+              Over time, BHI has undertaken community health outreaches, health education activities, screening
+              initiatives, referrals and other interventions addressing priority health challenges, working
+              alongside partners including{" "}
               <Link href={SUUBI_URL} target="_blank" rel="noopener noreferrer" className="text-primary font-semibold underline-offset-4 hover:underline">
                 Suubi Medical Centre
               </Link>
-              , we are working to make healthcare more accessible and responsive to the realities of the people we serve.
+              , which provides clinical care for many of the people we reach.
             </p>
             {afterSuubi.map((text) => (
               <p key={text.slice(0, 24)} className={pClass}>{text}</p>
             ))}
           </div>
-          <p className="mt-8 sm:mt-10 border-l-4 border-primary pl-4 text-lg sm:text-2xl font-bold text-foreground italic">
-            Born in Kayunga. Driven by Community. Built to Boost Health.
-          </p>
+          <figure className="mt-8 sm:mt-10 border-l-4 border-primary pl-4">
+            <figcaption className="text-sm font-semibold uppercase tracking-wider text-primary mb-1">Our Belief</figcaption>
+            <blockquote className="text-lg sm:text-2xl font-bold text-foreground italic">{BELIEF}</blockquote>
+          </figure>
         </div>
       </div>
     </section>

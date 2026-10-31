@@ -3,13 +3,13 @@ import { v } from "convex/values";
 
 /** Matches the original hard-coded home hero (used when DB row is missing or slides are empty). */
 export const DEFAULT_HERO = {
-  headline: "Boosting Health. Empowering Communities. Changing Lives.",
+  headline: "Bringing Healthcare Closer to Communities",
   subheadline:
-    "We improve health outcomes in Uganda through community-driven programs and sustainable solutions that impact lives where it matters most.",
-  primaryCtaLabel: "Explore Our Programs",
-  secondaryCtaLabel: "Get Involved",
+    "Building healthier communities through accessible healthcare, health education and strengthened community health systems.",
+  primaryCtaLabel: "Our Programs",
+  secondaryCtaLabel: "Partner With Us",
   primaryCtaHref: "/programs",
-  secondaryCtaHref: "/contact",
+  secondaryCtaHref: "/contact?type=partner",
   slides: [
     {
       url: "/img/dr7i.jpg",

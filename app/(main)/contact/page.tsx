@@ -128,12 +128,12 @@ function ContactPageInner() {
       <section id="contact-hero" aria-labelledby="contact-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
           <h1 id="contact-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
-            We&apos;re Here for You. Reach Out Today.
+            Let&apos;s Connect
           </h1>
           <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Whether you need help, want to partner with us, or simply have a question —
-            our team in Kayunga, Uganda is ready to listen. All inquiries are treated
-            with care.
+            We welcome enquiries from individuals, organisations and institutions interested in learning
+            more about our work or exploring opportunities for collaboration. If you need help, our team in
+            Kayunga is ready to listen, and all enquiries are treated with care.
           </p>
         </div>
       </section>

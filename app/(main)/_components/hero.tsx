@@ -10,13 +10,13 @@ import { ArrowRight } from "lucide-react";
 
 /** Client-side fallback while Convex is loading (matches `DEFAULT_HERO` in convex/heroSettings.ts). */
 const FALLBACK_HERO = {
-  headline: "Boosting Health. Empowering Communities. Changing Lives.",
+  headline: "Bringing Healthcare Closer to Communities",
   subheadline:
-    "We improve health outcomes in Uganda through community-driven programs and sustainable solutions that impact lives where it matters most.",
-  primaryCtaLabel: "Explore Our Programs",
-  secondaryCtaLabel: "Get Involved",
+    "Building healthier communities through accessible healthcare, health education and strengthened community health systems.",
+  primaryCtaLabel: "Our Programs",
+  secondaryCtaLabel: "Partner With Us",
   primaryCtaHref: "/programs",
-  secondaryCtaHref: "/contact",
+  secondaryCtaHref: "/contact?type=partner",
   slides: [
     {
       src: "/img/dr7i.jpg",

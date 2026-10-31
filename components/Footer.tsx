@@ -54,7 +54,7 @@ export default function Footer() {
               <span className="font-bold text-lg text-foreground">Boost Health Initiative</span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-xs text-center md:text-left mb-6">
-              Empowering communities through health initiatives and sustainable solutions in Uganda.
+              Bringing healthcare closer to underserved communities in Kayunga, Uganda, and strengthening the systems and partnerships that sustain better health.
             </p>
             <p className="text-muted-foreground text-xs max-w-xs text-center md:text-left mb-6">
               <span className="font-semibold text-foreground">Focus areas: </span>

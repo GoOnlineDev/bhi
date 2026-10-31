@@ -35,7 +35,7 @@ export const CORE_PROGRAMS: CoreProgram[] = [
     description:
       "Helping mothers, newborns and young children in Kayunga District get the information, check-ups and referrals they need for a healthy start.",
     overview:
-      "Many mothers in rural Kayunga face long distances, costs and limited information when seeking care during pregnancy, childbirth and early childhood. BHI works with communities and Suubi Medical Centre to bring maternal and child health support closer to home.",
+      "Many mothers in rural Kayunga face long distances, costs and limited information when seeking care during pregnancy, childbirth and early childhood. BHI works with communities and our partner, Suubi Medical Centre, to bring maternal and child health support closer to home.",
     features: [
       { title: "Health education for families", description: "Community sessions on pregnancy care, birth preparedness, breastfeeding, nutrition and danger signs." },
       { title: "Antenatal and postnatal care", description: "Encouraging mothers to start antenatal visits early and to attend postnatal check-ups." },
