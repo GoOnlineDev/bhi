@@ -38,10 +38,12 @@ export default function ProgramsPage() {
       <section id="programs-hero" aria-labelledby="programs-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
           <h1 id="programs-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Comprehensive Health Initiatives in Kayunga, Uganda
+            Our Programs
           </h1>
           <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Explore our comprehensive health initiatives designed to address critical health challenges and empower communities in Kayunga, Uganda.
+            Our program portfolio is organised around the priority health needs of underserved communities in
+            Kayunga and neighbouring districts, from community outreach and infectious disease prevention to
+            chronic disease screening, maternal and adolescent health, eye health and nutrition.
           </p>
         </div>
       </section>

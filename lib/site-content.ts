@@ -1,13 +1,66 @@
 import type { LucideIcon } from "lucide-react";
-import { Activity, Baby, Brain, FlaskConical, Heart, Network, ShieldAlert } from "lucide-react";
+import {
+  Activity,
+  Award,
+  Baby,
+  Brain,
+  FlaskConical,
+  Handshake,
+  Heart,
+  Lightbulb,
+  Network,
+  Scale,
+  ShieldAlert,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
+
+export const POSITIONING =
+  "An organisation that brings healthcare closer to underserved communities while working to strengthen the systems, partnerships and community capacities necessary for sustainable health improvements.";
 
 export const MISSION =
-  "To close healthcare disparities by empowering communities with essential health knowledge, supporting informed health decisions, and improving access to medical services for underserved and vulnerable populations.";
+  "To reduce healthcare disparities by empowering communities with essential health knowledge, improving access to medical services and strengthening community-based healthcare delivery through sustainable partnerships and innovative interventions.";
 
 export const VISION =
-  "A healthy and empowered society where every individual, regardless of location, social or economic status, has equitable access to quality healthcare, reliable health information, and the opportunity to live a healthy and dignified life.";
+  "A healthier society where everyone has equitable access to quality healthcare services and the knowledge to make informed health decisions.";
+
+export const BELIEF = "Healthcare systems must reach communities, not simply wait for communities to reach them.";
 
 export const SUUBI_URL = "https://www.suubimedicalcentre.com/";
+
+export const CORE_VALUES: { icon: LucideIcon; title: string; text: string }[] = [
+  { icon: Scale, title: "Equity", text: "Promoting fair access to healthcare regardless of location or socioeconomic status." },
+  { icon: Users, title: "Community empowerment", text: "Enabling people to make informed decisions about their health." },
+  { icon: ShieldCheck, title: "Integrity", text: "Upholding honesty, accountability and ethical conduct." },
+  { icon: Handshake, title: "Collaboration", text: "Working with communities, governments and partners to achieve shared health goals." },
+  { icon: Lightbulb, title: "Innovation", text: "Exploring better and sustainable approaches to healthcare delivery." },
+  { icon: Award, title: "Excellence", text: "Striving for quality, measurable impact and continuous improvement." },
+];
+
+export const APPROACH: { title: string; text: string }[] = [
+  { title: "Community engagement", text: "Understanding local health needs and involving communities in identifying solutions." },
+  { title: "Preventive healthcare", text: "Promoting health education, disease prevention and early identification of health conditions." },
+  { title: "Clinical service delivery", text: "Improving access to essential medical services through facility-based and outreach interventions, working with partner facilities." },
+  { title: "Health systems collaboration", text: "Strengthening connections between communities, healthcare workers, health facilities and local government structures." },
+  { title: "Partnerships and innovation", text: "Mobilising technical expertise, resources and innovative approaches to address healthcare challenges." },
+];
+
+// TODO(owner): confirm the reporting period and records behind each figure before publication.
+export const IMPACT_STATS: { value: string; label: string }[] = [
+  { value: "32,000+", label: "Community members reached" },
+  { value: "18,000+", label: "Health service contacts" },
+  { value: "180+", label: "Community outreaches conducted" },
+  { value: "6,400+", label: "HIV tests conducted" },
+  { value: "276+", label: "People identified as living with HIV and linked to care" },
+];
+
+export const WHY_BHI = [
+  "Community engagement and health education.",
+  "Clinical services and community-based healthcare delivery.",
+  "Early identification, referral and follow-up.",
+  "Collaboration with public and private healthcare providers.",
+  "Partnerships that strengthen local capacity and expand healthcare access.",
+];
 
 export type FocusArea = {
   name: string;

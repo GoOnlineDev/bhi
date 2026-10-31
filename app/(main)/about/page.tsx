@@ -12,6 +12,17 @@ import {
   Baby,
   ShieldAlert,
   Activity,
+  Briefcase,
+  Wrench,
+  FlaskConical,
+  GraduationCap,
+  Coins,
+  Handshake,
+  Network,
+  Stethoscope,
+  CheckCircle,
+  ExternalLink,
+  Compass,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,52 +30,65 @@ import { Metadata } from "next";
 import { AboutFocusAreasSection } from "./_components/about-focus-areas";
 import { AboutHeroFocusAreas } from "./_components/about-dynamic-blurbs";
 import { AboutStorySection } from "./_components/about-story";
-import { MISSION, VISION } from "@/lib/site-content";
+import { APPROACH, CORE_VALUES, IMPACT_STATS, MISSION, POSITIONING, SUUBI_URL, VISION } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Founded in Kayunga in 2020, Boost Health Initiative works to close healthcare disparities by empowering communities with health knowledge and improving access to care for underserved and vulnerable populations in Uganda.",
+  description: "Boost Health Initiative is a community-focused health organisation in Kayunga District, Uganda, bringing healthcare closer to underserved communities and strengthening the systems, partnerships and community capacities needed for lasting health improvements.",
   alternates: { canonical: "/about" },
   openGraph: { url: "/about" },
 };
 
-const missionVisionApproach = [
+const missionVision = [
   { icon: Target, title: "Our Mission", description: MISSION },
   { icon: Lightbulb, title: "Our Vision", description: VISION },
-  {
-    icon: Users,
-    title: "Our Approach",
-    description: "We combine community outreaches, health education, screening and referrals with clinical care through Suubi Medical Centre — meeting families where they are and addressing health challenges at their root causes.",
-  },
 ];
 
 const communityChallenges = [
   { icon: MapPin, title: "Distance and cost", text: "Many families in rural Kayunga live far from health facilities, and the cost of travel and care delays treatment." },
-  { icon: Baby, title: "Mothers, newborns and adolescents", text: "Teenage pregnancy remains common, and many mothers miss antenatal and postnatal care, putting them and their babies at risk." },
+  { icon: Baby, title: "Mothers, children and adolescents", text: "Teenage pregnancy remains common, and many mothers miss antenatal and postnatal care, putting them and their babies at risk." },
   { icon: ShieldAlert, title: "Violence and silence", text: "Survivors of gender-based violence in rural communities often struggle to reach care, protection and justice." },
-  { icon: Activity, title: "Illness found too late", text: "Limited health information and screening mean that diseases and mental health conditions are often identified late." },
-];
-
-const achievements = [
-  { number: "4", label: "Districts Served", description: "Kayunga, Mukono, Kamuli, & Buyende" },
-  { number: "15M+", label: "Students Affected", description: "By COVID-19 school closures — a crisis we responded to" },
-  { number: "6,200+", label: "Teen Pregnancies", description: "Addressed during the lockdown period" },
-  { number: "2,000+", label: "Child Mothers", description: "Supported to overcome health risks since 2021" },
+  { icon: Activity, title: "Illness found too late", text: "Limited screening and delayed healthcare-seeking mean that many conditions are identified only when they become severe." },
 ];
 
 const testimonials = [
   {
     name: "Dr Simon Mpoya",
-    role: "Director, Boost Health Initiative",
-    content: "At Boost Health Initiative, we are dedicated to providing accessible, quality healthcare and empowering communities across Uganda. From maternal and child health to adolescent support and health education, our programs are designed to create lasting impact and brighter futures for all.",
+    role: "Founder & Director, Boost Health Initiative",
+    content: "At Boost Health Initiative, we are dedicated to bringing quality healthcare closer to underserved communities. From community outreaches and screening to health education and referrals, our work is designed to create lasting impact and healthier futures for the families we serve.",
     image: '/img/dr1.jpg'
   },
   {
     name: "Dr. John",
-    role: "Doctor at Suubi Medical Centre",
-    content: "As a doctor at Suubi Medical Centre — a hospital program from Boost Health Initiative supporting our community — I have witnessed firsthand how their partnership has been instrumental in improving health outcomes in rural areas. Their dedication to community health is truly remarkable.",
+    role: "Doctor at Suubi Medical Centre, a BHI partner",
+    content: "Through our partnership with Boost Health Initiative, I have seen firsthand how community outreach and timely referral improve health outcomes in rural areas. Their dedication to community health is truly remarkable.",
     image: '/img/dr2.jpg'
   }
+];
+
+const partnershipTypes = [
+  { icon: Briefcase, title: "Programmatic partnerships", text: "Joint implementation of community health programs and medical outreaches." },
+  { icon: Wrench, title: "Technical partnerships", text: "Sharing expertise, technical assistance and professional support." },
+  { icon: FlaskConical, title: "Research collaboration", text: "Community-based research, health assessments and implementation research." },
+  { icon: GraduationCap, title: "Capacity building", text: "Training, mentorship and strengthening the capacity of community health structures." },
+  { icon: Coins, title: "Resource mobilisation", text: "Financial support, medical supplies, equipment and logistical support." },
+  { icon: Lightbulb, title: "Innovation", text: "Development and testing of sustainable community healthcare delivery models." },
+];
+
+const whyPartner = [
+  "Established community engagement and outreach experience in Kayunga.",
+  "Existing connections with local healthcare structures.",
+  "Experience reaching underserved rural populations.",
+  "A community-centred approach to healthcare delivery.",
+  "An opportunity to implement and evaluate interventions in real-world rural settings.",
+];
+
+const waysToGetInvolved = [
+  { icon: Handshake, title: "Partner with us", text: "Collaborate in implementing impactful community health interventions.", href: "/contact?type=partner" },
+  { icon: HandHeart, title: "Support our programs", text: "Provide financial or in-kind support for community health initiatives.", href: "/contact?type=partner" },
+  { icon: Users, title: "Volunteer", text: "Contribute your professional skills, time and expertise.", href: "/contact?type=volunteer" },
+  { icon: FlaskConical, title: "Research with us", text: "Collaborate on community health research and learning.", href: "/contact?type=partner" },
+  { icon: Network, title: "Join our network", text: "Connect with BHI and explore opportunities to make a difference.", href: "/contact" },
 ];
 
 const sdgTargets = [
@@ -82,9 +106,9 @@ export default function AboutPage() {
       <section id="about-hero" aria-labelledby="about-hero-heading" className="bg-background">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
           <h1 id="about-hero-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Closing the Healthcare Gap for Communities in Uganda
+            Bringing Healthcare Closer to Underserved Communities
           </h1>
-          <p className="text-lg sm:text-2xl font-semibold text-primary mb-6">Healthy, Empowered Communities. Equitable Care for All.</p>
+          <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed mb-6">{POSITIONING}</p>
           <AboutHeroFocusAreas />
         </div>
       </section>
@@ -103,8 +127,10 @@ export default function AboutPage() {
               Why This Work Matters
             </h2>
             <p className="text-base sm:text-xl text-white/80 max-w-3xl mx-auto">
-              In Kayunga and surrounding districts, distance, cost and limited health information stand
-              between many families and the care they need.
+              Healthcare challenges in underserved communities extend beyond the availability of medical
+              facilities. They include limited health information, financial barriers, delayed
+              healthcare-seeking, inadequate screening services and difficulties accessing timely diagnosis
+              and treatment.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -121,20 +147,20 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Mission / Vision / Approach */}
-      <section id="our-approach" aria-labelledby="our-approach-heading" className="bg-secondary">
+      {/* Mission / Vision / Values */}
+      <section id="mission-vision" aria-labelledby="mission-vision-heading" className="bg-secondary">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-6">
               <Target className="w-4 h-4 mr-2" />
               Who We Are
             </Badge>
-            <h2 id="our-approach-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
-              Mission, Vision &amp; Approach
+            <h2 id="mission-vision-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+              Vision, Mission &amp; Values
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-            {missionVisionApproach.map(({ icon: Icon, title, description }) => (
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-12">
+            {missionVision.map(({ icon: Icon, title, description }) => (
               <Card key={title} className="h-full text-center bg-background shadow-lg border-0 md:text-left">
                 <CardHeader className="items-center md:items-start pt-6 pb-4">
                   <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-full mb-4 flex items-center justify-center mx-auto md:mx-0 shrink-0">
@@ -148,13 +174,72 @@ export default function AboutPage() {
               </Card>
             ))}
           </div>
+          <h3 className="text-xl sm:text-2xl font-bold text-foreground text-center mb-6">Our Core Values</h3>
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {CORE_VALUES.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="flex items-start gap-4 bg-background rounded-2xl p-5 shadow-sm">
+                <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5" aria-hidden />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-foreground mb-1">{title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Approach + Geographical focus */}
+      <section id="our-approach" aria-labelledby="our-approach-heading" className="bg-background">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
+          <div className="grid lg:grid-cols-5 gap-10 lg:gap-14">
+            <div className="lg:col-span-3">
+              <Badge variant="outline" className="mb-6">
+                <Compass className="w-4 h-4 mr-2" />
+                Our Approach
+              </Badge>
+              <h2 id="our-approach-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-8">
+                How We Work
+              </h2>
+              <ol className="space-y-5">
+                {APPROACH.map(({ title, text }, i) => (
+                  <li key={title} className="flex gap-4">
+                    <span className="w-10 h-10 rounded-full bg-primary text-white font-bold flex items-center justify-center flex-shrink-0">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-foreground text-lg">{title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <aside className="lg:col-span-2 rounded-2xl bg-secondary p-6 sm:p-8 self-start" aria-labelledby="geo-focus-heading">
+              <MapPin className="w-8 h-8 text-primary mb-4" aria-hidden />
+              <h2 id="geo-focus-heading" className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+                Our Geographical Focus
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                BHI is based in Kayunga District in central Uganda, with a focus on underserved rural
+                communities in Kayunga and neighbouring districts. Rural geography, dispersed settlements,
+                and fishing, farming and livestock-keeping communities present distinct healthcare needs.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                We intend to progressively expand our reach through partnerships, coordinated community
+                health interventions and scalable service delivery approaches.
+              </p>
+            </aside>
+          </div>
         </div>
       </section>
 
       <AboutFocusAreasSection />
 
       {/* Achievements / Impact Section */}
-      <section id="achievements" aria-labelledby="achievements-heading" className="bg-secondary">
+      <section id="impact" aria-labelledby="achievements-heading" className="bg-secondary">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-6">
@@ -162,24 +247,28 @@ export default function AboutPage() {
               Our Impact
             </Badge>
             <h2 id="achievements-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
-              Measurable Results in Our Communities
+              Making a Difference in Communities
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
-              Demonstrating our commitment to improving health outcomes and empowering communities
-              through data-driven, sustained impact.
+              Every individual deserves access to essential healthcare services and reliable health
+              information. Through our previous community health interventions, BHI has reported the
+              following achievements.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {achievements.map(({ number, label, description }) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {IMPACT_STATS.map(({ value, label }) => (
               <Card key={label} className="text-center bg-background border-0 shadow-lg">
                 <CardContent className="p-6">
-                  <p className="text-4xl sm:text-5xl font-bold text-primary mb-2">{number}</p>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">{label}</h3>
-                  <p className="text-muted-foreground text-sm">{description}</p>
+                  <p className="text-4xl font-bold text-primary mb-2">{value}</p>
+                  <p className="text-sm font-medium text-foreground">{label}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
+          <p className="text-center text-muted-foreground max-w-3xl mx-auto mt-10">
+            Beyond these numbers, our work reflects the importance of reaching underserved populations,
+            improving health awareness and connecting individuals to appropriate healthcare services.
+          </p>
         </div>
       </section>
 
@@ -195,7 +284,7 @@ export default function AboutPage() {
               The People Behind BHI
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
-              Hear from the dedicated health professionals who make our mission possible every day.
+              Hear from the people and partners who make our mission possible every day.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
@@ -222,6 +311,84 @@ export default function AboutPage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Partnerships */}
+      <section id="partnerships" aria-labelledby="partnerships-heading" className="bg-background">
+        <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-6">
+              <Handshake className="w-4 h-4 mr-2" />
+              Partnerships &amp; Collaborations
+            </Badge>
+            <h2 id="partnerships-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
+              Working Together for Better Health Outcomes
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
+              No single organisation can address the complex health challenges affecting underserved
+              communities alone. BHI welcomes partnerships with local and international organisations,
+              government institutions, healthcare providers, academic institutions, researchers,
+              foundations and corporate partners.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border-2 border-primary/20 bg-primary/5 p-6 sm:p-10 mb-12 grid md:grid-cols-[auto_1fr] gap-6 items-start">
+            <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center">
+              <Stethoscope className="w-7 h-7" aria-hidden />
+            </div>
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-1">Clinical partner</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3">Suubi Medical Centre</h3>
+              <p className="text-muted-foreground leading-relaxed mb-3">
+                Suubi Medical Centre is a 24-hour healthcare facility in Kayunga and a partner of Boost Health
+                Initiative. It provides clinical consultations, diagnostics, preventive care and continuity of
+                care for people identified and referred through BHI&apos;s community outreaches.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-5">
+                Together, we link community-based health interventions with facility-based clinical care, so that
+                people reached in their communities can access timely diagnosis and treatment.
+              </p>
+              <Link
+                href={SUUBI_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 font-semibold text-primary hover:underline"
+              >
+                Visit Suubi Medical Centre <ExternalLink className="w-4 h-4" aria-hidden />
+              </Link>
+            </div>
+          </div>
+
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
+            {partnershipTypes.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="rounded-2xl bg-secondary p-5">
+                <Icon className="w-6 h-6 text-primary mb-3" aria-hidden />
+                <h3 className="font-semibold text-foreground mb-1">{title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{text}</p>
+              </li>
+            ))}
+          </ul>
+
+          <div className="max-w-3xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-5 text-center">Why Partner With BHI?</h3>
+            <ul className="space-y-3">
+              {whyPartner.map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" aria-hidden />
+                  <span className="text-foreground">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="text-center mt-8">
+              <Link
+                href="/contact?type=partner"
+                className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-base font-semibold bg-primary text-white hover:bg-primary/90 transition-colors"
+              >
+                Let&apos;s explore opportunities for collaboration
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -258,28 +425,39 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Fund Our Work CTA */}
-      <section id="fund-our-work" aria-labelledby="fund-cta-heading" className="bg-background">
+      {/* Get Involved */}
+      <section id="get-involved" aria-labelledby="fund-cta-heading" className="bg-background">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24">
-          <div className="bg-primary rounded-3xl p-6 sm:p-10 md:p-16 text-white text-center max-w-5xl mx-auto">
-            <HandHeart className="w-14 h-14 mx-auto mb-6 opacity-90" />
-            <Badge className="mb-6 bg-white/20 text-white border-white/30 hover:bg-white/30">
-              <Award className="w-4 h-4 mr-2" />
-              Partner With BHI
-            </Badge>
-            <h2 id="fund-cta-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
-              Your Investment Changes Lives
-            </h2>
-            <p className="text-base sm:text-xl text-white/85 max-w-3xl mx-auto mb-4 leading-relaxed">
-              BHI works in underserved rural communities where distance, cost and limited health information
-              keep many families from care. Funding our programmes helps us expand our reach, support more
-              community health volunteers, and bring essential services closer to the people who need them.
-            </p>
-            <p className="text-sm sm:text-lg text-white/75 max-w-2xl mx-auto mb-10">
-              Whether through direct funding, partnerships, in-kind support, or technical collaboration —
-              your contribution has a lasting impact on the health of families and communities.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
+          <div className="bg-primary rounded-3xl p-6 sm:p-10 md:p-16 text-white max-w-6xl mx-auto">
+            <div className="text-center">
+              <HandHeart className="w-14 h-14 mx-auto mb-6 opacity-90" />
+              <Badge className="mb-6 bg-white/20 text-white border-white/30 hover:bg-white/30">
+                <Award className="w-4 h-4 mr-2" />
+                Get Involved
+              </Badge>
+              <h2 id="fund-cta-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+                Be Part of the Change
+              </h2>
+              <p className="text-base sm:text-xl text-white/85 max-w-3xl mx-auto mb-10 leading-relaxed">
+                Improving healthcare access requires collective commitment. There are several ways to
+                contribute to our work.
+              </p>
+            </div>
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {waysToGetInvolved.map(({ icon: Icon, title, text, href }) => (
+                <li key={title}>
+                  <Link
+                    href={href}
+                    className="block h-full rounded-2xl bg-white/10 border border-white/20 p-5 hover:bg-white/20 transition-colors"
+                  >
+                    <Icon className="w-6 h-6 mb-3" aria-hidden />
+                    <h3 className="font-semibold mb-1">{title}</h3>
+                    <p className="text-sm text-white/80 leading-relaxed">{text}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap mt-10">
               <Link
                 href="/contact?type=partner"
                 className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-base font-semibold bg-white text-primary hover:bg-gray-100 transition-colors"

@@ -16,7 +16,13 @@ import {
   Search,
   ShieldAlert,
   Users,
+  Stethoscope,
+  BookOpen,
+  ScanSearch,
+  Network,
+  FlaskConical,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -24,6 +30,73 @@ import { getCategoryStyle } from "@/lib/service-category-styles";
 import { unclaimedCorePrograms, type ServiceContent } from "@/lib/core-programs";
 
 type ListItem = ServiceContent & { key: string; href: string };
+
+const WORK_AREAS: { icon: LucideIcon; title: string; text: string; points: string[] }[] = [
+  {
+    icon: Stethoscope,
+    title: "Community-Based Healthcare Delivery",
+    text: "We take essential healthcare services closer to underserved communities through organised medical outreaches and community-based interventions.",
+    points: ["Community medical outreaches", "Basic medical consultations and health assessments", "Screening for priority health conditions", "Referral, follow-up and linkage to care"],
+  },
+  {
+    icon: BookOpen,
+    title: "Health Education and Community Empowerment",
+    text: "Informed communities are better positioned to prevent disease, recognise warning signs and make appropriate healthcare decisions.",
+    points: ["Disease prevention and health promotion", "Sexual, reproductive, maternal and child health", "Adolescent health and mental health awareness", "Nutrition, NCD awareness and GBV prevention"],
+  },
+  {
+    icon: ScanSearch,
+    title: "Screening, Early Identification and Referral",
+    text: "Many conditions are better managed when identified early. We link people who need further attention to appropriate healthcare providers.",
+    points: ["Hypertension and diabetes screening", "HIV, malaria and STI interventions", "Sickle cell and G6PD awareness and screening", "Eye health and vision screening"],
+  },
+  {
+    icon: Network,
+    title: "Strengthening Community Health Systems",
+    text: "We strengthen collaboration between communities, community health structures, government health facilities and private providers.",
+    points: ["Coordinated community health outreaches", "Collaboration with public and private facilities", "Stronger referral and follow-up pathways", "Community participation in health planning"],
+  },
+  {
+    icon: FlaskConical,
+    title: "Partnerships, Research and Innovation",
+    text: "We welcome collaborations that generate knowledge, strengthen healthcare delivery and develop sustainable solutions to local health challenges.",
+    points: ["Community health assessments and implementation research", "Technical assistance and institutional partnerships", "Innovative healthcare delivery models", "Monitoring, evaluation and learning"],
+  },
+];
+
+function WorkAreasSection() {
+  return (
+    <section className="bg-secondary" aria-labelledby="work-areas-heading">
+      <div className="container mx-auto px-4 py-12 sm:py-16">
+        <div className="text-center mb-10">
+          <Badge variant="outline" className="mb-4">How We Work</Badge>
+          <h2 id="work-areas-heading" className="text-2xl sm:text-3xl font-bold text-foreground">
+            Five Ways We Improve Community Health
+          </h2>
+        </div>
+        <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {WORK_AREAS.map(({ icon: Icon, title, text, points }) => (
+            <li key={title} className="rounded-2xl bg-background p-6 shadow-sm flex flex-col">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+                <Icon className="w-6 h-6" aria-hidden />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">{title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">{text}</p>
+              <ul className="space-y-2 mt-auto">
+                {points.map((p) => (
+                  <li key={p} className="flex items-start gap-2 text-sm text-foreground">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" aria-hidden />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
 
 function ServiceCard({ item }: { item: ListItem }) {
   const cfg = getCategoryStyle(item.category);
@@ -139,14 +212,29 @@ function ServicesPageInner() {
       {/* Hero */}
       <section className="bg-background">
         <div className="container mx-auto px-4 py-10 sm:py-16 lg:py-24 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             What We Do
           </h1>
+          <p className="text-lg sm:text-2xl font-semibold text-primary mb-6">
+            Bringing Healthcare Closer to the People
+          </p>
           <p className="text-base sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            BHI works across seven core programmes — from maternal, newborn and child health and
-            sexual and reproductive health to gender-based violence, disease prevention, mental
-            health, community health systems and research — bringing health information, screening
-            and referrals closer to communities in Kayunga and beyond.
+            Improving health outcomes requires accessible services, informed communities and stronger
+            connections between people and the healthcare system. We deliver community-centred health
+            interventions that address immediate needs while contributing to longer-term improvements in
+            community health in Kayunga and beyond.
+          </p>
+        </div>
+      </section>
+
+      <WorkAreasSection />
+
+      {/* Areas of work from admin services */}
+      <section className="bg-background" aria-labelledby="areas-heading">
+        <div className="container mx-auto px-4 pt-12 sm:pt-16 text-center">
+          <h2 id="areas-heading" className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Our Areas of Work</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Explore the health areas we focus on and how each one reaches communities.
           </p>
         </div>
       </section>
@@ -244,8 +332,8 @@ function ServicesPageInner() {
               <Users className="w-10 h-10 mx-auto mb-4 text-primary" />
               <h2 className="text-2xl font-bold text-foreground mb-3">Partner or Fund Our Work</h2>
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                We actively seek partnerships and grants to expand our services and reach more
-                communities across Uganda.
+                We welcome development organisations, healthcare institutions, researchers, corporate
+                partners and individuals who share our vision of bringing healthcare closer to communities.
               </p>
               <div className="flex flex-col gap-3">
                 <Button size="lg" asChild>
